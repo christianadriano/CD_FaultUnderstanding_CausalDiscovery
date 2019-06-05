@@ -17,8 +17,8 @@ library(dplyr) #for select and ddply
 
 file_path <-
   "C://Users//Christian//Documents//GitHub//ML_FaultUnderstanding//data//consolidated_Final_Experiment_2.arff"
-df2 <-  readARFF(file_path)
-f2$explanation_size <- sapply(strsplit(df2$explanation, " "), length)
+df2 <-  readARFF(file_path);
+df2$explanation_size <- sapply(strsplit(df2$explanation, " "), length);
 
 df2 <-
   select(df2,
@@ -28,6 +28,14 @@ df2 <-
          'confidence',
          'difficulty',
          'duration',
-         'explanation_size')
+         'explanation_size');
 
-df2$
+xvars <- c("qualification_score",
+           "years_programming",
+           "experience",
+           "confidence",
+           "difficulty",
+           "duration",
+           "explanation_size");
+
+table1 <- CreateTableOne(vars=xvars,strata="treatment",data=df2,test=FALSE)
