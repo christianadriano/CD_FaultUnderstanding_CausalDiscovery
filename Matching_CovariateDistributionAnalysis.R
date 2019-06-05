@@ -4,6 +4,8 @@ Diagnosis the differences in covariate distribution for E2
 
 install.packages("tableone")
 install.packages("Matching")
+install.packages("haven")
+library(haven)
 library(tableone)
 library(Matching)
 
@@ -14,21 +16,21 @@ library(farff) #all for reading arff file
 library(dplyr) #for select and ddply
 
 
+"Load data with treatment field (isBugCovering) and ground truth (answer correct)"
+source("C://Users//Christian//Documents//GitHub//ML_FaultUnderstanding//analysis//descriptive//accuracy//load_apply_ground_truth.R")
 
-file_path <-
-  "C://Users//Christian//Documents//GitHub//ML_FaultUnderstanding//data//consolidated_Final_Experiment_2.arff"
-df2 <-  readARFF(file_path);
-df2$explanation_size <- sapply(strsplit(df2$explanation, " "), length);
+df2_ground$explanation_size <- sapply(strsplit(df2_ground$explanation, " "), length);
 
-df2 <-
-  select(df2,
+df2_ground <-
+  select(df2_ground,
          'qualification_score',
          'years_programming',
          'experience',
          'confidence',
          'difficulty',
          'duration',
-         'explanation_size');
+         'explanation_size',
+         'isBugCovering');
 
 xvars <- c("qualification_score",
            "years_programming",
@@ -38,4 +40,5 @@ xvars <- c("qualification_score",
            "duration",
            "explanation_size");
 
-table1 <- CreateTableOne(vars=xvars,strata="treatment",data=df2,test=FALSE)
+table1 <- CreateTableOne(vars=xvars,strata="isBugCovering",data=df2_ground,test=FALSE)
+print(table1, smd=TRUE)
