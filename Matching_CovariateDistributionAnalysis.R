@@ -25,16 +25,17 @@ df2_ground <-
   select(df2_ground,
          'qualification_score',
          'years_programming',
-         'experience',
+        
          'confidence',
          'difficulty',
          'duration',
          'explanation_size',
          'isBugCovering');
 
+# 'experience',
+
 xvars <- c("qualification_score",
            "years_programming",
-           "experience",
            "confidence",
            "difficulty",
            "duration",
@@ -42,3 +43,9 @@ xvars <- c("qualification_score",
 
 table1 <- CreateTableOne(vars=xvars,strata="isBugCovering",data=df2_ground,test=FALSE)
 print(table1, smd=TRUE)
+
+greedymatch <- Match(Tr=df2_ground$isBugCovering, M=1, X=df2_ground[xvars])
+matched <- df2_ground[unlist(greedymatch[c("index.treated","index.control")]),]
+
+matchedTab1 <- CreateTableOne(vars=xvars, strata="isBugCovering", data=matched, test=FALSE)
+print(matchedTab1, smd=TRUE)
