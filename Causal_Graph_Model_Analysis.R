@@ -1,5 +1,8 @@
 
+install.packages("ggm")
+
 library( dagitty )
+library (ggm)
 
 g <- dagitty(
   "dag{
@@ -22,11 +25,43 @@ g <- dagitty(
   }"
 )
 
-g$$paths(g,"Skill","Difficulty")
+
+graph <- dagitty(' dag {
+bb="-0.5,-0.5,0.5,0.5";
+Accuracy [outcome,pos="-0.018,0.091"];
+AnswerType [pos="-0.254,0.002"];
+CodeComplexity [pos="-0.324,-0.233"];
+Confidence [pos="-0.115,-0.034"];
+Duration [pos="-0.037,-0.095"];
+ExplanationSize [pos="0.061,-0.176"];
+PerceivedDifficulty [pos="-0.142,-0.179"];
+ProgrammerSkill [pos="-0.327,-0.120"];
+TaskType [exposure,pos="-0.044,-0.318"];
+AnswerType -> Confidence;
+CodeComplexity -> PerceivedDifficulty;
+Confidence -> Accuracy;
+Duration -> Confidence;
+ExplanationSize -> Accuracy;
+ExplanationSize -> Duration;
+PerceivedDifficulty -> Duration;
+PerceivedDifficulty -> ExplanationSize;
+ProgrammerSkill -> Confidence;
+ProgrammerSkill -> PerceivedDifficulty;
+TaskType -> ExplanationSize;
+TaskType -> PerceivedDifficulty;
+}'
+)
+
+
 
 paths(g,"TaskType","Accuracy")
+#$paths
+#[1] "TaskType -> Difficulty -> Duration -> Confidence -> Accuracy"     
+#[2] "TaskType -> Difficulty -> Duration <- ExplanationSize -> Accuracy"
+#$open TRUE FALSE
+
 
 adjustmentSets(g,exposure = "TaskType",outcome = "Accuracy",effect = c("direct"))
-{ Confidence, ExplanationSize }
-{ Duration, ExplanationSize }
-{ Difficulty }
+#{ Confidence, ExplanationSize }
+#{ Duration, ExplanationSize }
+#{ Difficulty }
