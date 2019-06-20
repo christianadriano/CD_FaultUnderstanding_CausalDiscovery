@@ -1,29 +1,32 @@
 
 install.packages("ggm")
+install.packages("ggdag")
+
+library(ggdag)
 
 library( dagitty )
 library (ggm)
 
-g <- dagitty(
-  "dag{
-  TaskType -> Difficulty;
-  Skill -> Difficulty;
-  Complexity -> Difficulty;
-  Difficulty -> Duration;
-  ExplanationSize -> Duration;
-  Duration -> Confidence;
-  Confidence -> Accuracy
-  ExplanationSize -> Accuracy
-  TaskType [exposure]
-  Skill [exogenous]
-  Complexity [exogenous]
-  Difficulty [endogenous]
-  ExplanationSize [endogenous]
-  Duration [endogenous]
-  Confidence [endogenous]
-  Accuracy [outcome]
-  }"
-)
+# g <- dagitty(
+#   "dag{
+#   TaskType -> Difficulty;
+#   Skill -> Difficulty;
+#   Complexity -> Difficulty;
+#   Difficulty -> Duration;
+#   ExplanationSize -> Duration;
+#   Duration -> Confidence;
+#   Confidence -> Accuracy
+#   ExplanationSize -> Accuracy
+#   TaskType [exposure]
+#   Skill [exogenous]
+#   Complexity [exogenous]
+#   Difficulty [endogenous]
+#   ExplanationSize [endogenous]
+#   Duration [endogenous]
+#   Confidence [endogenous]
+#   Accuracy [outcome]
+#   }"
+# )
 
 
 graph <- dagitty(' dag {
@@ -35,7 +38,7 @@ Confidence [pos="-0.115,-0.034"];
 Duration [pos="-0.037,-0.095"];
 ExplanationSize [pos="0.061,-0.176"];
 PerceivedDifficulty [pos="-0.142,-0.179"];
-ProgrammerSkill [pos="-0.327,-0.120"];
+ProgrammerSkill [exposure,pos="-0.327,-0.120"];
 TaskType [exposure,pos="-0.044,-0.318"];
 AnswerType -> Confidence;
 CodeComplexity -> PerceivedDifficulty;
@@ -52,9 +55,12 @@ TaskType -> PerceivedDifficulty;
 }'
 )
 
+tidy_dagitty(graph)
+ggdag(graph, layout = "circle")
 
 
-paths(g,"TaskType","Accuracy")
+
+paths(graph,from=exposures("TaskType","CodeComplexity"),to=outcomes("Accuracy"),directed = TRUE)
 #$paths
 #[1] "TaskType -> Difficulty -> Duration -> Confidence -> Accuracy"     
 #[2] "TaskType -> Difficulty -> Duration <- ExplanationSize -> Accuracy"
