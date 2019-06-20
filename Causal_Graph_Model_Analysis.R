@@ -33,7 +33,7 @@ graph <- dagitty(' dag {
 bb="-0.5,-0.5,0.5,0.5";
 Accuracy [outcome,pos="-0.018,0.091"];
 AnswerType [pos="-0.254,0.002"];
-CodeComplexity [pos="-0.324,-0.233"];
+CodeComplexity [exposure, pos="-0.324,-0.233"];
 Confidence [pos="-0.115,-0.034"];
 Duration [pos="-0.037,-0.095"];
 ExplanationSize [pos="0.061,-0.176"];
@@ -57,10 +57,12 @@ TaskType -> PerceivedDifficulty;
 
 tidy_dagitty(graph)
 ggdag(graph, layout = "circle")
+#check layout and color options:
+#https://cran.r-project.org/web/packages/ggdag/vignettes/intro-to-ggdag.html
 
 
 
-paths(graph,from=exposures("TaskType","CodeComplexity"),to=outcomes("Accuracy"),directed = TRUE)
+paths(graph,from=exposures("TaskType"),to=outcomes("Accuracy"),directed = FALSE)
 #$paths
 #[1] "TaskType -> Difficulty -> Duration -> Confidence -> Accuracy"     
 #[2] "TaskType -> Difficulty -> Duration <- ExplanationSize -> Accuracy"
