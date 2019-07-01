@@ -27,6 +27,27 @@ impliedConditionalIndependencies(g1)
 # Accuracy _||_ Skill | Difficulty
 # Complexity _||_ Skill
 
+" Model includes direct effect from Skill to Accuracy"
+g_SA <- dagitty(
+  "dag{
+  Skill -> Difficulty;
+  Complexity -> Difficulty;
+  Skill -> Accuracy;
+  Difficulty -> Accuracy;
+  Skill [exogenous]
+  Complexity [exogenous]
+  Difficulty [endogenous]
+  Accuracy [outcome]
+  }"
+)
+
+tidy_dagitty(g_SA)
+ggdag(g_SA, layout = "circle")
+
+impliedConditionalIndependencies(g_SA)
+# Accuracy _||_ Complexity | Difficulty, Skill
+# Complexity _||_ Skill
+
 
 
 
