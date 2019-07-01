@@ -70,6 +70,28 @@ impliedConditionalIndependencies(g_CA)
 # Complexity _||_ Skill
 
 
+" Model includes direct effects from Code Complexity and Skill to Accuracy"
+g_CSA <- dagitty(
+  "dag{
+  Skill -> Difficulty;
+  Complexity -> Difficulty;
+  Skill -> Accuracy;
+  Complexity -> Accuracy;
+  Difficulty -> Accuracy;
+  Skill [exogenous]
+  Complexity [exogenous]
+  Difficulty [endogenous]
+  Accuracy [outcome]
+  }"
+)
+
+tidy_dagitty(g_CSA)
+ggdag(g_CSA, layout = "circle")
+
+impliedConditionalIndependencies(g_CSA)
+# Complexity _||_ Skill
+
+
 
 
 
