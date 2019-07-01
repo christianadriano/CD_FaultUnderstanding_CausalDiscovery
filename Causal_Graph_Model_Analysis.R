@@ -62,7 +62,7 @@ ggdag(graph, layout = "circle")
 
 
 
-paths(graph,from=exposures("TaskType"),to=outcomes("Accuracy"),directed = FALSE)
+p <- paths(graph,c("ProgrammerSkill"),"Accuracy",directed = TRUE)
 #$paths
 #[1] "TaskType -> Difficulty -> Duration -> Confidence -> Accuracy"     
 #[2] "TaskType -> Difficulty -> Duration <- ExplanationSize -> Accuracy"
