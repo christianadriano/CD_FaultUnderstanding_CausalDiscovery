@@ -6,8 +6,7 @@ library(ggdag)
 library( dagitty )
 library (ggm)
 
-
-g1 <- dagitty(
+g_0 <- dagitty(
   "dag{
   Skill -> Difficulty;
   Complexity -> Difficulty;
@@ -19,10 +18,10 @@ g1 <- dagitty(
   }"
 )
 
-tidy_dagitty(g1)
-ggdag(g1, layout = "circle")
+tidy_dagitty(g_0)
+ggdag(g_0, layout = "circle")
 
-impliedConditionalIndependencies(g1)
+impliedConditionalIndependencies(g_0)
 # Accuracy _||_ Complexity | Difficulty
 # Accuracy _||_ Skill | Difficulty
 # Complexity _||_ Skill
@@ -91,14 +90,30 @@ ggdag(g_CSA, layout = "circle")
 impliedConditionalIndependencies(g_CSA)
 # Complexity _||_ Skill
 
-
-
-
-
 p <- paths(g,c("Skill"),"Accuracy",directed = TRUE)
 p
 
+"Direct effect of Difficulty on Accuracy in each model"
+adjustmentSets(g_0,exposure = "Difficulty",outcome = "Accuracy",effect = c("direct"))
+#{}
+adjustmentSets(g_CA,exposure = "Difficulty",outcome = "Accuracy",effect = c("direct"))
+#{Complexity}
+adjustmentSets(g_SA,exposure = "Difficulty",outcome = "Accuracy",effect = c("direct"))
+#{Skill}
+adjustmentSets(g_CSA,exposure = "Difficulty",outcome = "Accuracy",effect = c("direct"))
+#{Skill,Complexity}
+
+"Total effect of Difficulty on Accuracy in each model"
+adjustmentSets(g_0,exposure = "Difficulty",outcome = "Accuracy",effect = c("total"))
+#{}
+adjustmentSets(g_CA,exposure = "Difficulty",outcome = "Accuracy",effect = c("total"))
+#{Complexity}
+adjustmentSets(g_SA,exposure = "Difficulty",outcome = "Accuracy",effect = c("total"))
+#{Skill}
+adjustmentSets(g_CSA,exposure = "Difficulty",outcome = "Accuracy",effect = c("total"))
+#{Skill,Complexity}
 
 
-adjustmentSets(g,exposure = "Skill",outcome = "Accuracy",effect = c("direct"))
-adjustmentSets(g,exposure = c("Skill","Complexity"),outcome = "Accuracy",effect = c("direct"))
+
+adjustmentSets(g_CA,exposure = c("Skill","Complexity"),outcome = "Accuracy",effect = c("direct"))
+
