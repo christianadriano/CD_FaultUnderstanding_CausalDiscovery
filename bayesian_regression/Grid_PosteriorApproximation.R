@@ -17,9 +17,12 @@ prior <- rep(1,20)
 #compute likelihood at value in the grid
 likelihood <- dbinom(6, size=9, prob=p_grid)
 
-unstd_posterior <- likelihood * prior
-posterior <- unstd_posterior / sum(unstd_posterior)
+unstandardized_posterior <- likelihood * prior
+
+standardized_posterior <- unstandardized_posterior / sum(unstandardized_posterior)
+
 
 plot(p_grid, posterior, type="b",
-     xlab="probability of water", ylab="posterior probability")
+     xlab="probability of water", 
+     ylab="posterior probability")
 mtext("20 points")
