@@ -26,3 +26,36 @@ plot(p_grid, posterior, type="b",
      xlab="probability of water", 
      ylab="posterior probability")
 mtext("20 points")
+
+
+# We can answer questions like (from McElreath):
+#    How much posterior probability is below some parameter value?
+#    How much posterior probability is between two parameter values?
+#    Which parameter value marks the lower 10% of the posterior probability?
+#    Which range of parameter values contains 99% of the posterior probability?
+#    Which parameter value has the highest posterior probability?
+  
+#For that we only need to sum over the posterior.
+sum( standardized_posterior[ p_grid < 0.5 ] )
+#[1] 0.1707239
+#i.e., 17% of the data is below 50% probabiltiy of water
+
+#Confidence Interval, which in Bayesian is called Credible Interval
+
+#It can be calculated for different ranges of boundaries, for instance:
+#the 50% central (between 25% and 75%). For that use the PI function.
+
+#It can also be calculated based on the mass, for instance:
+#the bottom 80% of densitiy mass or the top 80%, which will give 
+#correspoding intervals for p_grid. For that use the quantile function.
+
+#HPDI - Highest Probability Density Interval
+#HPDI is the narrowest interval containing the desired probability mass
+
+#For a discussion see page 57 of McElreath 2019 Rethinking book.
+
+#These intervals (PI and HPDI) tend to provide similar results.
+#Remember that the Bayesian estimate is not the intervals but the whole distribution.
+
+#All fine, however grid approximation is not used because summing over the posterior
+#is not feasible for more complex situations, i.e., multiple variables.
