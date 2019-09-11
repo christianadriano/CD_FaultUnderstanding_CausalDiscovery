@@ -28,7 +28,8 @@ library(rethinking)
 
 #Quadratic Approximation (Maximum a posteriori)
 
-#Water and Land area in the Globe
+#---------------------------
+#Example-1 Water and Land area in the Globe
 globe.qa <- rethinking::map(
   alist(
       W ~ dbinom( W+L ,p) , # binomial likelihood
@@ -43,6 +44,8 @@ precis( globe.qa )
 # p 0.67   0.16   0.42  0.92
 
 
+#---------------------------
+#Example-2 Height
 
 data("Howell1")
 height_data <- Howell1
@@ -58,24 +61,38 @@ dens(prior_h) #plots the prior
 
 
 #Prepare list with functions
-flist <- alist(
-  height ~ rnorm(mu, sigma),
-  mu ~ rnorm(178, 20),
-  sigma ~ runif(0, 50)
+flist_height <- alist(
+  height ~ dnorm( mu , sigma ) ,
+  mu ~ dnorm( 178 , 20 ) ,
+  sigma ~ dunif( 0 , 50 )
 )
-
-y_height=list(height_data$height)
 
 #Run the approximations
-fit <- map(
-  flist,
-  data=y_height,
-  start=list(mu=0,sigma=0)
-)
+fit <- rethinking::map(
+  flist=flist_height,
+  data=height_data,
+  debug=TRUE
+  )
 
+precis(fit)
+#         Mean    StdDev   5.5%  94.5%
+#   mu    138.40   1.18  136.52 140.29
+# sigma  27.58     0.84   26.24  28.91
+
+#I can also sample from the posterior...
 post <- extract.samples(fit)
-fit[1:5, ]
+plot(post)
 
+#---------------------------
+#Example-3 Cars
+data(cars)
+flist <- alist(
+  dist ~ dnorm( mean=mu , sd=sigma ) ,
+  mu <- a+b*speed ,
+  c(a,b) ~ dnorm(0,10) , 
+  sigma ~ dcauchy(0,1)
+)
+fit <- map( flist , start=list(a=40,b=0.1,sigma=20) , data=cars , debug=TRUE)
 
 #----------------------------------------------------------------------------------------------
 #Linear Regression example with MAP
