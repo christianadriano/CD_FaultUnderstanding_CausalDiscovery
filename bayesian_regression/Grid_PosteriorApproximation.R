@@ -57,5 +57,15 @@ sum( standardized_posterior[ p_grid < 0.5 ] )
 #These intervals (PI and HPDI) tend to provide similar results.
 #Remember that the Bayesian estimate is not the intervals but the whole distribution.
 
-#All fine, however grid approximation is not used because summing over the posterior
+#All fine, however..
+
+#1- Grid approximation is not used because summing over the posterior
 #is not feasible for more complex situations, i.e., multiple variables.
+#
+#2- Grid approximation makes less assumptions than other methods, but it does not scale well.
+# As McElreath wrote in his book Statistical Rethinking (chapter 2, page 42):  
+#   ...the number of unique values to consider in the grid grows exponentially with the number of parameters in the
+# model increases. For a single parameter model, the problem to compute a grid of 100 or 1000 values is 
+# respectively 100 and 1000 values. However, for two parameters approximated by 100 values each, that's
+# already 100^2 = 10000 values to compute. For 10 parameters, the grid becomes many billions
+# of values.
