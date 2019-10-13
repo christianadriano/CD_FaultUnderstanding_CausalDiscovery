@@ -134,5 +134,25 @@ adjustmentSets(g_CSA,exposure = "Skill",outcome = "Accuracy",effect = c("total")
 #{}
 
 
+"Direct effect of Skill and complexity on Accuracy in each model"
+adjustmentSets(g_0,exposure = c("Skill","Complexity"),outcome = "Accuracy",effect = c("direct"))
+#{Difficulty}
+adjustmentSets(g_CA,exposure = c("Skill","Complexity"),outcome = "Accuracy",effect = c("direct"))
+#{Difficulty}
+adjustmentSets(g_SA,exposure = c("Skill","Complexity"),outcome = "Accuracy",effect = c("direct"))
+#{Difficulty}
+adjustmentSets(g_CSA,exposure = c("Skill","Complexity"),outcome = "Accuracy",effect = c("direct"))
+#{Difficulty,Complexity}
+
+"Total effect of Skill and complexity on Accuracy in each model"
+adjustmentSets(g_0,exposure = c("Skill","Complexity"),outcome = "Accuracy",effect = c("total"))
+#{}
+adjustmentSets(g_CA,exposure = c("Skill","Complexity"),outcome = "Accuracy",effect = c("total"))
+#{}
+adjustmentSets(g_SA,exposure = c("Skill","Complexity"),outcome = "Accuracy",effect = c("total"))
+#{}
+adjustmentSets(g_CSA,exposure = c("Skill","Complexity"),outcome = "Accuracy",effect = c("total"))
+#{}
+
 adjustmentSets(g_CA,exposure = c("Skill","Complexity"),outcome = "Accuracy",effect = c("direct"))
 
