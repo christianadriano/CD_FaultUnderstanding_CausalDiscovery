@@ -18,6 +18,7 @@ for ( i in 2:n_samples ) {
 }
 
 #p are samples from the posterior distribution
-
 dens( p , xlim=c(0,1) )
+
+#Draws the known distribution with a dotted line over the approximated distribution
 curve( dbeta( x , W+1 , L+1 ) , lty=2 , add=TRUE )
