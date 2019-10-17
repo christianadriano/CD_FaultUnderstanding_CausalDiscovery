@@ -13,26 +13,32 @@ dataset_E2 <- read.csv(str_c(path, "merged_tasks_complexity_E2.csv"))
 df_E2 <- data.frame(dataset_E2)
 summary(df_E2)
 
-size_list <-  c(1,10,100,1000) #number successful of trials for the binomial distribution
-i <- 0
-grade_priors_matrix <- matrix(nrow=6,ncol=4)
+trial_list <-  c(10,100,1000) #number successful of trials for the binomial distribution
+grade_range = c(0:5)
+grade_priors_matrix <- matrix(nrow=1, ncol=6)
+
+hist_prior <- hist(rnbinom(6,mu=1,size=1),plot=FALSE)
+grade_priors_matrix <- rbind(grade_priors_matrix,hist_prior$counts)
+
 #Simulate priors for Grade
-for(mu in 0:5){
-  for(size in size_list){
-    prior <- rnbinom(1500,mu=mu,size=1000)
-    
-    grade_priors_matrix[i,j] <- prior$count    
-    grade_priors_counts[i] <- prior$counts
-    
-    i <- i+1
-    rbind()
+for(grade_mu in 1:grade_range+1){
+  for(trial in trial_list){
+    prior <- rnbinom(6,mu=grade_mu,size=trial)
+    hist_prior <- hist(prior, breaks = grade_range, plot=FALSE )
+    grade_priors_matrix <- rbind(grade_priors_matrix,hist_prior$counts)
   }
 }
 
-h_grade_prior <- dens(grade_prior,breaks = h1$breaks,plot=TRUE)
-barplot(h_grade_prior$counts,
-        beside = TRUE,
-        names.arg = round(h_grade_prior$breaks[-length(h_grade_prior$breaks)]))
+h_grade_prior <- dens(grade_priors_matrix[1:10,],plot=TRUE)
+
+h_grade_prior <- dens(grade_priors_matrix,breaks = hist_prior$breaks,plot=TRUE)
+
+barplot(grade_priors_matrix,beside = TRUE,
+        names.arg = round(hist_prior$breaks[-length(hist_prior$breaks)]))
+
+#barplot(grade_priors_matrix,
+#        beside = TRUE,
+#        names.arg = round(h_grade_prior$breaks[-length(h_grade_prior$breaks)]))
 
 
 #Continuous priors
