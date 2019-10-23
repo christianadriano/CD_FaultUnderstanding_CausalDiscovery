@@ -1,10 +1,10 @@
 "
-Simulate piors for categorical values
-- Categorical input: Profession, Grade
-- Categorical output: difficulty, confidence (likert scales) //See what McElreath recommends
+Simulate piors for ordered categorical values
+- Order: Profession, Grade
+- Likert scale: difficulty, confidence (likert scales)
 "
 
-"GRADES
+"GRADE
 What is the probability distribution of grades?
 In E2 there were 6 grade levels (from 0 to 5). However, only levels 3,4,5 were allowed to take the
 tasks. Hence, these are the only three levels available in the task dataset. Similarly, in 
