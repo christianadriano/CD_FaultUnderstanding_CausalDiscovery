@@ -2,7 +2,13 @@
 Computing the WAIC for a model
 Code based on McElreath's book - Statistical Rethinking
 "
+#UPDATING packages
+remove.packages("rstan")
+if (file.exists(".RData")) file.remove(".RData")
 
+install.packages(c("coda","mvtnorm","devtools","loo"))
+library(devtools)
+devtools::install_github("rmcelreath/rethinking")
 library(rethinking)
 
 data(cars)
