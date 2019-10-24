@@ -10,6 +10,7 @@ install.packages(c("coda","mvtnorm","devtools","loo"))
 library(devtools)
 devtools::install_github("rmcelreath/rethinking")
 library(rethinking)
+#-----------------------------
 
 data(cars)
 
@@ -20,7 +21,7 @@ m <- map(
     mu <- a + b*speed,
     a ~ dnorm(0,100),
     b ~ dnorm(0,10),
-    sigma ~ dunif(1) #dexp
+    sigma ~ dexp(1) #dexp
   ) , data=cars )
 set.seed(94)
 
@@ -39,3 +40,16 @@ logprob <- sapply( 1:n_samples ,
 "4. compute the lppd"
 n_cases <- nrow(cars)
 lppd <- sapply( 1:n_cases , function(i) log_sum_exp(logprob[i,]) - log(n_samples) )
+
+"5. compute penalties for each observation"
+pWAIC <- sapply( 1:n_cases , function(i) var(logprob[i,]) )
+
+"6. compute WAIC"
+-2*( sum(lppd) - sum(pWAIC) )
+
+"7. compute WAIC by observation"
+waic_vec <- -2*( lppd - pWAIC )
+
+"8. compute the standard error"
+sqrt( n_cases*var(waic_vec) )
+  
