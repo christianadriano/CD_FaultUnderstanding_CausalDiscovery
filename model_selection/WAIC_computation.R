@@ -26,6 +26,7 @@ m <- map(
     b ~ dnorm(0,10),
     sigma ~ dexp(1) #dexp
   ) , data=cars )
+
 set.seed(94)
 
 "2. Collects samples from the fit model m"
@@ -72,3 +73,22 @@ WAIC(m)
 # attr(,"se")
 # [1] 17.61842
   
+
+#---------------
+#Comparing models
+m1.1 <- map(
+  alist(
+    dist ~ dnorm(mu,sigma),
+    mu <- a + b*speed +c*speed^2,
+    a ~ dnorm(0,100),
+    b ~ dnorm(0,10),
+    c ~ dnorm(0,10),
+    sigma ~ dexp(1) #dexp
+  ) , data=cars )
+
+compare(m,m1.1)
+#       WAIC  pWAIC dWAIC weight    SE  dSE
+# m    423.0   4.6   0.0   0.58  17.70   NA
+# m1.1 423.7   6.1   0.7   0.42  18.94 4.35
+
+
