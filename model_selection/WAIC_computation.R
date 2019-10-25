@@ -91,4 +91,7 @@ compare(m,m1.1)
 # m    423.0   4.6   0.0   0.58  17.70   NA
 # m1.1 423.7   6.1   0.7   0.42  18.94 4.35
 
-
+compare(m,m1.1, func=LOO)
+#      LOO pLOO dLOO weight   SE   dSE
+# m    4.6  0.5  0.0    0.7  1.76   NA
+# m1.1 6.4  0.7  1.7    0.3  2.32 0.72
