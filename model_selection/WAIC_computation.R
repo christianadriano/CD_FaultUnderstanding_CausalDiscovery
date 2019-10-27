@@ -4,13 +4,14 @@ Code based on McElreath's book - Statistical Rethinking
 "
 #UPDATING packages
 remove.packages("rstan")
+remove.packages("rethinking")
 if (file.exists(".RData")) file.remove(".RData")
 
 install.packages(c("coda","mvtnorm","devtools","loo"))
 library(loo)
 library(mvtnorm)
 library(devtools)
-devtools::install_github("rmcelreath/rethinking")
+devtools::install_github("rmcelreath/rethinking", ref="Experimental")
 #-----------------------------
 
 library(rethinking)
