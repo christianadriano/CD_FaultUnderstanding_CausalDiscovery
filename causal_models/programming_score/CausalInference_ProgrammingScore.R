@@ -68,6 +68,31 @@ the path between YoE and Prof.
 #Build causal models
 
 #Model-1 No interactions
+m1_NoInter <- quap(
+  alist(
+    qualification_score ~ dnorm( mu , sigma ) ,
+    mu <- a + by*years_programming ,
+    a ~ dnorm( 0 , 0.2 ) ,
+    by ~ dnorm( 0 , 0.5 ) ,
+    sigma ~ dexp(1)
+  ), data = df_E2
+) 
+
+m1_intercept <- quap(
+  alist(
+    qualification_score ~ dnorm( mu , sigma ) ,
+    mu <- a, #+ by*years_programming^2 ,
+    a ~ dnorm( 0 , 0.2 ) ,
+    by ~ dnorm( 0 , 0.5 ) ,
+    sigma ~ dexp(1)
+  ), data = df_E2
+) 
+
+precis(m1_NoInter)
+precis(m1_intercept)
+plot(coeftab(m1_NoInter,m1_intercept), par=c("a","by"),
+     xlab="Estimate")
+
 
 #Model-2 Interaction between profession and yoe
 
