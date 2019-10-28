@@ -67,23 +67,29 @@ the path between YoE and Prof.
 
 #Build causal models
 
+# standardize variables
+df_E2$yoe <- scale( df_E2$years_programming )
+df_E2$score <- scale( df_E2$qualification_score )
+
+sd(df_E2$years_programming)
+
 #Model-1 No interactions
 m1_NoInter <- quap(
   alist(
-    qualification_score ~ dnorm( mu , sigma ) ,
-    mu <- a + by*years_programming ,
+    score ~ dnorm( mu , sigma ) ,
+    mu <- a + b*yoe ,
     a ~ dnorm( 0 , 0.2 ) ,
-    by ~ dnorm( 0 , 0.5 ) ,
+    b ~ dnorm( 0 , 0.5 ) ,
     sigma ~ dexp(1)
   ), data = df_E2
 ) 
 
 m1_intercept <- quap(
   alist(
-    qualification_score ~ dnorm( mu , sigma ) ,
-    mu <- a, #+ by*years_programming^2 ,
+    score ~ dnorm( mu , sigma ) ,
+    mu <- a, 
     a ~ dnorm( 0 , 0.2 ) ,
-    by ~ dnorm( 0 , 0.5 ) ,
+    b ~ dnorm( 0 , 0.5 ) ,
     sigma ~ dexp(1)
   ), data = df_E2
 ) 
@@ -93,6 +99,18 @@ precis(m1_intercept)
 plot(coeftab(m1_NoInter,m1_intercept), par=c("a","by"),
      xlab="Estimate")
 
+#Simulate Priors
+set.seed(10)
+prior1 <- extract.prior( m1_NoInter )
+A_seq <- seq( from=-2 , to=5 , length.out=50 )
+mu <- link( m1_NoInter , post=prior1 , data=list( yoe=A_seq ) )
+
+plot( NULL , xlim=c(-1,5) , ylim=c(-1,5),
+      xlab="Years of Experience (std)",
+      ylab="Programming Score (std)",)
+title("Prior Simulation")
+
+for ( i in 1:50 ) lines(A_seq, mu[i,] , col=col.alpha("black",0.4))
 
 #Model-2 Interaction between profession and yoe
 
