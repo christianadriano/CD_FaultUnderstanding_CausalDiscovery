@@ -67,22 +67,40 @@ the path between YoE and Prof.
 
 #Build causal models
 
-# standardize variables
-df_E2$yoe <- scale( df_E2$years_programming )
-df_E2$score <- scale( df_E2$qualification_score )
+# standardize variables = (zero centered, standard deviation one)
+df_E2$yoe <- scale(df_E2$years_programming)
+df_E2$score <- scale(df_E2$qualification_score)
 
-sd(df_E2$years_programming)
+
 
 #Model-1 No interactions
 m1_NoInter <- quap(
   alist(
     score ~ dnorm( mu , sigma ) ,
-    mu <- a + b*yoe ,
+    mu <- a + by*yoe ,
     a ~ dnorm( 0 , 0.2 ) ,
     b ~ dnorm( 0 , 0.5 ) ,
     sigma ~ dexp(1)
   ), data = df_E2
 ) 
+
+#Let's reflect a bit about this regression formula
+# score = a + by*yoe
+
+"if by=1, this means that one standard deviation increase in YoE is
+associated with likewise one standard deviation in score. 
+
+To know whether or not this is strong relationship, 
+I need to know how big a standard deviation of qualification score is"
+
+sd(df_E2$years_programming)
+#8.297915 years
+sd(df_E2$qualification_score)
+#0.8198906
+
+"This translates do 8.2979 years of experience are necessary to increase
+the score in a bit less than one (0.8198). This looks a bit too much
+experience for too little gain in score..."
 
 m1_intercept <- quap(
   alist(
