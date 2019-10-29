@@ -65,13 +65,9 @@ the path between YoE and Prof.
 
 #Simulate priors
 
-#Build causal models
-
 # standardize variables = (zero centered, standard deviation one)
 df_E2$yoe <- scale(df_E2$years_programming)
 df_E2$score <- scale(df_E2$qualification_score)
-
-
 
 #Model-1 No interactions
 m1_NoInter <- quap(
@@ -100,24 +96,23 @@ sd(df_E2$qualification_score)
 
 "This translates do 8.2979 years of experience are necessary to increase
 the score in a bit less than one (0.8198). This looks a bit too much
-experience for too little gain in score..."
+experience for too little gain in score.
 
-m1_intercept <- quap(
-  alist(
-    score ~ dnorm( mu , sigma ) ,
-    mu <- a, 
-    a ~ dnorm( 0 , 0.2 ) ,
-    b ~ dnorm( 0 , 0.5 ) ,
-    sigma ~ dexp(1)
-  ), data = df_E2
-) 
+Now looking at the prior for by (by ~ dnorm( 0 , 0.5 ). This normal distribution with 
+std=0.5 implies that 95% of the datapoints are below 1 (i.e., two standard deviations).
+In other words, the prior thinks taht only 5% of the plausible slopes are more 
+extreme than 1.
+
+Since we already think that the relationship looks very weak, this prior seems to agree
+with that, because it will put 95% of the values of by below 1.
+
+Next I simulate these priors to see how they look in the outcome space.
+
+"
 
 precis(m1_NoInter)
-precis(m1_intercept)
-plot(coeftab(m1_NoInter,m1_intercept), par=c("a","by"),
-     xlab="Estimate")
 
-#Simulate Priors
+
 set.seed(10)
 prior1 <- extract.prior( m1_NoInter )
 A_seq <- seq( from=-2 , to=5 , length.out=50 )
@@ -129,6 +124,26 @@ plot( NULL , xlim=c(-1,5) , ylim=c(-1,5),
 title("Prior Simulation")
 
 for ( i in 1:50 ) lines(A_seq, mu[i,] , col=col.alpha("black",0.4))
+
+#------------------------------------------------------
+
+#new model only with Intercept
+m1_intercept <- quap(
+  alist(
+    score ~ dnorm( mu , sigma ) ,
+    mu <- a, 
+    a ~ dnorm( 0 , 0.2 ) ,
+    b ~ dnorm( 0 , 0.5 ) ,
+    sigma ~ dexp(1)
+  ), data = df_E2
+) 
+
+precis(m1_intercept)
+
+#Compare with the previous model
+plot(coeftab(m1_NoInter,m1_intercept), par=c("a","by"),
+     xlab="Estimate")
+
 
 #Model-2 Interaction between profession and yoe
 
