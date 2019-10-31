@@ -1,5 +1,14 @@
 library(rethinking)
 
+#Quick way to simulate priors for height (from example 4.14 McElreath)
+sample_mu <- rnorm( 1e4 , 178 , 20 ) #sample from the mean height prior
+sample_sigma <- runif( 1e4 , 0 , 50 ) #sample from the variance height prior
+prior_h <- rnorm( 1e4 , sample_mu , sample_sigma ) #compute the joint probability
+dens( prior_h ) #plot it.
+
+"Note however, that priors are also posteriors, so we can also compute a
+posterior and sample from it. That's what I will do next"
+
 data(WaffleDivorce)
 d <- WaffleDivorce
 # standardize variables
