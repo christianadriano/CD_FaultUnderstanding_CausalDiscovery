@@ -139,6 +139,7 @@ for( i in 1:1000){
   points(A_seq, mu[i,], pch=14,  col=col.alpha(rangi2,0.1))
 }
 
+#----
 #Plot the HPDI range around the mean Score for each YoE
 mu.mean = apply(mu,2,mean)
 mu.HPDI = apply(mu,2,HPDI, prob=0.89)
@@ -151,6 +152,24 @@ lines(A_seq,mu.mean)
 
 #plot the shaded region with 89% HPDI
 shade(mu.HPDI,A_seq)
+
+#----
+#Plot the shade region with the variance
+sim_1 <- sim(m1_NoInter, data=list(yoe=A_seq))
+mu.PI = apply(sim_1,2, PI, prob=0.89) #compute the percentile intervals
+
+plot(score ~ yoe, df_E2,col=col.alpha(rangi2,0.5)) #plot raw data
+title("Posterior with Prediction Interval")
+
+#plot the Map line and interval more visible
+lines(A_seq,mu.mean)
+
+#plot the shaded region with 89% HPDI
+shade(mu.HPDI,A_seq)
+
+#plot the shaded region with 89% PI
+shade(mu.PI,A_seq)
+
 
 #------------------------------------------------------
 
