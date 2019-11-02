@@ -122,20 +122,35 @@ mu <- link( m1_NoInter , post=priors_1 , data=list( yoe=A_seq ) )
 plot( NULL , xlim=c(-1,5) , ylim=c(-1,5),
       xlab="Years of Experience (std)",
       ylab="Programming Score (std)",)
-title("Prior Simulation")
+title("Prior Simulation",font=1)
 
 for ( i in 1:50 ) lines(A_seq, mu[i,] , col=col.alpha("black",0.4))
 
 #Should I use dlnorm or lnorm for the prior for 'by'?
 
-#plot the posterior with HPDI uncertainty
-#Plot only with the uncertainty around the mean score for each YoE
+#-------------------------------------------
+
+"Plotting the posterior with HPDI uncertainty"
+#Plot only with the uncertainty around the mean Score for each YoE
 mu <- link(m1_NoInter, data = data.frame(A_seq))
 plot(score ~ yoe, df_E2, type="n") #n to hide the datapoints
-title("Posterior with mean values up for each yoe")
-for( i in 1:50000){
+title("Posterior values for each yoe")
+for( i in 1:1000){
   points(A_seq, mu[i,], pch=14,  col=col.alpha(rangi2,0.1))
 }
+
+#Plot the HPDI range around the mean Score for each YoE
+mu.mean = apply(mu,2,mean)
+mu.HPDI = apply(mu,2,HPDI, prob=0.89)
+
+plot(score ~ yoe, df_E2,col=col.alpha(rangi2,0.5)) #plot raw data
+title("Posterior with HPDI range")
+
+#plot the Map line and interval more visible
+lines(A_seq,mu.mean)
+
+#plot the shaded region with 89% HPDI
+shade(mu.HPDI,A_seq)
 
 #------------------------------------------------------
 
