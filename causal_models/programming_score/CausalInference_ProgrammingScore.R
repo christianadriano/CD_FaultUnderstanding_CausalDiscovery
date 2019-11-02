@@ -17,6 +17,7 @@ path <- "C://Users//Christian//Documents//GitHub//Complexity_Metrics//output//"
 dataset_E2 <- read.csv(str_c(path, "merged_tasks_complexity_E2.csv"))
 df_E2 <- data.frame(dataset_E2)
 
+
 #Causal graph
 #Create
 dag1.1 <- dagitty( "dag {
@@ -75,7 +76,7 @@ m1_NoInter <- quap(
     score ~ dnorm( mu , sigma ) ,
     mu <- a + by*yoe ,
     a ~ dnorm( 0 , 0.2 ) ,
-    b ~ dnorm( 0 , 0.5 ) ,
+    by ~ dlnorm( 0 , 0.5 ) , #only postive relation between yoe and score
     sigma ~ dexp(1)
   ), data = df_E2
 ) 
@@ -112,11 +113,11 @@ Next I simulate these priors to see how they look in the outcome space.
 
 precis(m1_NoInter)
 
-
+#extract the prior samples
 set.seed(10)
-prior1 <- extract.prior( m1_NoInter )
+priors_1 <- extract.prior( m1_NoInter )
 A_seq <- seq( from=-2 , to=5 , length.out=50 )
-mu <- link( m1_NoInter , post=prior1 , data=list( yoe=A_seq ) )
+mu <- link( m1_NoInter , post=priors_1 , data=list( yoe=A_seq ) )
 
 plot( NULL , xlim=c(-1,5) , ylim=c(-1,5),
       xlab="Years of Experience (std)",
@@ -124,6 +125,17 @@ plot( NULL , xlim=c(-1,5) , ylim=c(-1,5),
 title("Prior Simulation")
 
 for ( i in 1:50 ) lines(A_seq, mu[i,] , col=col.alpha("black",0.4))
+
+#Should I use dlnorm or lnorm for the prior for 'by'?
+
+#plot the posterior with HPDI uncertainty
+#Plot only with the uncertainty around the mean score for each YoE
+mu <- link(m1_NoInter, data = data.frame(A_seq))
+plot(score ~ yoe, df_E2, type="n") #n to hide the datapoints
+title("Posterior with mean values up for each yoe")
+for( i in 1:50000){
+  points(A_seq, mu[i,], pch=14,  col=col.alpha(rangi2,0.1))
+}
 
 #------------------------------------------------------
 
@@ -133,7 +145,7 @@ m1_intercept <- quap(
     score ~ dnorm( mu , sigma ) ,
     mu <- a, 
     a ~ dnorm( 0 , 0.2 ) ,
-    b ~ dnorm( 0 , 0.5 ) ,
+    b ~ dlnorm( 0 , 0.5 ) ,
     sigma ~ dexp(1)
   ), data = df_E2
 ) 
