@@ -70,8 +70,8 @@ the path between YoE and Prof.
 df_E2$yoe <- scale(df_E2$years_programming)
 df_E2$score <- scale(df_E2$qualification_score)
 
-#Model-1 No interactions
-m1_NoInter <- quap(
+#Model-1 No interactions, but only positive relation
+m1_NoInter_pos <- quap(
   alist(
     score ~ dnorm( mu , sigma ) ,
     mu <- a + by*yoe ,
@@ -80,6 +80,17 @@ m1_NoInter <- quap(
     sigma ~ dexp(1)
   ), data = df_E2
 ) 
+
+m1_NoInter_all <- quap(
+  alist(
+    score ~ dnorm( mu , sigma ) ,
+    mu <- a + by*yoe,
+    a ~ dnorm( 0 , 0.2 ) ,
+    by ~ dnorm( 0 , 0.5 ) , #negative and postive relation between yoe and score
+    sigma ~ dexp(1)
+  ), data = df_E2
+) 
+
 
 #Let's reflect a bit about this regression formula
 # score = a + by*yoe
@@ -111,7 +122,9 @@ Next I simulate these priors to see how they look in the outcome space.
 
 "
 
-precis(m1_NoInter)
+precis(m1_NoInter_pos)
+precis(m1_NoInter_all)
+m1_NoInter <- m1_NoInter_pos
 
 #extract the prior samples
 set.seed(10)
@@ -129,10 +142,10 @@ for ( i in 1:50 ) lines(A_seq, mu[i,] , col=col.alpha("black",0.4))
 #Should I use dlnorm or lnorm for the prior for 'by'?
 
 #-------------------------------------------
-
+m1_NoInter <- m1_NoInter_all
 "Plotting the posterior with HPDI uncertainty"
 #Plot only with the uncertainty around the mean Score for each YoE
-mu <- link(m1_NoInter, data = data.frame(A_seq))
+mu <- link(m1_NoInter_all, data = data.frame(yoe=A_seq))
 plot(score ~ yoe, df_E2, type="n") #n to hide the datapoints
 title("Posterior values for each yoe")
 for( i in 1:1000){
@@ -187,7 +200,7 @@ m1_intercept <- quap(
 precis(m1_intercept)
 
 #Compare with the previous model
-plot(coeftab(m1_NoInter,m1_intercept), par=c("a","by"),
+plot(coeftab(m1_NoInter_pos,m1_NoInter_all), par=c("a","by"),
      xlab="Estimate")
 
 
