@@ -75,7 +75,7 @@ m1_NoInter_pos <- quap(
   alist(
     score ~ dnorm( mu , sigma ) ,
     mu <- a + by*yoe ,
-    a ~ dnorm( 0 , 0.2 ) ,
+    a ~ dnorm( 0 , 1 ) ,
     by ~ dlnorm( 0 , 0.5 ) , #only postive relation between yoe and score
     sigma ~ dexp(1)
   ), data = df_E2
@@ -124,7 +124,7 @@ Next I simulate these priors to see how they look in the outcome space.
 
 precis(m1_NoInter_pos)
 precis(m1_NoInter_all)
-m1_NoInter <- m1_NoInter_pos
+m1_NoInter <- m1_NoInter_all
 
 #extract the prior samples
 set.seed(10)
@@ -135,20 +135,32 @@ mu <- link( m1_NoInter , post=priors_1 , data=list( yoe=A_seq ) )
 plot( NULL , xlim=c(-1,5) , ylim=c(-1,5),
       xlab="Years of Experience (std)",
       ylab="Programming Score (std)",)
-title("Prior Simulation",font=1)
+title("Prior Simulation All by_sig=0.5",font=1)
 
 for ( i in 1:50 ) lines(A_seq, mu[i,] , col=col.alpha("black",0.4))
+
+" Simulated values of sigma 0.5 and 1.0 for
+beta_yoe accepting positive and negative and
+beta_yoe only positive values.
+This extracted prior did not show major differences
+Same for the HPDI and PI margins around the posterior
+In the face of that we preferred a less informative prior 
+by=drom and sigma=1
+"
 
 #Should I use dlnorm or lnorm for the prior for 'by'?
 
 #-------------------------------------------
-m1_NoInter <- m1_NoInter_all
+
+#POSTERIOR
+
+m1_NoInter <- m1_NoInter_pos
 "Plotting the posterior with HPDI uncertainty"
 #Plot only with the uncertainty around the mean Score for each YoE
-mu <- link(m1_NoInter_all, data = data.frame(yoe=A_seq))
+mu <- link(m1_NoInter, data = data.frame(yoe=A_seq))
 plot(score ~ yoe, df_E2, type="n") #n to hide the datapoints
-title("Posterior values for each yoe")
-for( i in 1:1000){
+title("Posterior All, sig_by=0.5")
+for( i in 1:100){
   points(A_seq, mu[i,], pch=14,  col=col.alpha(rangi2,0.1))
 }
 
@@ -158,7 +170,7 @@ mu.mean = apply(mu,2,mean)
 mu.HPDI = apply(mu,2,HPDI, prob=0.89)
 
 plot(score ~ yoe, df_E2,col=col.alpha(rangi2,0.5)) #plot raw data
-title("Posterior with HPDI range")
+title("Posterior Pos, sig=o.5 with HPDI range")
 
 #plot the Map line and interval more visible
 lines(A_seq,mu.mean)
@@ -172,7 +184,7 @@ sim_1 <- sim(m1_NoInter, data=list(yoe=A_seq))
 mu.PI = apply(sim_1,2, PI, prob=0.89) #compute the percentile intervals
 
 plot(score ~ yoe, df_E2,col=col.alpha(rangi2,0.5)) #plot raw data
-title("Posterior with Prediction Interval")
+title("Posterior with Prediction Interval (All,Sig=0.5)")
 
 #plot the Map line and interval more visible
 lines(A_seq,mu.mean)
