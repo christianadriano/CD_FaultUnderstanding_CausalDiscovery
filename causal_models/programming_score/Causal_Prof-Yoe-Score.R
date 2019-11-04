@@ -29,15 +29,18 @@ df_E2$score <- scale(df_E2$qualification_score)
 
 #create indexes for each profession
 
+#Convert profession from factor to character 
+df_E2$profession <- as.character(df_E2$profession)
+
 #Replaces 'Other...something' for only 'Other'
-df_E2[grep("Other",df_E2$profession),"prf"] <- "Other"
+df_E2[grep("Other",df_E2$profession),"profession"] <- "Other"
 
 df_E2$prf <- case_when(
   df_E2$profession=="Professional_Developer" ~ 5,
   df_E2$profession=="Hobbyist" ~ 4,
   df_E2$profession=="Graduate_Student" ~ 3,
   df_E2$profession=="Undergraduate_Student" ~ 2,
-  df_E2$profession=="Other" ~ 1,
+  df_E2$profession=="Other" ~ 1
 )
 
 #Model-1 No interaction, only addivite effects
