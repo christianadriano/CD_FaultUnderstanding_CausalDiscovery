@@ -146,6 +146,18 @@ This extracted prior did not show major differences
 Same for the HPDI and PI margins around the posterior
 In the face of that we preferred a less informative prior 
 by=drom and sigma=1
+----
+However, we could also opt for more informative priors under the following
+circumstances:
+
+The intercept prior should be closer to zero, because we have two standardized 
+variables are standardized, which implies thatif the predictor-variable is zero, 
+the expected value of the outcome should also be zero. 
+
+Concerning the beta_y (the slope), it does not make sense to expect
+negative relationship between experience and score. We would also not
+expect that the relationship is too strong.
+
 "
 
 #Should I use dlnorm or lnorm for the prior for 'by'?
