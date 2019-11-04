@@ -47,10 +47,14 @@ df_E2$prf <- case_when(
 m1 <- quap(
   alist(
     score ~ dnorm( mu , sigma ) ,
-    mu <- a + by*yoe bp*profession[i],
-    a ~ dnorm( 0 , 1 ) ,
-    by ~ dnorm( 0 , 0.5 ) , #only postive relation between yoe and score
+    mu <- a[prf] + by[prf]*yoe,
+    a[prf] ~ dnorm( 0 , 1 ) ,
+    by[prf] ~ dnorm( 0 , 0.5 ),
     sigma ~ dexp(1)
   ), data = df_E2
 ) 
 
+#    by ~ dnorm( 0 , 0.5 ) , #only postive relation between yoe and score
+
+
+precis(m1,depth=2)
