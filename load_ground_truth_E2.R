@@ -47,8 +47,8 @@ Apply Ground Truth to E2 data
 isCorrectList <- (df_E2_ground$answer=="YES_THERE_IS_AN_ISSUE" &  df_E2_ground$isBugCovering) |
   (
     (df_E2_ground$answer=="NO_THERE_IS_NOT_AN_ISSUE" | df_E2_ground$answer=="I_DO_NOT_KNOW") & 
-     df_E2_ground$isBugCovering =="no"
-   )
+      !df_E2_ground$isBugCovering
+  )
 
 
 df_E2_ground$isAnswerCorrect <- isCorrectList
