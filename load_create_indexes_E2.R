@@ -60,3 +60,5 @@ df_E2$answer_id <- factor(df_E2$answer,
                              levels=levels(df_E2$answer),
                              labels=c(1:3)
 )
+
+"Buggy not Buggy"
