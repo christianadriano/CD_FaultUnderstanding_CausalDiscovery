@@ -18,43 +18,80 @@ library(stringr)
 library(dplyr)
 
 #Load data
-path <- "C://Users//Christian//Documents//GitHub//Complexity_Metrics//output//"
-dataset_E2 <- read.csv(str_c(path, "merged_tasks_complexity_E2.csv"))
-df_E2 <- data.frame(dataset_E2)
-
+source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//load_create_indexes_E2.R")
 
 # standardize variables = (zero centered, standard deviation one)
 df_E2$yoe <- scale(df_E2$years_programming)
 df_E2$score <- scale(df_E2$qualification_score)
 
-#create indexes for each profession
+df_E2$profession_id <- as.integer(df_E2$profession_id)
 
-#Convert profession from factor to character 
-df_E2$profession <- as.character(df_E2$profession)
-
-#Replaces 'Other...something' for only 'Other'
-df_E2[grep("Other",df_E2$profession),"profession"] <- "Other"
-
-df_E2$prf <- case_when(
-  df_E2$profession=="Professional_Developer" ~ 5,
-  df_E2$profession=="Hobbyist" ~ 4,
-  df_E2$profession=="Graduate_Student" ~ 3,
-  df_E2$profession=="Undergraduate_Student" ~ 2,
-  df_E2$profession=="Other" ~ 1
-)
-
-#Model-1 No interaction, only addivite effects
-m1 <- quap(
+#Model-0 Intercept only
+m0 <- quap(
   alist(
     score ~ dnorm( mu , sigma ) ,
-    mu <- a[prf] + by[prf]*yoe,
-    a[prf] ~ dnorm( 0 , 1 ) ,
-    by[prf] ~ dnorm( 0 , 0.5 ),
+    mu <- a[profession_id],
+    a[profession_id] ~ dnorm( 0 , 1 ) ,
     sigma ~ dexp(1)
   ), data = df_E2
 ) 
 
-#    by ~ dnorm( 0 , 0.5 ) , #only postive relation between yoe and score
+
+#Model-1 No interaction, only additive effects
+m1 <- quap(
+  alist(
+    score ~ dnorm( mu , sigma ) ,
+    mu <- a[profession_id] + by[profession_id]*yoe,
+    a[profession_id] ~ dnorm( 0 , 1 ) ,
+    by[profession_id] ~ dnorm( 0 , 0.5 ),
+    sigma ~ dexp(1)
+  ), data = df_E2
+) 
+
+
+#Model-2 prior for by positive
+m2 <- quap(
+  alist(
+    score ~ dnorm( mu , sigma ) ,
+    mu <- a[profession_id] + by[profession_id]*yoe,
+    a[profession_id] ~ dnorm( 0 , 1 ) ,
+    by[profession_id] ~ dlnorm( 0 , 0.5 ),
+    sigma ~ dexp(1)
+  ), data = df_E2
+) 
+
+
+#------------------------------
+
+labels1 <- paste( "a[" , 1:5 , "]:" , levels(df_E2$profession) , sep="" )
+labels2 <- paste( "b[" , 1:5 , "]:" , levels(df_E2$profession) , sep="" )
+labels <- c(labels1,labels2)
+
+
+precis_plot( precis( m0 , depth=2 , pars=c("a")) , labels=labels ,
+             xlab="qualification score" )
+title("Model-0")
+
+precis_plot( precis( m1 , depth=2 , pars=c("a","by")) , labels=labels ,
+             xlab="qualification score" )
+title("Model-1")
+
+precis_plot( precis( m2 , depth=2 , pars=c("a","by")) , labels=labels ,
+             xlab="qualification score" )
+title("Model-2")
 
 
 precis(m1,depth=2)
+
+
+
+#---------------------------------------------------------
+#Dead code
+
+# df_E2$prf <- case_when(
+#   df_E2$profession=="Professional_Developer" ~ 5,
+#   df_E2$profession=="Hobbyist" ~ 4,
+#   df_E2$profession=="Graduate_Student" ~ 3,
+#   df_E2$profession=="Undergraduate_Student" ~ 2,
+#   df_E2$profession=="Other" ~ 1
+# )
