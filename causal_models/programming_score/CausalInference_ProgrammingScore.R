@@ -144,6 +144,7 @@ beta_yoe accepting positive and negative and
 beta_yoe only positive values.
 This extracted prior did not show major differences
 Same for the HPDI and PI margins around the posterior
+
 In the face of that we preferred a less informative prior 
 by=drom and sigma=1
 ----
