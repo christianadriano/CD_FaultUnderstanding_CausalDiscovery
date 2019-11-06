@@ -26,7 +26,7 @@ df_E2$score <- scale(df_E2$qualification_score)
 
 df_E2$profession_id <- as.integer(df_E2$profession_id)
 
-#Model-0 Intercept only
+#Model-0 only profession
 m0 <- quap(
   alist(
     score ~ dnorm( mu , sigma ) ,
@@ -37,24 +37,64 @@ m0 <- quap(
 ) 
 
 
-#Model-1 No interaction, only additive effects
+#Model-1 only Years of experience
 m1 <- quap(
   alist(
     score ~ dnorm( mu , sigma ) ,
-    mu <- a[profession_id] + by[profession_id]*yoe,
-    a[profession_id] ~ dnorm( 0 , 1 ) ,
-    by[profession_id] ~ dnorm( 0 , 0.5 ),
+    mu <- by*yoe,
+    by ~ dnorm( 0 , 0.5 ) ,
+    sigma ~ dexp(1)
+  ), data = df_E2
+) 
+
+#Model-2 both, but only additive effects
+# Yoe->Score<-prof
+m2 <- quap(
+  alist(
+    score ~ dnorm( mu , sigma ) ,
+    mu <- a[profession_id]+by*yoe,
+    a[profession_id] ~ dnorm( 0 , 1 ),
+    by ~ dnorm( 0 , 0.5 ) ,
     sigma ~ dexp(1)
   ), data = df_E2
 ) 
 
 
-#Model-2 prior for by positive
-m2 <- quap(
+#Model-3 interaction term, prof affected the effect of yoe
+# yoe->score<-prof
+m3.1 <- quap(
   alist(
     score ~ dnorm( mu , sigma ) ,
-    mu <- a[profession_id] + by[profession_id]*yoe,
+    mu <- a[profession_id] + bpy[profession_id]*yoe + by*yoe,
+    by ~ dnorm( 0 , 0.5 ),
     a[profession_id] ~ dnorm( 0 , 1 ) ,
+    by[profession_id] ~ dnorm( 0 , 0.5 ),
+    bpy[profession_id] ~ dnorm( 0 , 0.5 ),
+    sigma ~ dexp(1)
+  ), data = df_E2
+) 
+
+m3.2 <- quap(
+  alist(
+    score ~ dnorm( mu , sigma ) ,
+    mu <- a[profession_id] + bpy[profession_id]*yoe,
+    a[profession_id] ~ dnorm( 0 , 1 ) ,
+    bpy[profession_id] ~ dnorm( 0 , 0.5 ),
+    sigma ~ dexp(1)
+  ), data = df_E2
+) 
+
+
+#Model-4 both and Profession causing yoe
+# yoe->score<-prof
+# yoe->prof
+
+#Model-4 prior for by positive
+m4 <- quap(
+  alist(
+    score ~ dnorm( mu , sigma ) ,
+    mu <- a + by[profession_id]*yoe,
+    a ~ dnorm( 0 , 1 ) ,
     by[profession_id] ~ dlnorm( 0 , 0.5 ),
     sigma ~ dexp(1)
   ), data = df_E2
@@ -64,34 +104,67 @@ m2 <- quap(
 #------------------------------
 
 labels1 <- paste( "a[" , 1:5 , "]:" , levels(df_E2$profession) , sep="" )
-labels2 <- paste( "b[" , 1:5 , "]:" , levels(df_E2$profession) , sep="" )
-labels <- c(labels1,labels2)
+labels2 <- paste( "by[" , 1:5 , "]:" , levels(df_E2$profession) , sep="" )
+labels3 <- paste( "bpy[" , 1:5 , "]:" , levels(df_E2$profession) , sep="" )
 
 
-precis_plot( precis( m0 , depth=2 , pars=c("a")) , labels=labels ,
+precis_plot( precis( m0 , depth=2 , pars=c("a")) , labels=labels1 ,
              xlab="qualification score" )
 title("Model-0")
 
-precis_plot( precis( m1 , depth=2 , pars=c("a","by")) , labels=labels ,
+precis_plot( precis( m1 , depth=2 , pars=c("by"))  ,
              xlab="qualification score" )
 title("Model-1")
 
-precis_plot( precis( m2 , depth=2 , pars=c("a","by")) , labels=labels ,
+precis_plot( precis( m2 , depth=2 , pars=c("a","by")) , labels=c(labels1,"by") ,
              xlab="qualification score" )
 title("Model-2")
 
+precis_plot( precis( m3.1 , depth=2 , pars=c("a","by","bpy")) , labels=c(labels1,labels2,labels3) ,
+             xlab="qualification score" )
+title("Model-3.1")
 
-precis(m1,depth=2)
+precis_plot( precis( m3.2 , depth=2 , pars=c("a","bpy")) , labels=c(labels1,labels3) ,
+             xlab="qualification score" )
+title("Model-3.2")
 
 
 
 #---------------------------------------------------------
-#Dead code
+#Simulating the Posterior
 
-# df_E2$prf <- case_when(
-#   df_E2$profession=="Professional_Developer" ~ 5,
-#   df_E2$profession=="Hobbyist" ~ 4,
-#   df_E2$profession=="Graduate_Student" ~ 3,
-#   df_E2$profession=="Undergraduate_Student" ~ 2,
-#   df_E2$profession=="Other" ~ 1
-# )
+Yoe_seq <- seq( from=min(df_E2$yoe) , to=max(df_E2$yoe) , length.out=50 )
+Prof_seq <- seq( from=1, to=5)
+
+#Plot the shade region with the variance
+sim_0 <- sim(m0, data=list(profession_id=Prof_seq))
+mu.PI = apply(sim_0,2, PI, prob=0.89) #compute the percentile intervals
+
+plot(score ~ profession_id, df_E2,col=col.alpha(rangi2,0.5)) #plot raw data
+title(paste("Model-O, Posterior: ",levels(df_E2$profession)[1]))
+
+#plot the Map line and interval more visible
+lines(Prof_seq,mu.mean)
+
+#plot the shaded region with 89% HPDI
+shade(mu.HPDI,Prof_seq)
+
+#plot the shaded region with 89% PI
+shade(mu.PI,Prof_seq)
+
+#--------------------------------------------------
+#Plot the shade region with the variance
+sim_2 <- sim(m2, data=list(yoe=A_seq))
+mu.PI = apply(sim_2,2, PI, prob=0.89) #compute the percentile intervals
+
+plot(score ~ yoe[1], df_E2,col=col.alpha(rangi2,0.5)) #plot raw data
+title("Model-O, Posterior with Prediction Interval")
+
+#plot the Map line and interval more visible
+lines(A_seq,mu.mean)
+
+#plot the shaded region with 89% HPDI
+shade(mu.HPDI,A_seq)
+
+#plot the shaded region with 89% PI
+shade(mu.PI,A_seq)
