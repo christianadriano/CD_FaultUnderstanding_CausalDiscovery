@@ -4,7 +4,7 @@ answer.
 
 "
 
-path <- "C://Users//Christian//Documents//GitHub//Complexity_Metrics//output//"
+path <- "C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data//"
 dataset_E2 <- read.csv(str_c(path, "merged_tasks_complexity_E2.csv"))
 df_E2 <- data.frame(dataset_E2)
 
