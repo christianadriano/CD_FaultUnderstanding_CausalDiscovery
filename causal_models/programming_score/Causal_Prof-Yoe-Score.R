@@ -176,11 +176,15 @@ shade(mu.PI,Yoe_seq)
 #--------------
 #Model-2
 #Plot the shade region with the variance
-sim_2 <- sim(m2, data=list(profession_id=Prof_seq))
-mu.PI = apply(sim_2,2, PI, prob=0.89) #compute the percentile intervals
+sim2 <- sim(m2, data=list(profession_id=Prof_seq,yoe=Yoe_seq))
+mu <- link(m2, data = data.frame(yoe=Yoe_seq))
+
+mu.mean = apply(mu,2,mean)
+mu.PI = apply(sim2,2, PI, prob=0.89) #mean with the percentile intervals
+mu.HPDI = apply(mu,2,HPDI, prob=0.89) #mean with highest posterior density interval
 
 plot(score ~ profession_id, df_E2,col=col.alpha(rangi2,0.5)) #plot raw data
-title(paste("Model-2, Posterior: ",levels(df_E2$profession)[1]))
+title(paste("Model-2, a[profession_id]+by*yoe ",""))
 
 #plot the Map line and interval more visible
 lines(Prof_seq,mu.mean)
