@@ -158,10 +158,11 @@ shade(mu.PI,Prof_seq)
 #--------------
 #Model 1.2
 #Simulate the posterior with synthetic data
-sim_1.2 <- sim(m1.2, data=list(yoe=Yoe_seq))
+sim1.2 <- sim(m1.2, data=list(yoe=Yoe_seq))
+mu <- link(m1.2, data = data.frame(yoe=Yoe_seq))
 
 mu.mean = apply(mu,2,mean)
-mu.PI = apply(sim1.1,2, PI, prob=0.89) #mean with the percentile intervals
+mu.PI = apply(sim1.2,2, PI, prob=0.89) #mean with the percentile intervals
 mu.HPDI = apply(mu,2,HPDI, prob=0.89) #mean with highest posterior density interval
 
 plot(score ~ yoe, df_E2,col=col.alpha(rangi2,0.5)) #plot raw data
