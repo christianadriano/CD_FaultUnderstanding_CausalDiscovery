@@ -49,7 +49,7 @@ m1.2 <- quap(
 
 #Model-2 both, but only additive effects
 # Yoe->Score<-prof
-m2.1 <- quap(
+m2 <- quap(
   alist(
     score ~ dnorm( mu , sigma ) ,
     mu <- a[profession_id]+by*yoe,
@@ -127,19 +127,25 @@ precis_plot( precis( m3.3 , depth=2 , pars=c("a","by")) , labels=c(labels1,"by")
 title("Model-3.3")
 
 
-
 #---------------------------------------------------------
-#Simulating the Posterior
+"Plot the Posterior with corresponding variance (shaded region)"
 
+#Generate simulated input data
 Yoe_seq <- seq( from=min(df_E2$yoe) , to=max(df_E2$yoe) , length.out=50 )
 Prof_seq <- seq( from=1, to=5)
 
 #Plot the shade region with the variance
-sim_0 <- sim(m0, data=list(profession_id=Prof_seq))
-mu.PI = apply(sim_0,2, PI, prob=0.89) #compute the percentile intervals
+mu <- link(m1.1, data = data.frame(profession_id=Prof_seq))
+
+sim1.1 <- sim(m1.1, data=list(profession_id=Prof_seq))
+
+#Compute vectors of means
+mu.mean = apply(mu,2,mean)
+mu.PI = apply(sim1.1,2, PI, prob=0.89) #mean with the percentile intervals
+mu.HPDI = apply(mu,2,HPDI, prob=0.89) #mean with highest posterior density interval
 
 plot(score ~ profession_id, df_E2,col=col.alpha(rangi2,0.5)) #plot raw data
-title(paste("Model-O, Posterior: ",levels(df_E2$profession)[1]))
+title(paste("M1.1 posterior score ","a[profession_id]"))
 
 #plot the Map line and interval more visible
 lines(Prof_seq,mu.mean)
@@ -149,36 +155,31 @@ shade(mu.HPDI,Prof_seq)
 
 #plot the shaded region with 89% PI
 shade(mu.PI,Prof_seq)
-
-#----------------------------------------------------------------
-"Plot the Posterior with corresponding variance (shaded region)"
-
-#Model 1.1
+#--------------
+#Model 1.2
 #Simulate the posterior with synthetic data
-sim_1.1 <- sim(m1.1, data=list(profession_id=Prof_seq))
-mu.PI = apply(sim_1.1,2, PI, prob=0.89) #compute the percentile intervals
+sim_1.2 <- sim(m1.2, data=list(yoe=Yoe_seq))
 
-plot(score ~ profession_id, df_E2,col=col.alpha(rangi2,0.5)) #plot raw data
-title(paste("Model-O, Posterior: ",levels(df_E2$profession)[1]))
+mu.mean = apply(mu,2,mean)
+mu.PI = apply(sim1.1,2, PI, prob=0.89) #mean with the percentile intervals
+mu.HPDI = apply(mu,2,HPDI, prob=0.89) #mean with highest posterior density interval
 
-#plot the Map line and interval more visible
-lines(Prof_seq,mu.mean)
-
-#plot the shaded region with 89% HPDI
-shade(mu.HPDI,Prof_seq)
-
-#plot the shaded region with 89% PI
-shade(mu.PI,Prof_seq)
+plot(score ~ yoe, df_E2,col=col.alpha(rangi2,0.5)) #plot raw data
+title(paste("M1.2 posterior score ","score=by*yoe"))
+lines(Yoe_seq,mu.mean)
+shade(mu.HPDI,Yoe_seq)
+shade(mu.PI,Yoe_seq)
 
 "Results show that M1"
 
-#Model-1.2
+#--------------
+#Model-2
 #Plot the shade region with the variance
-sim_1.1 <- sim(m1.1, data=list(profession_id=Prof_seq))
-mu.PI = apply(sim_1.1,2, PI, prob=0.89) #compute the percentile intervals
+sim_2 <- sim(m2, data=list(profession_id=Prof_seq))
+mu.PI = apply(sim_2,2, PI, prob=0.89) #compute the percentile intervals
 
 plot(score ~ profession_id, df_E2,col=col.alpha(rangi2,0.5)) #plot raw data
-title(paste("Model-O, Posterior: ",levels(df_E2$profession)[1]))
+title(paste("Model-2, Posterior: ",levels(df_E2$profession)[1]))
 
 #plot the Map line and interval more visible
 lines(Prof_seq,mu.mean)
