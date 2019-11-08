@@ -59,20 +59,11 @@ m2.1 <- quap(
   ), data = df_E2
 ) 
 
-m2.2 <- quap(
-  alist(
-    score ~ dnorm( mu , sigma ) ,
-    mu <- a + by[profession_id]*yoe,
-    a ~ dnorm( 0 , 1 ) ,
-    by[profession_id] ~ dlnorm( 0 , 0.5 ),
-    sigma ~ dexp(1)
-  ), data = df_E2
-) 
 
-
-#Model-3 interaction term, prof affected the effect of yoe
+#Model-3 interaction term, prof influencing the effect of yoe on score
 # yoe->score<-prof
-m3.1 <- quap(
+# prof->score
+m3.2 <- quap(
   alist(
     score ~ dnorm( mu , sigma ) ,
     mu <- a[profession_id] + bpy[profession_id]*yoe + by*yoe,
@@ -84,7 +75,7 @@ m3.1 <- quap(
   ), data = df_E2
 ) 
 
-m3.2 <- quap(
+m3.1 <- quap(
   alist(
     score ~ dnorm( mu , sigma ) ,
     mu <- a[profession_id] + bpy[profession_id]*yoe,
@@ -94,6 +85,15 @@ m3.2 <- quap(
   ), data = df_E2
 ) 
 
+m3.3 <- quap(
+  alist(
+    score ~ dnorm( mu , sigma ) ,
+    mu <- a + by[profession_id]*yoe,
+    a ~ dnorm( 0 , 1 ) ,
+    by[profession_id] ~ dlnorm( 0 , 0.5 ),
+    sigma ~ dexp(1)
+  ), data = df_E2
+) 
 
 #------------------------------
 
@@ -102,30 +102,29 @@ labels2 <- paste( "by[" , 1:5 , "]:" , levels(df_E2$profession) , sep="" )
 labels3 <- paste( "bpy[" , 1:5 , "]:" , levels(df_E2$profession) , sep="" )
 
 
-precis_plot( precis( m0 , depth=2 , pars=c("a")) , labels=labels1 ,
+precis_plot( precis( m1.1 , depth=2 , pars=c("a")) , labels=labels1 ,
              xlab="qualification score" )
-title("Model-0")
+title("Model-1.1")
 
-precis_plot( precis( m1 , depth=2 , pars=c("by"))  ,
+precis_plot( precis( m1.2 , depth=2 , pars=c("by"))  ,
              xlab="qualification score" )
-title("Model-1")
+title("Model-1.2")
 
-precis_plot( precis( m2.1 , depth=2 , pars=c("a","by")) , labels=c(labels1,"by") ,
+precis_plot( precis( m2 , depth=2 , pars=c("a","by")) , labels=c(labels1,"by") ,
              xlab="qualification score" )
-title("Model-2.1")
+title("Model-2")
 
-precis_plot( precis( m2.2 , depth=2 , pars=c("a","by")) , labels=c(labels1,"by") ,
+precis_plot( precis( m3.2 , depth=2 , pars=c("a","by","bpy")) , labels=c(labels1,labels2,labels3) ,
              xlab="qualification score" )
-title("Model-2.2")
+title("Model-3.2")
 
-
-precis_plot( precis( m3.1 , depth=2 , pars=c("a","by","bpy")) , labels=c(labels1,labels2,labels3) ,
+precis_plot( precis( m3.1 , depth=2 , pars=c("a","bpy")) , labels=c(labels1,labels3) ,
              xlab="qualification score" )
 title("Model-3.1")
 
-precis_plot( precis( m3.2 , depth=2 , pars=c("a","bpy")) , labels=c(labels1,labels3) ,
+precis_plot( precis( m3.3 , depth=2 , pars=c("a","by")) , labels=c(labels1,"by") ,
              xlab="qualification score" )
-title("Model-3.2")
+title("Model-3.3")
 
 
 
@@ -151,13 +150,13 @@ shade(mu.HPDI,Prof_seq)
 #plot the shaded region with 89% PI
 shade(mu.PI,Prof_seq)
 
-#--------------------------------------------------
-#Plot the shade region with the variance
-#Model 1 
+#----------------------------------------------------------------
+"Plot the Posterior with corresponding variance (shaded region)"
 
-#Plot the shade region with the variance
-sim_0 <- sim(m0, data=list(profession_id=Prof_seq))
-mu.PI = apply(sim_0,2, PI, prob=0.89) #compute the percentile intervals
+#Model 1.1
+#Simulate the posterior with synthetic data
+sim_1.1 <- sim(m1.1, data=list(profession_id=Prof_seq))
+mu.PI = apply(sim_1.1,2, PI, prob=0.89) #compute the percentile intervals
 
 plot(score ~ profession_id, df_E2,col=col.alpha(rangi2,0.5)) #plot raw data
 title(paste("Model-O, Posterior: ",levels(df_E2$profession)[1]))
@@ -170,3 +169,23 @@ shade(mu.HPDI,Prof_seq)
 
 #plot the shaded region with 89% PI
 shade(mu.PI,Prof_seq)
+
+"Results show that M1"
+
+#Model-1.2
+#Plot the shade region with the variance
+sim_1.1 <- sim(m1.1, data=list(profession_id=Prof_seq))
+mu.PI = apply(sim_1.1,2, PI, prob=0.89) #compute the percentile intervals
+
+plot(score ~ profession_id, df_E2,col=col.alpha(rangi2,0.5)) #plot raw data
+title(paste("Model-O, Posterior: ",levels(df_E2$profession)[1]))
+
+#plot the Map line and interval more visible
+lines(Prof_seq,mu.mean)
+
+#plot the shaded region with 89% HPDI
+shade(mu.HPDI,Prof_seq)
+
+#plot the shaded region with 89% PI
+shade(mu.PI,Prof_seq)
+
