@@ -22,8 +22,8 @@ source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding/
 
 # standardize variables = (zero centered, standard deviation one)
 df_E2$yoe <- scale(df_E2$years_programming)
-#df_E2$score <- scale(df_E2$qualification_score)
-df_E2$score <-  df_E2$qualification_score
+df_E2$score <- scale(df_E2$qualification_score)
+#df_E2$score <-  df_E2$qualification_score
 
 df_E2$profession_id <- as.integer(df_E2$profession_id)
 
@@ -140,14 +140,14 @@ Prof_seq <- seq( from=1, to=5)
 #sample from the posterior distribution, and then compute
 #for each case in the data and sample from the posterior distribution.
 mu <- link(m1.1, data = data.frame(profession_id=Prof_seq))
-
-sim1.1 <- sim(m1.1, data=list(profession_id=Prof_seq)) 
-
-
 #Compute vectors of means
 mu.mean = apply(mu,2,mean)
-mu.PI = apply(sim1.1,2, PI, prob=0.89) #mean with the percentile intervals
 mu.HPDI = apply(mu,2,HPDI, prob=0.89) #mean with highest posterior density interval
+
+#Simulates score by extracting from the posterior, but now also
+#considers the variance
+sim1.1 <- sim(m1.1, data=list(profession_id=Prof_seq)) 
+score.PI = apply(sim1.1,2, PI, prob=0.89) #mean with the percentile intervals
 
 plot(score ~ profession_id, df_E2,col=col.alpha(rangi2,0.5)) #plot raw data
 title(paste("M1.1 posterior score ","a[profession_id]"))
@@ -159,11 +159,11 @@ lines(Prof_seq,mu.mean)
 shade(mu.HPDI,Prof_seq)
 
 #plot the shaded region with 89% PI
-shade(mu.PI,Prof_seq)
+shade(score.PI,Prof_seq)
 #--------------
 #Model 1.2
 #Simulate the posterior with synthetic data
-sim1.2 <- sim(m1.2, data=list(yoe=Yoe_seq))
+sim1.2 <- sim(m1.2, data=data.frame(yoe=Yoe_seq))
 mu <- link(m1.2, data = data.frame(yoe=Yoe_seq))
 
 mu.mean = apply(mu,2,mean)
@@ -172,7 +172,7 @@ mu.HPDI = apply(mu,2,HPDI, prob=0.89) #mean with highest posterior density inter
 
 plot(score ~ yoe, df_E2,col=col.alpha(rangi2,0.5)) #plot raw data
 title(paste("M1.2 posterior score ","score=by*yoe"))
-lines(Yoe_seq,mu.mean)
+lines(Yoe_seq,mu.mean, col="red")
 shade(mu.HPDI,Yoe_seq)
 shade(mu.PI,Yoe_seq)
 
@@ -181,24 +181,27 @@ shade(mu.PI,Yoe_seq)
 #--------------
 #Model-2
 #Plot the shade region with the variance
-sim2 <- sim(m2, data=list(profession_id=Prof_seq,yoe=Yoe_seq))
-mu <- link(m2, data = data.frame(yoe=Yoe_seq))
 
-mu.mean = apply(mu,2,mean)
-mu.PI = apply(sim2,2, PI, prob=0.89) #mean with the percentile intervals
+#Simulates score by extracting from the posterior, but now also
+#considers the variance
+sim_scores <- sim(m2, data=data.frame(profession_id=3,yoe=Yoe_seq))
+score.PI = apply(sim_scores,2, PI, prob=0.89) #mean with the percentile intervals
+
+mu <- link(m2, data = data.frame(profession_id=3,yoe=Yoe_seq))
+mu.mean2 = apply(mu,2,mean)
 mu.HPDI = apply(mu,2,HPDI, prob=0.89) #mean with highest posterior density interval
 
-plot(score ~ profession_id, df_E2,col=col.alpha(rangi2,0.5)) #plot raw data
+plot(score ~ yoe, df_E2,col=col.alpha(rangi2,0.5)) #plot raw data
 title(paste("Model-2, a[profession_id]+by*yoe ",""))
 
 #plot the Map line and interval more visible
-lines(Prof_seq,mu.mean)
+lines(Yoe_seq,mu.mean2,col="blue")
 
 #plot the shaded region with 89% HPDI
-shade(mu.HPDI,Prof_seq)
+shade(mu.HPDI,Yoe_seq)
 
 #plot the shaded region with 89% PI
-shade(mu.PI,Prof_seq)
+shade(mu.PI,Yoe_seq)
 
 #-----------------
 # Plotting the variance around the mean for
@@ -206,8 +209,13 @@ shade(mu.PI,Prof_seq)
 post3.1 <- extract.samples(m3.1)
 mu_at_yoe_3 <- post3.1$a[,1] + post3.1$bpy[,1]*3
 dens( mu_at_yoe_3 , col=rangi2 , lwd=2 , xlab="mu|yoe=3" )
+HPDI(mu_at_yoe_3,prob = 0.89)
+  #   |0.89    0.89| 
+  # 3.991492 4.244820 
 
-#Onimplication of the model m3.1 for professionals:
+#Two implications of the model m3.1 for professionals:
 # - more experience decreases the score because the
 #slope in the regression model is negative
+# - the slope is almost horizontal
+dens( post3.1$bpy[,1] , col=rangi2 , lwd=2 , xlab="bpy professionals" )
 
