@@ -22,7 +22,8 @@ source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding/
 
 # standardize variables = (zero centered, standard deviation one)
 df_E2$yoe <- scale(df_E2$years_programming)
-df_E2$score <- scale(df_E2$qualification_score)
+#df_E2$score <- scale(df_E2$qualification_score)
+df_E2$score <-  df_E2$qualification_score
 
 df_E2$profession_id <- as.integer(df_E2$profession_id)
 
@@ -135,9 +136,13 @@ Yoe_seq <- seq( from=min(df_E2$yoe) , to=max(df_E2$yoe) , length.out=50 )
 Prof_seq <- seq( from=1, to=5)
 
 #Plot the shade region with the variance
+
+#sample from the posterior distribution, and then compute
+#for each case in the data and sample from the posterior distribution.
 mu <- link(m1.1, data = data.frame(profession_id=Prof_seq))
 
-sim1.1 <- sim(m1.1, data=list(profession_id=Prof_seq))
+sim1.1 <- sim(m1.1, data=list(profession_id=Prof_seq)) 
+
 
 #Compute vectors of means
 mu.mean = apply(mu,2,mean)
@@ -194,4 +199,15 @@ shade(mu.HPDI,Prof_seq)
 
 #plot the shaded region with 89% PI
 shade(mu.PI,Prof_seq)
+
+#-----------------
+# Plotting the variance around the mean for
+#professsional and years of experience =3
+post3.1 <- extract.samples(m3.1)
+mu_at_yoe_3 <- post3.1$a[,1] + post3.1$bpy[,1]*3
+dens( mu_at_yoe_3 , col=rangi2 , lwd=2 , xlab="mu|yoe=3" )
+
+#Onimplication of the model m3.1 for professionals:
+# - more experience decreases the score because the
+#slope in the regression model is negative
 
