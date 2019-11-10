@@ -8,6 +8,7 @@ library(dplyr)
 
 #Load data
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//load_create_indexes_E2.R")
+df_E2$profession_id <- as.integer(df_E2$profession_id)
 
 # standardize variables = (zero centered, standard deviation one)
 #df_E2$yoe <- scale(df_E2$years_programming)
@@ -15,17 +16,17 @@ source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding/
 
 df_E2$score <-  df_E2$qualification_score
 df_E2$yoe <- df_E2$years_programming
-summary(df_E2$testDuration)
-boxplot(df_E2$testDuration)
+# summary(df_E2$testDuration)
+# boxplot(df_E2$testDuration)
 
-df_E2$testDuration_minutes <- df_E2$testDuration/(60 *1000)
-boxplot(df_E2$testDuration_minutes)
-maximum <- 60
-max <- 1625504839/1
+
+df_E2$testDuration_minutes <- as.numeric(df_E2$testDuration/(60 *1000))
+# boxplot(df_E2$testDuration_minutes)
 
 #removing outliers (tests above 60 minutes)
 df_E2_aux <- df_E2[df_E2$testDuration_minutes<=60,]
 boxplot(df_E2_aux$testDuration_minutes)
+summary(df_E2_aux$testDuration_minutes)
 
 sd(df_E2_aux$testDuration_minutes)
 #>[1] 7.731263
@@ -61,14 +62,48 @@ precis(m2,2)
 # by    0.00 0.00 0.00  0.00
 # sigma 0.81 0.01 0.79  0.83
 
+df_E2_aux$testDuration_minutes <-  scale(df_E2_aux$testDuration_minutes)
+df_E2_aux$yoe <- scale(df_E2_aux$years_programming)
+
 #Interactions
 m3 <- quap(
   alist(
     score ~ dnorm( mu , sigma ) ,
-    mu <- a[profession_id] + by[profession_id]*yoe + bt[profession_id]*testDuration_minutes,
+    mu <- a[profession_id] +bt[profession_id]*testDuration_minutes,
     a[profession_id] ~ dnorm( 0 , 1.0 ),
-    bt ~ dnorm( 0 , 1.0 ) ,
-    by ~ dnorm( 0 , 1.0 ) ,
+    bt[profession_id] ~ dnorm( 0 , 1.0 ) ,
     sigma ~ dexp(1)
   ), data = df_E2_aux
 ) 
+
+precis(m3,2)
+"slope bt is flat for professionals, hobbyists, and othes. It is slightly positive for undergrads,
+whereas slightly negative for graduate students. These figures do not change in the model that we 
+include a slope for YoE.
+"
+
+m4 <- quap(
+  alist(
+    score ~ dnorm( mu , sigma ) ,
+    mu <- a[profession_id] + by[profession_id]*yoe +bt[profession_id]*testDuration_minutes,
+    a[profession_id] ~ dnorm( 0 , 1.0 ),
+    bt[profession_id] ~ dnorm( 0 , 1.0 ) ,
+    by[profession_id] ~ dnorm( 0 , 1.0 ) ,
+    sigma ~ dexp(1)
+  ), data = df_E2_aux
+) 
+
+boxplot(df_E2_aux$testDuration_minutes)
+precis(m4,2)
+
+#Three way interaction
+m5 <- quap(
+  alist(
+    score ~ dnorm( mu , sigma ) ,
+    mu <- a[profession_id] + bty[profession_id]*testDuration_minutes*yoe,
+    a[profession_id] ~ dnorm( 0 , 1.0 ),
+    bty[profession_id] ~ dnorm( 0 , 1.0 ) ,
+    sigma ~ dexp(1)
+  ), data = df_E2_aux
+) 
+precis(m5,2) #all slopes are flat.
