@@ -21,9 +21,12 @@ library(dplyr)
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//load_create_indexes_E2.R")
 
 # standardize variables = (zero centered, standard deviation one)
-df_E2$yoe <- scale(df_E2$years_programming)
-df_E2$score <- scale(df_E2$qualification_score)
-#df_E2$score <-  df_E2$qualification_score
+#df_E2$yoe <- scale(df_E2$years_programming)
+#df_E2$score <- scale(df_E2$qualification_score)
+
+df_E2$score <-  df_E2$qualification_score
+df_E2$yoe <- df_E2$years_programming
+
 
 df_E2$profession_id <- as.integer(df_E2$profession_id)
 
@@ -54,7 +57,7 @@ m2 <- quap(
   alist(
     score ~ dnorm( mu , sigma ) ,
     mu <- a[profession_id]+by*yoe,
-    a[profession_id] ~ dnorm( 0 , 1 ),
+    a[profession_id] ~ dnorm( 0 , 0.5 ),
     by ~ dnorm( 0 , 0.5 ) ,
     sigma ~ dexp(1)
   ), data = df_E2
@@ -80,7 +83,7 @@ m3.1 <- quap(
   alist(
     score ~ dnorm( mu , sigma ) ,
     mu <- a[profession_id] + bpy[profession_id]*yoe,
-    a[profession_id] ~ dnorm( 0 , 1 ) ,
+    a[profession_id] ~ dnorm( 0 , 0.5 ) ,
     bpy[profession_id] ~ dnorm( 0 , 0.5 ),
     sigma ~ dexp(1)
   ), data = df_E2
@@ -202,6 +205,25 @@ shade(mu.HPDI,Yoe_seq)
 
 #plot the shaded region with 89% PI
 shade(mu.PI,Yoe_seq)
+
+#-----------------
+#Model 3.1
+
+sim3.1 <- sim(m3.1, data=data.frame(profession_id=1,yoe=Yoe_seq))
+mu.PI = apply(sim3.1,2, PI, prob=0.89) #mean with the percentile intervals
+
+mu <- link(m1.2, data = data.frame(profession_id=4,yoe=Yoe_seq))
+mu.mean_4 <-  apply(mu,2,mean)
+mu.HPDI = apply(mu,2,HPDI, prob=0.89) #mean with highest posterior density interval
+
+plot(score ~ yoe, df_E2,col=col.alpha(rangi2,0.5)) #plot raw data
+title(paste("M3.1","score=a[i] + by[i]*yoe"))
+lines(Yoe_seq,mu.mean, col="blue")
+shade(mu.HPDI,Yoe_seq)
+
+shade(mu.PI,Yoe_seq)
+
+
 
 #-----------------
 # Plotting the variance around the mean for
