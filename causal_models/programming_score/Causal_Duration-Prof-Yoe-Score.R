@@ -11,33 +11,34 @@ source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding/
 df_E2$profession_id <- as.integer(df_E2$profession_id)
 
 # standardize variables = (zero centered, standard deviation one)
-df_E2$yoe <- scale(df_E2$years_programming, center=FALSE)
-df_E2$score <- scale(df_E2$qualification_score, center=FALSE)
+# df_E2$yoe <- scale(df_E2$years_programming, center=FALSE)
+# df_E2$score <- scale(df_E2$qualification_score, center=FALSE)
+df_E2$yoe <- df_E2$years_programming
+df_E2$score <- df_E2$qualification_score
+
+
 
 #-----------------
 "OUTLIERS in DURATION"
-#The upper cut corresponds to 6 times standard deviation of the time,
-#which corresponds to 42.98 min 
-
-df_E2$testDuration_minutes <- as.numeric(df_E2$testDuration/(60 *1000))
-sd(df_E2_aux$testDuration_minutes)
-#>[1] 7.163576
+"Code comprehension studies show that a programmer takes from 12 to 24 seconds is also the 
+average minimum time to read one line of code."
 
 "The lower cut to the minimum time to read all 5 questions and corresponding lines of code
 in the qualification test. 
-Code comprehension studies show that a programmer takes from 12 to 24 seconds is also the 
-average minimum time to read one line of code. Since the test has 5 questions, each question 
+ Since the test has 5 questions, each question 
 requires the inspection of one line of code, that would require the programmer from 60s to 120s.
 We chose 60s (1 min) as the minimum time-effort one need to read and answer all 5 questions"
 
-df_E2_aux <- df_E2[df_E2$testDuration_minutes<=43 & df_E2$testDuration_minutes>=1 ,]
+#The upper cut corresponds to 3 times the minimum. We choose 24s, so 60 min.
+
+df_E2_aux <- df_E2[df_E2$testDuration_minutes<=12 & df_E2$testDuration_minutes>=1 ,]
 boxplot(df_E2_aux$testDuration_minutes)
 summary(df_E2_aux$testDuration_minutes)
 #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 # 1.000   3.329   5.372   7.267   9.080  41.703
 
 #scale without centering, so I avoid negative values
-df_E2_aux$testDuration_minutes <- scale(df_E2_aux$testDuration_minutes, center = FALSE) 
+#df_E2_aux$testDuration_minutes <- scale(df_E2_aux$testDuration_minutes, center = FALSE) 
 #---------------
 
 
@@ -73,9 +74,6 @@ precis(m2,2)
 # sigma 0.81 0.01  0.80  0.83
 
 #slopes are flat.
-
-df_E2_aux$testDuration_minutes <-  scale(df_E2_aux$testDuration_minutes)
-df_E2_aux$yoe <- scale(df_E2_aux$years_programming)
 
 #Interactions
 m3 <- quap(
@@ -123,11 +121,10 @@ m4 <- quap(
   ), data = df_E2_aux
 ) 
 
-boxplot(df_E2_aux$testDuration_minutes)
 precis(m4,2)
 
-#           mean   sd  5.5% 94.5%
-#   a[1]   4.27 0.04  4.20  4.34
+#        mean   sd  5.5% 94.5%
+# a[1]   4.27 0.04  4.20  4.34
 # a[2]   4.29 0.05  4.22  4.37
 # a[3]   3.79 0.08  3.66  3.91
 # a[4]   3.81 0.05  3.73  3.90
