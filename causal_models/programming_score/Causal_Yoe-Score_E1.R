@@ -45,26 +45,12 @@ m1.1 <- quap(
     sigma ~ dexp(1)
   ), data = df
 ) 
-
 precis(m1.1)
 
-m1.2 <- quap(
-  alist(
-    score ~ dnorm( mu , sigma ) ,
-    mu <- a + by*yoe + ba*ages,
-    by ~ dnorm( 0 , 0.5 ) ,
-    ba ~ dnorm( 0 , 0.5 ) ,
-    a ~ dnorm(0, 0.5),
-    sigma ~ dexp(1)
-  ), data = df
-) 
-
-precis(m1.2)
-
-#Are Age and YoE correlated? YES, ba
+#Direct effect of Age on Score
 m1.3 <- quap(
   alist(
-    yoe ~ dnorm( mu , sigma ) ,
+    score ~ dnorm( mu , sigma ) ,
     mu <- a + ba*ages,
     ba ~ dnorm( 0 , 0.5 ) ,
     a ~ dnorm(0, 0.5),
@@ -73,14 +59,74 @@ m1.3 <- quap(
 ) 
 precis(m1.3)
 
-#Direct effect of Age on Score
-m1.4 <- quap(
+
+#Are Age and YoE correlated? YES, ba
+m1.2 <- quap(
   alist(
-    score ~ dnorm( mu , sigma ) ,
+    yoe ~ dnorm( mu , sigma ) ,
     mu <- a + ba*ages,
     ba ~ dnorm( 0 , 0.5 ) ,
     a ~ dnorm(0, 0.5),
     sigma ~ dexp(1)
   ), data = df
 ) 
-precis(m1.4)
+precis(m1.2)
+
+"Analyse of Interactions"
+m1.5.1 <- quap(
+  alist(
+    score ~ dnorm( mu , sigma ) ,
+    mu <- a + bya*yoe*ages +ba*ages +by*yoe,
+    bya ~ dnorm( 0 , 0.5 ) ,
+    ba ~ dnorm( 0 , 0.5 ) ,
+    by ~ dnorm( 0 , 0.5 ) ,
+    a ~ dnorm(0, 0.5),
+    sigma ~ dexp(1)
+  ), data = df
+) 
+
+m1.5.2 <- quap(
+  alist(
+    score ~ dnorm( mu , sigma ) ,
+    mu <- a + bya*yoe*ages +ba*ages,
+    bya ~ dnorm( 0 , 0.5 ) ,
+    ba ~ dnorm( 0 , 0.5 ) ,
+    a ~ dnorm(0, 0.5),
+    sigma ~ dexp(1)
+  ), data = df
+) 
+
+m1.5.3 <- quap(
+  alist(
+    score ~ dnorm( mu , sigma ) ,
+    mu <- a + bya*yoe*ages,
+    bya ~ dnorm( 0 , 0.5 ) ,
+    a ~ dnorm(0, 0.5),
+    sigma ~ dexp(1)
+  ), data = df
+) 
+
+m1.5.4 <- quap(
+  alist(
+    score ~ dnorm( mu , sigma ) ,
+    mu <- a + bya*yoe*ages + by*yoe,
+    bya ~ dnorm( 0 , 0.5 ) ,
+    by ~ dnorm( 0 , 0.5 ) ,
+    a ~ dnorm(0, 0.5),
+    sigma ~ dexp(1)
+  ), data = df
+)
+
+precis(m1.5.4)
+
+"About interaction YoE and Age
+Interaction is positive only when a term for yoe is not present (m.1.5.2, bya=0.05 [0.02,0.08] and
+m1.5.3 bya==0.03 [0.02,0.08].
+However, when the slope for yoe (by) is present, the interaction term can present zero value 
+in their credible intervals (m1.5.1, bya=-0.03 [], m1.5.4, bya=-0.04 [-0.07,0.00]). 
+Meanwhile in these models m1.5.1 and m1.5.4, by has positive values for all the
+credible intervals.
+
+We interpret from these models that the effect on yoe on score is not influence by the
+age of the participant.
+"
