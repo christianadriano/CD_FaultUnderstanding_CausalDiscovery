@@ -199,16 +199,39 @@ m1.6 <- quap(
 ) 
 precis(m1.6,depth=2)
 
-labels1 <- paste( "a[" , 1:3 , "]:" , levels(df$gender) , sep="" )
+#labels1 <- paste( "a[" , 1:3 , "]:" , levels(df$gender) , sep="" )
 labels2 <- paste( "by[" , 1:3  , "]:" , levels(df$gender) , sep="" )
 labels3 <- paste( "ba[" , 1:3  , "]:" , levels(df$gender) , sep="" )
 
-precis_plot( precis( m1.6 , depth=2 , pars=c("a","by","ba")) , 
-             labels=c(labels1,labels2,labels3),xlab="qualification score" )
+precis_plot( precis( m1.6 , depth=2 , pars=c("by","ba")) , 
+             labels=c(labels2,labels3),xlab="qualification score" )
 title("Model1.6 conditioned on age, yoe, and gender")
 
 "The results generalize for male and female participants,
 it does not for the Prefer_not_tell group probably because it
 has only 5 participants."
 
+#-----------
+#COUNTRY
+#Conditioning both on Age and YoE and on Country (indicador variable)
+m1.7 <- quap(
+  alist(
+    score ~ dnorm( mu , sigma ) ,
+    mu <- a[country_id] + ba[country_id]*ages + by[country_id]*yoe,
+    by[country_id] ~ dnorm( 0 , 0.5 ) ,
+    ba[country_id] ~ dnorm( 0 , 0.5 ) ,
+    a[country_id] ~ dnorm(0, 0.5),
+    sigma ~ dexp(1)
+  ), data = df
+) 
+precis(m1.7,depth=2)
 
+#labels1 <- paste( "a[" , 1:3 , "]:" , levels(df$country) , sep="" )
+labels2 <- paste( "by[" , 1:3  , "]:" , levels(df$country) , sep="" )
+labels3 <- paste( "ba[" , 1:3  , "]:" , levels(df$country) , sep="" )
+
+precis_plot( precis( m1.7 , depth=2 , pars=c("ba","by")) , 
+             labels=c(labels2,labels3),xlab="qualification score" )
+title("Model1.7 conditioned on age, yoe, and country")
+
+"The results generalize for three country groups (US, INDIA, and OTHERS)"
