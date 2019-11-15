@@ -38,3 +38,40 @@ df_E1$gender_id<- factor(df_E1$gender,
                          labels = c(1:3)
                         )
 
+"COUNTRY"
+
+df_E1$country <- unlist(lapply(df_E1$country, function(v) {
+  if (is.character(v)) return(toupper(v))
+  else return(v)
+}))
+
+df_E1$country <- gsub("UNITED STATES OF AMERICA","US",df_E1$country)
+df_E1$country <- gsub("UNITED STATES","US",df_E1$country)
+df_E1$country <- gsub("UNITES STATES","US",df_E1$country)
+df_E1$country <- gsub("AMERICA","US",df_E1$country)
+df_E1$country <- gsub("LOS ANGELES","US",df_E1$country)
+df_E1$country <- gsub("WASHINGTON","US",df_E1$country)
+df_E1$country <- gsub("ILLINOIS","US",df_E1$country)
+df_E1$country <- gsub("U.S.","US",df_E1$country)
+df_E1$country <- gsub("US.","US",df_E1$country)
+df_E1$country <- gsub("THE US","US",df_E1$country)
+df_E1$country <- gsub("USA","US",df_E1$country)
+df_E1$country <- gsub("USD","US",df_E1$country)
+df_E1$country <- gsub("33","US",df_E1$country)
+
+
+df_E1$country <- unlist(lapply(df_E1$country, 
+                               function(v) {
+                                 if(v %in%  c("US","INDIA")) return(v)
+                                 else return("OTHER")
+                               }))
+
+
+df_E1$country<- factor(df_E1$country, 
+                      labels = c("US","INDIA","OTHER")
+)
+
+df_E1$country_id<- factor(df_E1$country, 
+                         levels=levels(df_E1$country),
+                         labels = c(1:3)
+)
