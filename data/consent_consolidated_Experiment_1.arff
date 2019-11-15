@@ -9,7 +9,7 @@
 
 @ATTRIBUTE time_stamp  STRING
 @ATTRIBUTE worker_id  STRING
-@ATTRIBUTE event  {CONSENT}
+@ATTRIBUTE event  {CONSENT,SKILLTEST,SURVEY}
 @ATTRIBUTE consent_date STRING
 @ATTRIBUTE test1 {false, true}
 @ATTRIBUTE test2 {false, true}
