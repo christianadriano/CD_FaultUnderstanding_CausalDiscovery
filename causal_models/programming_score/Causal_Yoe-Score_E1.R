@@ -183,3 +183,32 @@ age of the participant.
 "Generalization. Do these models generalize to subgroups of participants, or 
 in other words, are there other known variables that could also be confounders
 of the effect of yoe and age on score? Next we look at gender and country"
+
+
+#GENDER
+#Conditioning both on Age and YoE and on Gender (indicador variable)
+m1.6 <- quap(
+  alist(
+    score ~ dnorm( mu , sigma ) ,
+    mu <- a[gender_id] + ba[gender_id]*ages + by[gender_id]*yoe,
+    by[gender_id] ~ dnorm( 0 , 0.5 ) ,
+    ba[gender_id] ~ dnorm( 0 , 0.5 ) ,
+    a[gender_id] ~ dnorm(0, 0.5),
+    sigma ~ dexp(1)
+  ), data = df
+) 
+precis(m1.6,depth=2)
+
+labels1 <- paste( "a[" , 1:3 , "]:" , levels(df$gender) , sep="" )
+labels2 <- paste( "by[" , 1:3  , "]:" , levels(df$gender) , sep="" )
+labels3 <- paste( "ba[" , 1:3  , "]:" , levels(df$gender) , sep="" )
+
+precis_plot( precis( m1.6 , depth=2 , pars=c("a","by","ba")) , 
+             labels=c(labels1,labels2,labels3),xlab="qualification score" )
+title("Model1.6 conditioned on age, yoe, and gender")
+
+"The results generalize for male and female participants,
+it does not for the Prefer_not_tell group probably because it
+has only 5 participants."
+
+
