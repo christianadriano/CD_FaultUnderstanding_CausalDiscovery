@@ -35,6 +35,6 @@ df_E1$gender<- factor(df_E1$gender,
 
 df_E1$gender_id<- factor(df_E1$gender, 
                          levels=levels(df_E1$gender),
-                         labels = c(2:0)
+                         labels = c(1:3)
                         )
 
