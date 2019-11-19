@@ -30,7 +30,6 @@ df_E2$profession_id <- factor(df_E2$profession,
 
 #Transform profession as factor again
 
-
 df_E2$qualification_score_label<- factor(df_E2$qualification_score, 
                                           levels = c(5:3),
                                           labels = c("100%","80%","60%")
@@ -42,6 +41,8 @@ df_E2$qualification_score_id <- factor(df_E2$qualification_score_label,
 
 "FILE_NAME"
 
+df_E2 <- df_E2[df_E2$file_name!="null",]
+
 df_E2$file_name<- factor(df_E2$file_name, 
                          levels = c("HIT01_8","HIT02_24","HIT03_6","HIT04_7",
                                     "HIT05_35","HIT06_51","HIT07_33","HIT08_54")
@@ -51,8 +52,13 @@ df_E2$file_name_id <- factor(df_E2$file_name,
                              labels=c(1:8)
 )
 
-"COUNTRY"
+"GENDER"
 
+df_E2$gender<- factor(df_E2$gender, 
+                      levels = c("Female","Male","Prefer_not_to_tell","Other")
+)
 
-
-"Buggy not Buggy"
+df_E2$gender_id<- factor(df_E2$gender, 
+                         levels=levels(df_E2$gender),
+                         labels = c(1:4)
+)
