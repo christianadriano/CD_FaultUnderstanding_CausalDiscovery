@@ -65,7 +65,6 @@ df_E1$country <- unlist(lapply(df_E1$country,
                                  else return("OTHER")
                                }))
 
-
 df_E1$country_labels<- factor(df_E1$country,
                               levels = c("US","INDIA","OTHER")
                               )
