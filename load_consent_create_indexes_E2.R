@@ -62,3 +62,88 @@ df_E2$gender_id<- factor(df_E2$gender,
                          levels=levels(df_E2$gender),
                          labels = c(1:4)
 )
+
+"COUNTRY"
+
+
+df_E2$country <- unlist(lapply(df_E2$country, function(v) {
+  if (is.character(v)) return(toupper(v))
+  else return(v)
+}))
+
+df_E2$country <- gsub("\\bUNITED STATES OF AMERICA\\b","US",df_E2$country)
+df_E2$country <- gsub("\\bUNITED STATES\\b","US",df_E2$country)
+df_E2$country <- gsub("\\bUNITES STATES\\b","US",df_E2$country)
+df_E2$country <- gsub("\\bUNITEDE STATES\\b","US",df_E2$country)
+df_E2$country <- gsub("\\bUNITED STAETS\\b","US",df_E2$country)
+df_E2$country <- gsub("\\bUNITED\\b","US",df_E2$country)
+df_E2$country <- gsub("\\bUNIT\\b","US",df_E2$country)
+df_E2$country <- gsub("\\bAMERICA\\b","US",df_E2$country)
+df_E2$country <- gsub("LOS ANGELES","US",df_E2$country)
+df_E2$country <- gsub("ILLINOIS","US",df_E2$country)
+df_E2$country <- gsub("WISCONSIN","US",df_E2$country)
+df_E2$country <- gsub("RIVERSIDE","US",df_E2$country)
+df_E2$country <- gsub("SAN JOSE CA","US",df_E2$country)
+df_E2$country <- gsub("SAN DIEGO","US",df_E2$country)
+df_E2$country <- gsub("LOUISIANA","US",df_E2$country)
+df_E2$country <- gsub("CALIFORNIA","US",df_E2$country)
+df_E2$country <- gsub("ARIZONA","US",df_E2$country)
+df_E2$country <- gsub("OHIO","US",df_E2$country)
+df_E2$country <- gsub("MARYLAND","US",df_E2$country)
+df_E2$country <- gsub("CINCINNATI","US",df_E2$country)
+df_E2$country <- gsub("\\bIL\\b","US",df_E2$country)
+df_E2$country <- gsub("\\bIN\\b","US",df_E2$country)
+
+df_E2$country <- gsub("U\\.S\\.A\\.","US",df_E2$country)
+df_E2$country <- gsub("U\\.S\\.","US",df_E2$country)
+df_E2$country <- gsub("U\\.S","US",df_E2$country)
+df_E2$country <- gsub("\\bUSA\\b","US",df_E2$country)
+df_E2$country <- gsub("GG","OTHER",df_E2$country)
+df_E2$country <- gsub("NO","OTHER",df_E2$country)
+df_E2$country <- gsub("GURGAON, INDIA","INDIA",df_E2$country)
+df_E2$country <- gsub("INDIAN","INDIA",df_E2$country)
+df_E2$country <- gsub("MADURAI","INDIA",df_E2$country)
+df_E2$country <- gsub("SRILANKA","SRI LANKA",df_E2$country)
+df_E2$country <- gsub("ENGLAND","UK",df_E2$country)
+
+df_tb <-  data.frame(table(df_E2$country))
+colnames(df_tb) <- c("country","participants")
+tribble_cnty <- df_tb %>% group_by(participants)
+tribble_cnty <- tribble_cnty %>% summarise(countries_by_participants = n())
+tribble_cnty$participants_labels <- as.factor(tribble_cnty$participants)
+
+barplot(tribble_cnty$countries_by_participants,
+        names.arg = tribble_cnty$participants,
+        xlab="Countries with N participants",
+        ylab="Number of countries",
+        main="Countries by number of participants - E2",
+        ymin=0, ymax=15
+        )
+
+ggplot(data=tribble_cnty, aes(x=participants_labels, y=countries_by_participants)) +
+  geom_bar(stat="identity", fill="lightgray")+
+  geom_text(aes(label=countries_by_participants), vjust=-0.3, color="black", size=3.0)+
+  theme_minimal()+
+  theme(plot.title = element_text("Helvetica-Narrow", face="plain", colour="black", size=10))+
+  theme(axis.title.x = element_text("Helvetica-Narrow", face="plain", colour="black", size=8))+
+  theme(axis.title.y = element_text("Helvetica-Narrow", face="plain", colour="black", size=8))+
+  theme(axis.text.x  = element_text("Helvetica-Narrow", face="plain", colour="black", size=8))+
+  theme(axis.text.y  = element_text("Helvetica-Narrow", face="plain", colour="black", size=8))+
+  xlab("Number of participants")+
+  ylab("Number of countries")+
+  ggtitle("Countries by number of participants - E2")
+
+df_E2$country <- unlist(lapply(df_E2$country, 
+                               function(v) {
+                                 if(v %in%  c("US","INDIA")) return(v)
+                                 else return("OTHER")
+                               }))
+
+df_E2$country_labels<- factor(df_E2$country,
+                              levels = c("US","INDIA","OTHER")
+)
+
+df_E2$country_id<- factor(df_E2$country_labels, 
+                          levels=levels(df_E2$country_labels),
+                          labels = c(1:3)
+)
