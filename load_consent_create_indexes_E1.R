@@ -28,7 +28,7 @@ df_E1$qualification_score_id <- factor(df_E1$qualification_score_label,
 "GENDER"
 
 df_E1$gender<- factor(df_E1$gender, 
-                      labels = c("Female","Male","Prefer_not_to_tell")
+                      levels = c("Female","Male","Prefer_not_to_tell")
                       )
 
 df_E1$gender_id<- factor(df_E1$gender, 
