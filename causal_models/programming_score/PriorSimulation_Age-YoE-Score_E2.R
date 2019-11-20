@@ -229,8 +229,3 @@ plot(coeftab(m1_NoInter_pos,m1_NoInter_all), par=c("a","by"),
      xlab="Estimate")
 
 
-#Model-2 Interaction between profession and yoe
-
-#Model-3 Interaction between profession and yoe and gender
-
-#Model-4 Add Duration
