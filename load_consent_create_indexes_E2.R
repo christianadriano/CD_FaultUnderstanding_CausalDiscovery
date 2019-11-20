@@ -31,12 +31,12 @@ df_E2$profession_id <- factor(df_E2$profession,
 #Transform profession as factor again
 
 df_E2$qualification_score_label<- factor(df_E2$qualification_score, 
-                                          levels = c(5:3),
-                                          labels = c("100%","80%","60%")
+                                          levels = c(5:0),
+                                          labels = c("100%","80%","60%","40%","20%","0%")
                                           )
 df_E2$qualification_score_id <- factor(df_E2$qualification_score_label,
                               levels=levels(df_E2$qualification_score_label),
-                              labels=c(3:1)
+                              labels=c(5:0)
 )
 
 "FILE_NAME"
