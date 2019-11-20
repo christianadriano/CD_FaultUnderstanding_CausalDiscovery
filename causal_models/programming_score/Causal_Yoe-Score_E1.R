@@ -10,19 +10,19 @@ library(dplyr)
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//load_consent_create_indexes_E1.R")
 
 "Remove participants for whom we do not have years of experience information  (who did not complete the survey)"
-df <- df_E1[complete.cases(df_E1),] #left with 485 rows
+df <- df_E1[complete.cases(df_E1[,"years_programming"]),] #left with 486 rows
 
 "Remove people who did no qualify to the test (score<2)"
-df <- df[df$qualification_score>=2,] #left with 482 rows
+df <- df[df$qualification_score>=2,] #left with 483 rows
 
 "Outlier in Age. Removing participants who reported to be below 18 years old."
-df <- df[df$age>=18,] #removed one, left with 481 rows
+df <- df[df$age>=18,] #removed one, left with 482 rows
 
 "Outlier in Yoe. Removing participants which the difference between age and yoe is less than ten
 years-old"
 age_minus_yoe <- df$age-df$years_programming
 minimum_age_minus_yoe <- age_minus_yoe>=10
-df <- df[minimum_age_minus_yoe,] #left with 478 rows
+df <- df[minimum_age_minus_yoe,] #left with 479 rows
 
 #----------------------
 #Rename fields to be easier to place in formulas
