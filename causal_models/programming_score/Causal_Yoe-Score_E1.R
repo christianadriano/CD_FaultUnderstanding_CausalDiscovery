@@ -21,8 +21,8 @@ df <- df[df$age>=18,] #removed one, left with 482 rows
 "Outlier in Yoe. Removing participants which the difference between age and yoe is less than ten
 years-old"
 age_minus_yoe <- df$age-df$years_programming
-minimum_age_minus_yoe <- age_minus_yoe>=10
-df <- df[minimum_age_minus_yoe,] #left with 479 rows
+minimum_age_minus_yoe <- age_minus_yoe>=12
+df <- df[minimum_age_minus_yoe,] #left with 478 rows
 
 #----------------------
 #Rename fields to be easier to place in formulas
@@ -40,15 +40,15 @@ m1.1 <- quap(
   alist(
     score ~ dnorm( mu , sigma ) ,
     mu <- a + by*yoe,
-    by ~ dnorm( 0 , 0.5 ) ,
-    a ~ dnorm(0, 0.5),
+    by ~ dnorm( 0 , 1 ) ,
+    a ~ dnorm(0, 1),
     sigma ~ dexp(1)
   ), data = df
 ) 
 precis(m1.1)
 # mean   sd 5.5% 94.5%
-# by    0.15 0.03 0.10  0.20
-# a     2.44 0.03 2.39  2.49
+# by    0.16 0.03 0.10  0.21
+# a     2.45 0.03 2.40  2.50
 # sigma 0.70 0.02 0.67  0.74
 "Model m1.1 tells that for each year of programming experience there is an increase in
 0.15 in score. Assuming nothing changes, but yoe, someone who got zero score, would need 13.3 yoe to qualify (2/0.15)
@@ -60,15 +60,15 @@ m1.2 <- quap(
   alist(
     score ~ dnorm( mu , sigma ) ,
     mu <- a+ ba*ages,
-    ba ~ dnorm( 0 , 0.5 ) ,
-    a ~ dnorm(0, 0.5),
+    ba ~ dnorm( 0 , 1 ) ,
+    a ~ dnorm(0, 1),
     sigma ~ dexp(1)
   ), data = df
 ) 
 precis(m1.2)
 #       mean   sd  5.5% 94.5%
 # ba    -0.06 0.03 -0.11  0.00
-# a      2.44 0.03  2.39  2.49
+# a      2.45 0.03  2.40  2.50
 # sigma  0.72 0.02  0.68  0.76
 
 "Age has a negative effect, but it is uncertain as it crosses zero in in the 89%
@@ -80,20 +80,20 @@ m1.3 <- quap(
   alist(
     yoe ~ dnorm( mu , sigma ) ,
     mu <- a + ba*ages,
-    ba ~ dnorm( 0 , 0.5 ) ,
-    a ~ dnorm(0, 0.5),
+    ba ~ dnorm( 0 , 1 ) ,
+    a ~ dnorm(0, 1),
     sigma ~ dexp(1)
   ), data = df
 ) 
 precis(m1.3)
 #       mean   sd  5.5% 94.5%
-# ba    0.36 0.04  0.30  0.43
+# ba    0.37 0.04  0.30  0.44
 # a     0.00 0.04 -0.07  0.07
 # sigma 0.93 0.03  0.88  0.98
 "The slope that explain yoe by ages has non-zero value in the credible interval. 
 The mean of the slope correspond to a medium correlation strenght in Cohen scale
 (from 0.3 to 0.5). The slope tells that for each year of age there is an average 
-gain of 4 months of Yoe (0.36 year). Now we looked at the possibility of
+gain of 4 months of Yoe (0.37 year). Now we looked at the possibility of
 age being a confounder. "
 
 #Conditioning both on Age and YoE
@@ -101,17 +101,17 @@ m1.4 <- quap(
   alist(
     score ~ dnorm( mu , sigma ) ,
     mu <- a + ba*ages + by*yoe,
-    by ~ dnorm( 0 , 0.5 ) ,
-    ba ~ dnorm( 0 , 0.5 ) ,
-    a ~ dnorm(0, 0.5),
+    by ~ dnorm( 0 , 1 ) ,
+    ba ~ dnorm( 0 , 1 ) ,
+    a ~ dnorm(0, 1),
     sigma ~ dexp(1)
   ), data = df
 ) 
 precis(m1.4)
 #        mean   sd  5.5% 94.5%
-# by     0.20 0.03  0.14  0.25
-# ba    -0.13 0.03 -0.18 -0.07
-# a      2.44 0.03  2.39  2.49
+# by     0.20 0.03  0.15  0.26
+# ba    -0.13 0.03 -0.19 -0.08
+# a      2.44 0.03  2.40  2.50
 # sigma  0.69 0.02  0.66  0.73
 "After deconfounding, we can see that it got more clear the effects of yoe and age.
 The effect of yoe got stronger (by in m1.1 versus m1.4). The effect 
@@ -165,7 +165,7 @@ m1.5.4 <- quap(
   ), data = df
 )
 
-precis(m1.5.4)
+precis(m1.5.1)
 
 "About interaction YoE and Age
 Interaction is positive only when a term for yoe is not present (m.1.5.2, bya=0.05 [0.02,0.08] and
@@ -175,8 +175,8 @@ in their credible intervals (m1.5.1, bya=-0.03 [], m1.5.4, bya=-0.04 [-0.07,0.00
 Meanwhile in these models m1.5.1 and m1.5.4, by has positive values for all the
 credible intervals.
 
-We interpret from these models that the effect on yoe on score is not influence by the
-age of the participant.
+These models do not show that participants' age influence the effect of yoe on score, i.e.,
+we could not see any moderation effect of age.
 "
 
 #-------------------------------------
@@ -191,25 +191,26 @@ m1.6 <- quap(
   alist(
     score ~ dnorm( mu , sigma ) ,
     mu <- a[gender_id] + ba[gender_id]*ages + by[gender_id]*yoe,
-    by[gender_id] ~ dnorm( 0 , 0.5 ) ,
-    ba[gender_id] ~ dnorm( 0 , 0.5 ) ,
-    a[gender_id] ~ dnorm(0, 0.5),
+    by[gender_id] ~ dnorm( 0 , 1 ) ,
+    ba[gender_id] ~ dnorm( 0 , 1 ) ,
+    a[gender_id] ~ dnorm(0, 1),
     sigma ~ dexp(1)
   ), data = df
 ) 
 precis(m1.6,depth=2)
 
-#labels1 <- paste( "a[" , 1:3 , "]:" , levels(df$gender) , sep="" )
+labels1 <- paste( "a[" , 1:3 , "]:" , levels(df$gender) , sep="" )
 labels2 <- paste( "by[" , 1:3  , "]:" , levels(df$gender) , sep="" )
 labels3 <- paste( "ba[" , 1:3  , "]:" , levels(df$gender) , sep="" )
 
-precis_plot( precis( m1.6 , depth=2 , pars=c("by","ba")) , 
-             labels=c(labels2,labels3),xlab="qualification score" )
+precis_plot( precis( m1.6 , depth=2 , pars=c("by","ba","a")) , 
+             labels=c(labels2,labels3,labels1),xlab="qualification score" )
 title("Model1.6 conditioned on age, yoe, and gender")
 
-"The results generalize for male and female participants,
-it does not for the Prefer_not_tell group probably because it
-has only 5 participants."
+"The previous results generalize for male and female gender groups, as
+the coeficients for yoe and age are respectively non-negative and 
+non-positive (Table-x). This is not true for the prefer_not_tell group, 
+maybe because it contained only 5 participants."
 
 #-----------
 #COUNTRY
@@ -218,20 +219,20 @@ m1.7 <- quap(
   alist(
     score ~ dnorm( mu , sigma ) ,
     mu <- a[country_id] + ba[country_id]*ages + by[country_id]*yoe,
-    by[country_id] ~ dnorm( 0 , 0.5 ) ,
-    ba[country_id] ~ dnorm( 0 , 0.5 ) ,
-    a[country_id] ~ dnorm(0, 0.5),
+    by[country_id] ~ dnorm( 0 , 1 ) ,
+    ba[country_id] ~ dnorm( 0 , 1 ) ,
+    a[country_id] ~ dnorm(0, 1),
     sigma ~ dexp(1)
   ), data = df
 ) 
 precis(m1.7,depth=2)
 
-#labels1 <- paste( "a[" , 1:3 , "]:" , levels(df$country) , sep="" )
-labels2 <- paste( "by[" , 1:3  , "]:" , levels(df$country) , sep="" )
-labels3 <- paste( "ba[" , 1:3  , "]:" , levels(df$country) , sep="" )
+labels1 <- paste( "a[" , 1:3 , "]:" , levels(df$country_labels) , sep="" )
+labels2 <- paste( "by[" , 1:3  , "]:" , levels(df$country_labels) , sep="" )
+labels3 <- paste( "ba[" , 1:3  , "]:" , levels(df$country_labels) , sep="" )
 
-precis_plot( precis( m1.7 , depth=2 , pars=c("ba","by")) , 
-             labels=c(labels2,labels3),xlab="qualification score" )
+precis_plot( precis( m1.7 , depth=2 , pars=c("ba","by","a")) , 
+             labels=c(labels2,labels3,labels1),xlab="qualification score" )
 title("Model1.7 conditioned on age, yoe, and country")
 
-"The results generalize for three country groups (US, INDIA, and OTHERS)"
+"The results generalize for US and Other country groups, but not for INDIA."
