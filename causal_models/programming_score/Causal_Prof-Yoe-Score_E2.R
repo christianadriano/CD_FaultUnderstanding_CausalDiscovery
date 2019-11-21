@@ -18,7 +18,7 @@ library(stringr)
 library(dplyr)
 
 #Load data
-source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//load_create_indexes_E2.R")
+source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//load_consent_create_indexes_E2.R")
 
 # standardize variables = (zero centered, standard deviation one)
 #df_E2$yoe <- scale(df_E2$years_programming)
