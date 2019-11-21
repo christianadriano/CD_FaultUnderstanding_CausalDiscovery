@@ -28,7 +28,6 @@ df_E2 <- df_E2[complete.cases(df_E2[,c("years_programming","qualification_score"
 # standardize variables = (zero centered, standard deviation one)
 df_E2$yoe <- scale(df_E2$years_programming)
 df_E2$score <- scale(df_E2$qualification_score)
-
 #df_E2$yoe <- df_E2$years_programming
 #df_E2$score <-  df_E2$qualification_score
 
@@ -44,7 +43,7 @@ m1.1 <- quap(
     sigma ~ dexp(1)
   ), data = df_E2
 ) 
-
+precis(m1.1)
 
 #Model-1.2 only Years of experience
 m1.2 <- quap(
@@ -55,6 +54,7 @@ m1.2 <- quap(
     sigma ~ dexp(1)
   ), data = df_E2
 ) 
+precis(m1.2)
 
 #Model-2 both, but only additive effects
 # Yoe->Score<-prof
@@ -67,11 +67,25 @@ m2 <- quap(
     sigma ~ dexp(1)
   ), data = df_E2
 ) 
-
+precis(m2,depth=2)
 
 #Model-3 interaction term, prof influencing the effect of yoe on score
 # yoe->score<-prof
 # prof->score
+
+m3.1 <- quap(
+  alist(
+    score ~ dnorm( mu , sigma ) ,
+    mu <- a[profession_id] + bpy[profession_id]*yoe,
+    a[profession_id] ~ dnorm( 0 , 1.0 ) ,
+    bpy[profession_id] ~ dnorm( 0 , 1.0 ),
+    sigma ~ dexp(1)
+  ), data = df_E2
+) 
+precis(m3.1,depth=2)
+
+
+
 m3.2 <- quap(
   alist(
     score ~ dnorm( mu , sigma ) ,
@@ -83,16 +97,8 @@ m3.2 <- quap(
     sigma ~ dexp(1)
   ), data = df_E2
 ) 
+precis(m3.1,depth=2)
 
-m3.1 <- quap(
-  alist(
-    score ~ dnorm( mu , sigma ) ,
-    mu <- a[profession_id] + bpy[profession_id]*yoe,
-    a[profession_id] ~ dnorm( 0 , 0.5 ) ,
-    bpy[profession_id] ~ dnorm( 0 , 0.5 ),
-    sigma ~ dexp(1)
-  ), data = df_E2
-) 
 
 m3.3 <- quap(
   alist(
@@ -103,7 +109,12 @@ m3.3 <- quap(
     sigma ~ dexp(1)
   ), data = df_E2
 ) 
+precis(m3.3,depth=2)
 
+"Compare m3.3 with m3.1, because in the former the credible interval for all by do 
+not cross zero, but the intercept a crosses. Meanwhile, in m3.1, all but graduates 
+do not cross zero, whereas the three intercepts do not cross zero (professionals,
+graduates, and others)"
 #------------------------------
 
 labels1 <- paste( "a[" , 1:5 , "]:" , levels(df_E2$profession) , sep="" )
