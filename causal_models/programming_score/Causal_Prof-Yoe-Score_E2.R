@@ -24,8 +24,10 @@ source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding/
 #df_E2$yoe <- scale(df_E2$years_programming)
 #df_E2$score <- scale(df_E2$qualification_score)
 
-df_E2$score <-  df_E2$qualification_score
+df_E2 <- df_E2[complete.cases(df_E2[,"years_programming"]),]
 df_E2$yoe <- df_E2$years_programming
+
+df_E2$score <-  df_E2$qualification_score
 
 
 df_E2$profession_id <- as.integer(df_E2$profession_id)
