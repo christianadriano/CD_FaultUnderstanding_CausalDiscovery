@@ -52,10 +52,31 @@ table(df$score)
 #Causal graph
 #Create
 dag1.1 <- dagitty( "dag {
-age -> score
-YoE -> score
-age -> yoe
+score [outcome];
+age [exogenous];
+yoe [endogenous];
+age -> score;
+yoe -> score;
+age -> yoe 
 }")
+
+coordinates(dag1.1) <- list( x=c(yoe=0,score=1,age=2) , y=c(yoe=0,score=1,age=0) )
+plot( dag1.1 )
+tidy_dagitty(dag1.1)
+ggdag(dag1.1, layout = "circle")
+
+condIndep <- impliedConditionalIndependencies(dag1.1)
+#{}
+
+#Conditional independence assumptions
+paths(dag1.1,c("age"),"score",directed = TRUE)
+# $paths [1] "age -> score"        "age -> yoe -> score"
+# $open [1] TRUE TRUE
+
+adjustmentSets(dag1.1,exposure = "age",outcome = "score",effect = c("direct"))
+#{ yoe } because YoE is a mediator
+adjustmentSets(dag1.1,exposure = "yoe",outcome = "score",effect = c("direct"))
+#{ age } because age is a confounder
 
 
 
