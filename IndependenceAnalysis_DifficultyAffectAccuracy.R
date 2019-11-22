@@ -90,7 +90,7 @@ ggdag(g_CSA, layout = "circle")
 impliedConditionalIndependencies(g_CSA)
 # Complexity _||_ Skill
 
-p <- paths(g,c("Skill"),"Accuracy",directed = TRUE)
+p <- paths(g_CSA,c("Skill"),"Accuracy",directed = TRUE)
 p
 
 "Direct effect of Difficulty on Accuracy in each model"
