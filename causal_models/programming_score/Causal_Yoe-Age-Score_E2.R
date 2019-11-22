@@ -91,14 +91,11 @@ m1.1 <- quap(
   ), data = df
 ) 
 precis(m1.1)
-#       mean   sd  5.5% 94.5%
-# ba    0.37 0.04  0.30  0.44
-# a     0.00 0.04 -0.07  0.07
-# sigma 0.93 0.03  0.88  0.98
+
 "The slope that explain yoe by ages has non-zero value in the credible interval. 
-The mean of the slope correspond to a medium correlation strenght in Cohen scale
-(from 0.3 to 0.5). The slope tells that for each year of age there is an average 
-gain of 4 months of Yoe (0.37 year). Now we looked at the possibility of
+The mean of the slope correspond to a weak correlation strenght 
+(scale from 0.1 to 0.3). This slope ba=0.27 tells that for each year of age there is 
+an average gain of 3 months of Yoe (0.27 year). Now we looked at the possibility of
 age being a confounder. "
 
 
