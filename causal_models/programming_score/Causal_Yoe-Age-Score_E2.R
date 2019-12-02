@@ -157,7 +157,7 @@ precis(m1.4)
 # ba    -0.13 0.03 -0.19 -0.08
 # a      2.44 0.03  2.40  2.50
 # sigma  0.69 0.02  0.66  0.73
-"After deconfounding, we can see that it got more clear the effects of yoe and age.
+"After deconfounding, we can see that the effects of yoe and age got clearer.
 The effect of yoe got stronger (by in m1.1 versus m1.4). The effect 
 of age got stronger and its credible interval outside zero (m1.1 versus m1.4)"
 
