@@ -27,9 +27,6 @@ source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding/
 "Remove participants for whom we do not have years of experience information  (who did not complete the survey)"
 df <- df_E2[complete.cases(df_E2[,"years_programming"]),] #initial 3657, left with 2062 rows
 
-"Remove people who did no qualify to the test (score<2)"
-#df <- df[df$qualification_score>=2,] #left with 
-
 "Outlier in Age. Removing participants who reported to be below 18 years old."
 df <- df[df$age>=18,] #removed one, left with 2061 rows
 
@@ -41,14 +38,10 @@ df <- df[minimum_age_minus_yoe,] #left with 2040 rows
 
 #----------------------
 #Rename fields to be easier to place in formulas
-df$yoe <- as.numeric( scale(df$years_programming))
-df$score <- df$qualification_score #scale(df$qualification_score)
+df$yoe <- scale(df$years_programming)
 df$ages <- scale(df$age)
 
 boxplot(df$yoe)
-table(df$score)
-#score:     2    3   4 
-#subjects: 328  85  65 
 
 #Causal graph
 #Create
@@ -81,8 +74,8 @@ adjustmentSets(dag1.1,exposure = "yoe",outcome = "score",effect = c("direct"))
 
 
 
-#Are Age and YoE correlated? YES, ba
-m1.1 <- quap(
+#Are Age and YoE correlated? YES!
+m_correl <- quap(
   alist(
     yoe ~ dnorm( mu , sigma ) ,
     mu <- a + ba*ages,
@@ -91,7 +84,7 @@ m1.1 <- quap(
     sigma ~ dexp(1)
   ), data = df
 ) 
-precis(m1.1)
+precis(m_correl)
   # mean   sd  5.5% 94.5%
   # ba    0.27 0.02  0.24  0.30
   # a     0.00 0.02 -0.03  0.03
@@ -104,7 +97,34 @@ an average gain of 3 months of Yoe (0.27 year). Now we looked at the possibility
 age being a confounder. "
 
 
-#Direct effect of Years of experience
+#-------------------------------------------------------------
+
+"Remove people who did no qualify to the test (score<2)"
+df <- df[complete.cases(df[,"qualification_score"]),]
+"Scale score and rename"
+df$score <- df$qualification_score #scale(df$qualification_score)
+table(df$score)
+#Score         0   1   2   3   4   5 
+#Participants 240 402 280 157 158 183 
+df_qualified <- df[df$score>=3,]
+table(df_qualified$score)
+
+m1.0 <- quap(
+  alist(
+    score ~ dnorm( mu , sigma ) ,
+    mu <- a + by*yoe,
+    by ~ dnorm( 0 , 1 ) ,
+    a ~ dnorm(0, 1),
+    sigma ~ dexp(1)
+  ), data = df_qualified
+) 
+precis(m1.0)
+#       mean   sd 5.5% 94.5%
+# by    0.06 0.03 0.02  0.11
+# a     4.02 0.04 3.96  4.08
+# sigma 0.82 0.03 0.78  0.86
+
+#All who took the test
 m1.1 <- quap(
   alist(
     score ~ dnorm( mu , sigma ) ,
@@ -115,24 +135,30 @@ m1.1 <- quap(
   ), data = df
 ) 
 precis(m1.1)
-# mean   sd 5.5% 94.5%
-# by    0.16 0.03 0.10  0.21
-# a     2.45 0.03 2.40  2.50
-# sigma 0.70 0.02 0.67  0.74
-"Model m1.1 tells that for each year of programming experience there is an increase in
-0.15 in score. Assuming nothing changes, but yoe, someone who got zero score, would need 13.3 yoe to qualify (2/0.15)
-Since the people have different ages, which means that their Yoe might have been gained
+
+#Considering all who took the test
+#       mean   sd 5.5% 94.5%
+# by    0.46 0.04 0.40  0.52
+# a     2.05 0.04 2.00  2.14
+# sigma 1.55 0.03 1.50  1.60
+"Model m1.0 tells that for each year of programming experience there is an increase in
+0.06 in score, whereas in m1.1 there is a gain of almost half a score point (0.46).
+Assuming nothing changes, except yoe, someone who got zero score, would need 6 yoe to qualify (3/0.46)"
+
+#--------
+"Since the people have different ages, which means that their Yoe might have been gained
 at different moments in their lives, we looked if age has an effect on score."
+
 
 #Total effect of Age on Score
 m1.2 <- quap(
   alist(
     score ~ dnorm( mu , sigma ) ,
     mu <- a+ ba*ages,
-    ba ~ dnorm( 0 , 1 ) ,
-    a ~ dnorm(0, 1),
+    ba ~ dnorm( 0 , 0.5 ) ,
+    a ~ dnorm(0, 0.5),
     sigma ~ dexp(1)
-  ), data = df
+  ), data = df_qualified
 ) 
 precis(m1.2)
 #       mean   sd  5.5% 94.5%
