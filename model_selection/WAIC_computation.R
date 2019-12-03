@@ -7,13 +7,13 @@ remove.packages("rstan")
 remove.packages("rethinking")
 if (file.exists(".RData")) file.remove(".RData")
 
-install.packages(c("coda","mvtnorm","devtools","loo"))
-library(loo)
+install.packages(c("coda","mvtnorm","devtools","loo","Rcpp","digest","rlang","curl"))
 library(mvtnorm)
 library(devtools)
 devtools::install_github("rmcelreath/rethinking", ref="Experimental")
 #-----------------------------
 
+library(loo)
 library(rethinking)
 library(ggplot2)
 
