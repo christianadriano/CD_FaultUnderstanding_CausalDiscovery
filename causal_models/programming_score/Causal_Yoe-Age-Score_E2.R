@@ -19,6 +19,7 @@ library(dplyr)
 library(ggdag)
 library( dagitty )
 library (ggm)
+library(loo) #for running WAIC and Pareto-Smooth Leave One Out Cross-Validation
 
 #Load data
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//load_consent_create_indexes_E2.R")
@@ -40,7 +41,7 @@ df <- df[minimum_age_minus_yoe,] #left with 2040 rows
 
 #----------------------
 #Rename fields to be easier to place in formulas
-df$yoe <- scale(df$years_programming)
+df$yoe <- as.numeric( scale(df$years_programming))
 df$score <- df$qualification_score #scale(df$qualification_score)
 df$ages <- scale(df$age)
 
@@ -91,6 +92,10 @@ m1.1 <- quap(
   ), data = df
 ) 
 precis(m1.1)
+  # mean   sd  5.5% 94.5%
+  # ba    0.27 0.02  0.24  0.30
+  # a     0.00 0.02 -0.03  0.03
+  # sigma 0.96 0.02  0.94  0.99
 
 "The slope that explain yoe by ages has non-zero value in the credible interval. 
 The mean of the slope correspond to a weak correlation strenght 
@@ -222,6 +227,7 @@ credible intervals.
 These models do not show that participants' age influence the effect of yoe on score, i.e.,
 we could not see any moderation effect of age.
 "
+compare(m1.5.1, m1.5.2, m1.5.3, m1.5.4)
 
 #-------------------------------------
 "Generalization. Do these models generalize to subgroups of participants, or 
