@@ -20,6 +20,8 @@ library(ggdag)
 library( dagitty )
 library (ggm)
 library(loo) #for running WAIC and Pareto-Smooth Leave One Out Cross-Validation
+library(mvtnorm)
+library(devtools)
 
 #Load data
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//load_consent_create_indexes_E2.R")
@@ -121,7 +123,7 @@ m1.0 <- quap(
 precis(m1.0)
 #       mean   sd 5.5% 94.5%
 # by    0.06 0.03 0.02  0.11
-# a     4.02 0.04 3.96  4.08
+# a     4.02 0.04 3.95  4.08
 # sigma 0.82 0.03 0.78  0.86
 
 #All who took the test
@@ -158,7 +160,7 @@ m1.2 <- quap(
     ba ~ dnorm( 0 , 0.5 ) ,
     a ~ dnorm(0, 0.5),
     sigma ~ dexp(1)
-  ), data = df_qualified
+  ), data = df
 ) 
 precis(m1.2)
 #       mean   sd  5.5% 94.5%
@@ -170,6 +172,17 @@ precis(m1.2)
 credible interval. Since age could be confounder of the effect of Yoe on score,
 we looked at the correlation between Age and Yoe."
 
+
+rethinking::compare(m1.1,m1.2)
+#PSIS = Pareto-smoothed importance sampling
+#        PSIS    SE dPSIS   dSE pPSIS weight
+# m1.1 5284.1 42.52   0.0    NA   2.6      1
+# m1.2 5425.2 38.64 141.1 20.77   2.5      0
+
+#WAIC = Widely Applicable Information Criteria
+#        WAIC    SE dWAIC   dSE pWAIC weight
+# m1.1 5284.0 42.59     0    NA   2.6      1
+# m1.2 5425.1 38.61   141 20.79   2.5      0
 
 #Conditioning both on Age and YoE
 m1.4 <- quap(
