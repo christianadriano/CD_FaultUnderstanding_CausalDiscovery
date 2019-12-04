@@ -173,12 +173,13 @@ credible interval. Since age could be confounder of the effect of Yoe on score,
 we looked at the correlation between Age and Yoe."
 
 
-rethinking::compare(m1.1,m1.2)
+rethinking::compare(m1.1,m1.2, func=PSIS) 
 #PSIS = Pareto-smoothed importance sampling
 #        PSIS    SE dPSIS   dSE pPSIS weight
 # m1.1 5284.1 42.52   0.0    NA   2.6      1
 # m1.2 5425.2 38.64 141.1 20.77   2.5      0
 
+rethinking::compare(m1.1,m1.2, func=WAIC)
 #WAIC = Widely Applicable Information Criteria
 #        WAIC    SE dWAIC   dSE pWAIC weight
 # m1.1 5284.0 42.59     0    NA   2.6      1
@@ -205,6 +206,17 @@ precis(m1.4)
 The effect of yoe got stronger (by in m1.1 versus m1.4). The effect 
 of age got stronger and its credible interval outside zero (m1.1 versus m1.4)"
 
+rethinking::compare(m1.1,m1.2,m1.4, func=PSIS) 
+#       PSIS    SE dPSIS   dSE pPSIS weight
+# m1.4 5330.4 42.72   0.0    NA   3.5      1 
+# m1.1 5355.4 42.52  25.0  9.42   2.4      0
+# m1.2 5505.1 38.44 174.8 24.23   2.5      0
+rethinking::compare(m1.1,m1.2,m1.4, func=WAIC) 
+#        WAIC    SE dWAIC   dSE pWAIC weight
+# m1.4 5330.2 42.70   0.0    NA   3.4      1
+# m1.1 5355.6 42.35  25.4  9.35   2.5      0
+# m1.2 5505.2 38.49 175.0 24.27   2.5      0
+
 
 #------------------------------------
 "Analyse of Interactions. Does age also has an influence on the strenght of the 
@@ -220,6 +232,7 @@ m1.5.1 <- quap(
     sigma ~ dexp(1)
   ), data = df
 ) 
+precis(m1.5.1)
 
 m1.5.2 <- quap(
   alist(
@@ -232,6 +245,9 @@ m1.5.2 <- quap(
   ), data = df
 ) 
 
+precis(m1.5.2)
+
+
 m1.5.3 <- quap(
   alist(
     score ~ dnorm( mu , sigma ) ,
@@ -241,6 +257,8 @@ m1.5.3 <- quap(
     sigma ~ dexp(1)
   ), data = df
 ) 
+
+precis(m1.5.3)
 
 m1.5.4 <- quap(
   alist(
@@ -253,7 +271,6 @@ m1.5.4 <- quap(
   ), data = df
 )
 
-precis(m1.5.1)
 
 "About interaction YoE and Age
 Interaction is positive only when a term for yoe is not present (m.1.5.2, bya=0.05 [0.02,0.08] and
@@ -266,7 +283,27 @@ credible intervals.
 These models do not show that participants' age influence the effect of yoe on score, i.e.,
 we could not see any moderation effect of age.
 "
-compare(m1.5.1, m1.5.2, m1.5.3, m1.5.4)
+
+"OVERFITTING Evaluation
+Models with age, yoe,and interaction between yoe and age performed better both in terms 
+of parameters being  within credible intervals as well as presenting lower overfitting 
+measures (PSIC and WAIC, which agreed with other)."
+
+rethinking::compare(m1.5.1, m1.5.2, m1.5.3, m1.5.4, m1.4, func=PSIS)
+#          PSIS    SE dPSIS   dSE pPSIS weight
+# m1.5.1 5321.0 43.37   0.0    NA   4.2   0.99
+# m1.4   5330.2 42.78   9.3  5.13   3.4   0.01
+# m1.5.4 5343.4 43.00  22.5  8.85   3.1   0.00
+# m1.5.3 5470.2 39.65 149.3 23.31   2.6   0.00
+# m1.5.2 5470.9 39.57 150.0 23.29   3.4   0.00
+rethinking::compare(m1.5.1, m1.5.2, m1.5.3, m1.5.4, m1.4, func=WAIC)
+#          WAIC    SE dWAIC   dSE pWAIC weight
+# m1.5.1 5320.8 43.40   0.0    NA   4.1   0.99
+# m1.4   5330.3 42.81   9.6  5.21   3.4   0.01
+# m1.5.4 5343.6 43.02  22.8  8.77   3.2   0.00
+# m1.5.3 5470.0 39.55 149.2 23.40   2.5   0.00
+# m1.5.2 5470.7 39.61 150.0 23.41   3.3   0.00
+
 
 #-------------------------------------
 "Generalization. Do these models generalize to subgroups of participants, or 
