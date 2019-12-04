@@ -17,6 +17,10 @@ generalization by gender and country
 m1.6 <- a + by[gender_id]*yoe + ba[gender_id]*ages
 m1.7 <- a + by[country_id]*yoe + ba[country_id]*ages
 
+
+TODO: plot the posterior HPDI and PI both models 1.4 and 1.5.1
+
+
 "
 
 library(rethinking)
@@ -322,7 +326,7 @@ of the effect of yoe and age on score? Next we look at gender and country"
 
 #GENDER
 #Conditioning both on Age and YoE and on Gender (indicador variable)
-m1.6 <- quap(
+m1.6.1 <- quap(
   alist(
     score ~ dnorm( mu , sigma ) ,
     mu <- a[gender_id] + ba[gender_id]*ages + by[gender_id]*yoe,
@@ -332,25 +336,56 @@ m1.6 <- quap(
     sigma ~ dexp(1)
   ), data = df
 ) 
-precis(m1.6,depth=2)
+precis(m1.6.1,depth=2)
+
+#Model with interaction between yoe and ages
+m1.6.2 <- quap(
+  alist(
+    score ~ dnorm( mu , sigma ) ,
+    mu <- a[gender_id] + ba[gender_id]*ages + by[gender_id]*yoe+bya[gender_id]*yoe*ages,
+    by[gender_id] ~ dnorm( 0 , 1 ) ,
+    ba[gender_id] ~ dnorm( 0 , 1 ) ,
+    bya[gender_id] ~ dnorm( 0 , 1 ) ,
+    a[gender_id] ~ dnorm(0, 1),
+    sigma ~ dexp(1)
+  ), data = df
+) 
+precis(m1.6.2,depth=2)
 
 labels1 <- paste( "a[" , 1:3 , "]:" , levels(df$gender) , sep="" )
 labels2 <- paste( "by[" , 1:3  , "]:" , levels(df$gender) , sep="" )
 labels3 <- paste( "ba[" , 1:3  , "]:" , levels(df$gender) , sep="" )
+labels4 <- paste( "bya[" , 1:3  , "]:" , levels(df$gender) , sep="" )
 
-precis_plot( precis( m1.6 , depth=2 , pars=c("by","ba","a")) , 
-             labels=c(labels2,labels3,labels1),xlab="qualification score" )
+
+precis_plot( precis( m1.6.2 , depth=2 , pars=c("by","ba","bya","a")) , 
+             labels=c(labels2,labels3,labels4,labels1),xlab="qualification score" )
 title("Model1.6 conditioned on age, yoe, and gender")
 
-"The previous results generalize for male and female gender groups, as
+"Model 1.6.1 generalize for male and female gender groups, as
 the coeficients for yoe and age are respectively non-negative and 
 non-positive (Table-x). This is not true for the prefer_not_tell group, 
-maybe because it contained only 5 participants."
+maybe because it contained only 5 participants.
+
+Model 1.6.2 generalizes only for male gender group. For all others and
+across the coeficient ba, by, and bya, the estimated values cross the zero
+in the credible interval.
+"
+"OVERFITTING BY GENDER. Model with interactions shows lower risk of overfitting"
+rethinking::compare(m1.6.2,m1.6.1, func=WAIC)
+#          WAIC    SE dWAIC  dSE pWAIC weight
+# m1.6.2 5311.4 43.93   0.0   NA   9.6   0.99
+# m1.6.1 5320.2 43.40   8.9 5.26   8.2   0.01
+rethinking::compare(m1.6.2,m1.6.1, func=PSIS)
+#          PSIS    SE dPSIS  dSE pPSIS weight
+# m1.6.2 5312.2 44.01   0.0   NA  10.1   0.99
+# m1.6.1 5320.8 43.40   8.5 5.25   8.4   0.01
+
 
 #-----------
 #COUNTRY
 #Conditioning both on Age and YoE and on Country (indicador variable)
-m1.7 <- quap(
+m1.7.1 <- quap(
   alist(
     score ~ dnorm( mu , sigma ) ,
     mu <- a[country_id] + ba[country_id]*ages + by[country_id]*yoe,
@@ -360,14 +395,42 @@ m1.7 <- quap(
     sigma ~ dexp(1)
   ), data = df
 ) 
-precis(m1.7,depth=2)
+precis(m1.7.1,depth=2)
+
+m1.7.2 <- quap(
+  alist(
+    score ~ dnorm( mu , sigma ) ,
+    mu <- a[country_id] + ba[country_id]*ages + by[country_id]*yoe + bya[country_id]*yoe*ages,
+    by[country_id] ~ dnorm( 0 , 1 ) ,
+    ba[country_id] ~ dnorm( 0 , 1 ) ,
+    bya[country_id] ~ dnorm( 0 , 1 ) ,
+    a[country_id] ~ dnorm(0, 1),
+    sigma ~ dexp(1)
+  ), data = df
+) 
+precis(m1.7.2,depth=2)
+
 
 labels1 <- paste( "a[" , 1:3 , "]:" , levels(df$country_labels) , sep="" )
 labels2 <- paste( "by[" , 1:3  , "]:" , levels(df$country_labels) , sep="" )
 labels3 <- paste( "ba[" , 1:3  , "]:" , levels(df$country_labels) , sep="" )
+labels4 <- paste( "bya[" , 1:3  , "]:" , levels(df$country_labels) , sep="" )
 
-precis_plot( precis( m1.7 , depth=2 , pars=c("ba","by","a")) , 
-             labels=c(labels2,labels3,labels1),xlab="qualification score" )
+
+precis_plot( precis( m1.7.2 , depth=2 , pars=c("ba","by","bya","a")) , 
+             labels=c(labels2,labels3,labels4,labels1),xlab="qualification score" )
 title("Model1.7 conditioned on age, yoe, and country")
 
-"The results generalize for US and Other country groups, but not for INDIA."
+"For model 1.7.1 the results generalize for US and Other country groups, but not for INDIA.
+For model 1.7.2 the results generalize only for US.
+"
+
+"OVERFITTING BY COUNTRY Model with interactions shows lower risk of overfitting"
+rethinking::compare(m1.7.2,m1.7.1, func=WAIC)
+#          WAIC    SE dWAIC  dSE pWAIC weight
+# m1.7.2 5320.2 43.75   0.0   NA  11.3   0.98
+# m1.7.1 5328.3 43.26   8.1 5.98   9.1   0.02
+rethinking::compare(m1.7.2,m1.7.1, func=PSIS)
+#          PSIS    SE dPSIS  dSE pPSIS weight
+# m1.7.2 5320.2 43.90   0.0   NA  11.3   0.98
+# m1.7.1 5328.3 43.29   8.1 5.83   9.1   0.02
