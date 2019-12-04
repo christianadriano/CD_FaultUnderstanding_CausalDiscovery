@@ -10,6 +10,12 @@ Models:
 m1.2 <- a + by*yoe (total effect of Years of experience)
 m1.3 <-  a+ ba*ages (total effect of age)
 
+m1.4 <-  a+ ba*ages +by*yoe
+m1.5.1 <-  a+ ba*ages +by*yoe + ba*by*yoe
+
+generalization by gender and country
+m1.6 <- a + by[gender_id]*yoe + ba[gender_id]*ages
+m1.7 <- a + by[country_id]*yoe + ba[country_id]*ages
 
 "
 
@@ -303,6 +309,9 @@ rethinking::compare(m1.5.1, m1.5.2, m1.5.3, m1.5.4, m1.4, func=WAIC)
 # m1.5.4 5343.6 43.02  22.8  8.77   3.2   0.00
 # m1.5.3 5470.0 39.55 149.2 23.40   2.5   0.00
 # m1.5.2 5470.7 39.61 150.0 23.41   3.3   0.00
+
+#Plotting models m1.4 and m1.5.1
+
 
 
 #-------------------------------------
