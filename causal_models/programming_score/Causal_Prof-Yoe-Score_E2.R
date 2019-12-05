@@ -43,7 +43,7 @@ m1.1 <- quap(
     sigma ~ dexp(1)
   ), data = df_E2
 ) 
-precis(m1.1)
+precis(m1.1, depth = 2)
 
 #Model-1.2 only Years of experience
 m1.2 <- quap(
