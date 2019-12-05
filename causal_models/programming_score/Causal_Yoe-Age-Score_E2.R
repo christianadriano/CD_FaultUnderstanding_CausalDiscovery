@@ -50,8 +50,8 @@ df <- df[minimum_age_minus_yoe,] #left with 2040 rows
 
 #----------------------
 #Scale and Rename fields to be easier to place in formulas
-df$yoe <- scale(df$years_programming)
-df$ages <- scale(df$age)
+df$yoe <- as.vector(scale(df$years_programming))
+df$ages <- as.vector(scale(df$age))
 
 boxplot(df$yoe)
 
@@ -343,7 +343,7 @@ Ages_median <- median(df$ages)
 
 #sample from the posterior distribution, and then compute
 #for each case in the data and sample from the posterior distribution.
-mu1stQ_1.4 <- link(m1.4, data = data.frame(yoe=Yoe_seq,ages=Ages_1stQ))
+mu <- link(m1.4, data = data.frame(yoe=Yoe_seq,ages=Ages_1stQ))
 #Compute vectors of means
 
 #-------------------------------------
