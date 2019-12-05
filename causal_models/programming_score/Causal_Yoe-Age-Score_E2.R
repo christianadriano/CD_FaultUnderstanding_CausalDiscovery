@@ -341,20 +341,22 @@ Ages_1stQ <- Ages_quantiles[1]
 Ages_3rdQ <- Ages_quantiles[3]
 Ages_median <- median(df$ages) 
 
+ages_set <- Ages_median
+
 #sample from the posterior distribution, and then compute
 #for each case in the data and sample from the posterior distribution.
-mu <- link(m1.4, data = data.frame(yoe=Yoe_seq,ages=Ages_median))
+mu <- link(m1.4, data = data.frame(yoe=Yoe_seq,ages=ages_set))
 #Compute vectors of means
 mu.mean = apply(mu,2,mean)
 mu.HPDI = apply(mu,2,HPDI, prob=0.89) #mean with highest posterior density interval
 
 #Simulates score by extracting from the posterior, but now also
 #considers the variance
-sim1.4 <- sim(m1.4, data=list(yoe=Yoe_seq, ages=Ages_median)) 
+sim1.4 <- sim(m1.4, data=list(yoe=Yoe_seq, ages=ages_set)) 
 score.PI = apply(sim1.4,2, PI, prob=0.89) #mean with the percentile intervals
 
 plot(score ~ yoe, df,col=col.alpha(rangi2,0.5)) #plot raw data
-title(paste("M1.4 posterior score ","yoe, 1stQ Ages"))
+title(paste("M1.4 posterior score ","yoe and 1stQ, 3rdQ, Median ages"))
 
 #plot the Map line and interval more visible
 lines(Yoe_seq,mu.mean)
@@ -364,6 +366,10 @@ shade(mu.HPDI,Yoe_seq)
 
 #plot the shaded region with 89% PI
 shade(score.PI,Yoe_seq)
+
+"Lines are mostly parallel, changing only a little bit the intercept.
+Age_1stQ being higher, Median in the middle, and Age_3rdQ lower."
+
 
 
 
