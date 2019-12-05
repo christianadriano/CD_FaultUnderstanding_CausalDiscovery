@@ -202,20 +202,30 @@ m1.4 <- quap(
     mu <- a + ba*ages + by*yoe,
     by ~ dnorm( 0 , 1 ) ,
     ba ~ dnorm( 0 , 1 ) ,
-    a ~ dnorm(0, 1),
+    a ~ dnorm( 0, 1 ),
     sigma ~ dexp(1)
   ), data = df
 ) 
 precis(m1.4)
+
+"Prior Simulation 
+ Value with prior variance= 1. Tried a range of values. 
+ Stricter priors with smaller than one values 0.5, 0.2, 0.1
+ Flatter priors with larger than one values 1, 5, 7, 9 
+ Model did not change with values larger than one, 
+ Approximation did not converge with values larger than 10 
+"
+#Value with priors variance = 1.0
 #        mean   sd  5.5% 94.5%
 # by     0.57 0.04  0.51  0.64
 # ba    -0.39 0.07 -0.51 -0.27
 # a      2.04 0.04  1.97  2.10
 # sigma  1.54 0.03  1.49  1.58
 
-"After deconfounding, we can see that the effects of yoe and age got clearer.
-The effect of yoe got stronger (by in m1.1 versus m1.4). The effect 
-of age got stronger and its credible interval outside zero (m1.1 versus m1.4)"
+"After deconfounding, we can see that the effects of yoe and 
+age got clearer. The effect of yoe got stronger (by in m1.1 
+versus m1.4). The effect of age got stronger and its credible 
+interval outside zero (m1.1 versus m1.4)"
 
 rethinking::compare(m1.1,m1.2,m1.4, func=PSIS) 
 #       PSIS    SE dPSIS   dSE pPSIS weight
