@@ -49,7 +49,7 @@ minimum_age_minus_yoe <- age_minus_yoe>=12
 df <- df[minimum_age_minus_yoe,] #left with 2040 rows
 
 #----------------------
-#Rename fields to be easier to place in formulas
+#Scale and Rename fields to be easier to place in formulas
 df$yoe <- scale(df$years_programming)
 df$ages <- scale(df$age)
 
@@ -240,9 +240,10 @@ rethinking::compare(m1.1,m1.2,m1.4, func=WAIC)
 
 
 #-----------------------------------------------------------
-"Analyse of Interactions. Does age also has an influence on 
-the strenght of the effect of yoe on score? We evaluate 
-interactions for analyze this hypothesis."
+"INTERACTIONS 
+- Does age also has an influence on the strenght of the effect of yoe on score? 
+- i.e., being of an older or younger age makes a same level of yoe count more or less towards the score?
+"
 m1.5.1 <- quap(
   alist(
     score ~ dnorm( mu , sigma ) ,
