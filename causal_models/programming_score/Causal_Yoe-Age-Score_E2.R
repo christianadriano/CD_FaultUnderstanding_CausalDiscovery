@@ -307,7 +307,9 @@ These models do not show that participants' age influence the effect of yoe on s
 we could not see any moderation effect of age.
 "
 
-"OVERFITTING Evaluation
+#---------------------
+"OVERFITTING 
+- How do models compare in terms of overfitting?
 Models with age, yoe,and interaction between yoe and age performed better both in terms 
 of parameters being  within credible intervals as well as presenting lower overfitting 
 measures (PSIC and WAIC, which agreed with other)."
