@@ -370,6 +370,45 @@ shade(score.PI,Yoe_seq)
 "Lines are mostly parallel, changing only a little bit the intercept.
 Age_1stQ being higher, Median in the middle, and Age_3rdQ lower."
 
+#Plotting models m1.4 and m1.5.1
+"Plot the Posterior with corresponding variance (shaded region)"
+
+#Generate simulated input data of yoe increment by one year
+ages_seq <- seq( from=min(df$ages) , to=max(df$ages) , by=1) 
+yoe_quantiles <- quantile(df$yoe)
+yoe_1stQ <- yoe_quantiles[1]
+yoe_3rdQ <- yoe_quantiles[3]
+yoe_median <- median(df$yoe) 
+
+yoe_fixed <- yoe_1stQ
+
+#sample from the posterior distribution, and then compute
+#for each case in the data and sample from the posterior distribution.
+mu <- link(m1.4, data = data.frame(ages=ages_seq,yoe=yoe_fixed))
+#Compute vectors of means
+mu.mean = apply(mu,2,mean)
+mu.HPDI = apply(mu,2,HPDI, prob=0.89) #mean with highest posterior density interval
+
+#Simulates score by extracting from the posterior, but now also
+#considers the variance
+sim1.4 <- sim(m1.4, data=list(ages=ages_seq, yoe=yoe_fixed)) 
+score.PI = apply(sim1.4,2, PI, prob=0.89) #mean with the percentile intervals
+
+plot(score ~ ages, df,col=col.alpha(rangi2,0.5)) #plot raw data
+title(paste("M1.4 posterior score ","ages and 1stQ, 3rdQ, Median yoe"))
+
+#plot the Map line and interval more visible
+lines(ages_seq,mu.mean)
+
+#plot the shaded region with 89% HPDI
+shade(mu.HPDI,ages_seq)
+
+#plot the shaded region with 89% PI
+shade(score.PI,ages_seq)
+
+"Lines are parallel going doin. The change was only a little bit the intercept.
+yoe_1stQ being lower than Median and yoe_3rdQ, which
+overlap, because median and 3rd quartile of yoe are almost the same."
 
 
 
