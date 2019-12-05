@@ -208,10 +208,11 @@ m1.4 <- quap(
 ) 
 precis(m1.4)
 #        mean   sd  5.5% 94.5%
-# by     0.20 0.03  0.15  0.26
-# ba    -0.13 0.03 -0.19 -0.08
-# a      2.44 0.03  2.40  2.50
-# sigma  0.69 0.02  0.66  0.73
+# by     0.57 0.04  0.51  0.64
+# ba    -0.39 0.07 -0.51 -0.27
+# a      2.04 0.04  1.97  2.10
+# sigma  1.54 0.03  1.49  1.58
+
 "After deconfounding, we can see that the effects of yoe and age got clearer.
 The effect of yoe got stronger (by in m1.1 versus m1.4). The effect 
 of age got stronger and its credible interval outside zero (m1.1 versus m1.4)"
@@ -314,9 +315,22 @@ rethinking::compare(m1.5.1, m1.5.2, m1.5.3, m1.5.4, m1.4, func=WAIC)
 # m1.5.3 5470.0 39.55 149.2 23.40   2.5   0.00
 # m1.5.2 5470.7 39.61 150.0 23.41   3.3   0.00
 
+#------------------------------------
+
 #Plotting models m1.4 and m1.5.1
+"Plot the Posterior with corresponding variance (shaded region)"
 
+#Generate simulated input data of yoe increment by one year
+Yoe_seq <- seq( from=min(df$yoe) , to=max(df$yoe) , by=1) 
+Ages_quantiles <- quantile(df$ages)
+Ages_1stQ <- Ages_quantiles[1]
+Ages_3stQ <- Ages_quantiles[3]
+Ages_median <- median(df$ages) 
 
+#sample from the posterior distribution, and then compute
+#for each case in the data and sample from the posterior distribution.
+mu1stQ_1.4 <- link(m1.4, data = data.frame(yoe=Yoe_seq,ages=Ages_1stQ))
+#Compute vectors of means
 
 #-------------------------------------
 "Generalization. Do these models generalize to subgroups of participants, or 
