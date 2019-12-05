@@ -338,13 +338,34 @@ rethinking::compare(m1.5.1, m1.5.2, m1.5.3, m1.5.4, m1.4, func=WAIC)
 Yoe_seq <- seq( from=min(df$yoe) , to=max(df$yoe) , by=1) 
 Ages_quantiles <- quantile(df$ages)
 Ages_1stQ <- Ages_quantiles[1]
-Ages_3stQ <- Ages_quantiles[3]
+Ages_3rdQ <- Ages_quantiles[3]
 Ages_median <- median(df$ages) 
 
 #sample from the posterior distribution, and then compute
 #for each case in the data and sample from the posterior distribution.
-mu <- link(m1.4, data = data.frame(yoe=Yoe_seq,ages=Ages_1stQ))
+mu <- link(m1.4, data = data.frame(yoe=Yoe_seq,ages=Ages_median))
 #Compute vectors of means
+mu.mean = apply(mu,2,mean)
+mu.HPDI = apply(mu,2,HPDI, prob=0.89) #mean with highest posterior density interval
+
+#Simulates score by extracting from the posterior, but now also
+#considers the variance
+sim1.4 <- sim(m1.4, data=list(yoe=Yoe_seq, ages=Ages_median)) 
+score.PI = apply(sim1.4,2, PI, prob=0.89) #mean with the percentile intervals
+
+plot(score ~ yoe, df,col=col.alpha(rangi2,0.5)) #plot raw data
+title(paste("M1.4 posterior score ","yoe, 1stQ Ages"))
+
+#plot the Map line and interval more visible
+lines(Yoe_seq,mu.mean)
+
+#plot the shaded region with 89% HPDI
+shade(mu.HPDI,Yoe_seq)
+
+#plot the shaded region with 89% PI
+shade(score.PI,Yoe_seq)
+
+
 
 #-------------------------------------
 "Generalization. Do these models generalize to subgroups of participants, or 
