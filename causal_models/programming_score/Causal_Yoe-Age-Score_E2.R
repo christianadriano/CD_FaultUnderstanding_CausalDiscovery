@@ -167,8 +167,8 @@ m1.2 <- quap(
   alist(
     score ~ dnorm( mu , sigma ) ,
     mu <- a+ ba*ages,
-    ba ~ dnorm( 0 , 0.5 ) ,
-    a ~ dnorm(0, 0.5),
+    ba ~ dnorm( 0 , 1 ) ,
+    a ~ dnorm(0, 1 ),
     sigma ~ dexp(1)
   ), data = df
 ) 
@@ -208,12 +208,12 @@ m1.4 <- quap(
 ) 
 precis(m1.4)
 
-"Prior Simulation 
+"Prior Simulation for m1.4 and m1.5.1
  Value with prior variance= 1. Tried a range of values. 
  Stricter priors with smaller than one values 0.5, 0.2, 0.1
  Flatter priors with larger than one values 1, 5, 7, 9 
- Model did not change with values larger than one, 
- Approximation did not converge with values larger than 10 
+ Coefficients did not change with values larger than one. 
+ Approximation did not converge with values larger than 10. 
 "
 #Value with priors variance = 1.0
 #        mean   sd  5.5% 94.5%
@@ -239,17 +239,18 @@ rethinking::compare(m1.1,m1.2,m1.4, func=WAIC)
 # m1.2 5505.2 38.49 175.0 24.27   2.5      0
 
 
-#------------------------------------
-"Analyse of Interactions. Does age also has an influence on the strenght of the 
-effect of yoe on score? We evaluate interactions for analyze this hypothesis."
+#-----------------------------------------------------------
+"Analyse of Interactions. Does age also has an influence on 
+the strenght of the effect of yoe on score? We evaluate 
+interactions for analyze this hypothesis."
 m1.5.1 <- quap(
   alist(
     score ~ dnorm( mu , sigma ) ,
     mu <- a + bya*yoe*ages +ba*ages +by*yoe,
-    bya ~ dnorm( 0 , 0.5 ) ,
-    ba ~ dnorm( 0 , 0.5 ) ,
-    by ~ dnorm( 0 , 0.5 ) ,
-    a ~ dnorm(0, 0.5),
+    bya ~ dnorm( 0 , 1 ) ,
+    ba ~ dnorm( 0 , 1 ) ,
+    by ~ dnorm( 0 , 1 ) ,
+    a ~ dnorm( 0, 1 ),
     sigma ~ dexp(1)
   ), data = df
 ) 
@@ -259,9 +260,9 @@ m1.5.2 <- quap(
   alist(
     score ~ dnorm( mu , sigma ) ,
     mu <- a + bya*yoe*ages +ba*ages,
-    bya ~ dnorm( 0 , 0.5 ) ,
-    ba ~ dnorm( 0 , 0.5 ) ,
-    a ~ dnorm(0, 0.5),
+    bya ~ dnorm( 0 , 1.0 ) ,
+    ba ~ dnorm( 0 , 1.0 ) ,
+    a ~ dnorm( 0, 1.0 ),
     sigma ~ dexp(1)
   ), data = df
 ) 
@@ -273,8 +274,8 @@ m1.5.3 <- quap(
   alist(
     score ~ dnorm( mu , sigma ) ,
     mu <- a + bya*yoe*ages,
-    bya ~ dnorm( 0 , 0.5 ) ,
-    a ~ dnorm(0, 0.5),
+    bya ~ dnorm( 0 , 1.0 ) ,
+    a ~ dnorm(0, 1.0 ),
     sigma ~ dexp(1)
   ), data = df
 ) 
@@ -285,9 +286,9 @@ m1.5.4 <- quap(
   alist(
     score ~ dnorm( mu , sigma ) ,
     mu <- a + bya*yoe*ages + by*yoe,
-    bya ~ dnorm( 0 , 0.5 ) ,
-    by ~ dnorm( 0 , 0.5 ) ,
-    a ~ dnorm(0, 0.5),
+    bya ~ dnorm( 0 , 1.0 ) ,
+    by ~ dnorm( 0 , 1.0 ) ,
+    a ~ dnorm(0, 1.0 ),
     sigma ~ dexp(1)
   ), data = df
 )
