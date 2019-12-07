@@ -13,9 +13,11 @@ m1.3 <-  a+ ba*ages (total effect of age)
 m1.4 <-  a+ ba*ages +by*yoe
 m1.5.1 <-  a+ ba*ages +by*yoe + ba*by*yoe
 
-generalization by gender and country
+generalization by gender, country, and profession
 m1.6 <- a + by[gender_id]*yoe + ba[gender_id]*ages
 m1.7 <- a + by[country_id]*yoe + ba[country_id]*ages
+m1.8 <- a + by[profession_id]*yoe + ba[profession_id]*ages
+
 
 Overfitting - computed WAIC and PSIS
 
@@ -529,3 +531,68 @@ rethinking::compare(m1.7.2,m1.7.1, func=PSIS)
 #          PSIS    SE dPSIS  dSE pPSIS weight
 # m1.7.2 5320.2 43.90   0.0   NA  11.3   0.98
 # m1.7.1 5328.3 43.29   8.1 5.83   9.1   0.02
+
+#-----------
+#PROFESSION
+#Conditioning both on Age and YoE and on Profession (indicador variable)
+m1.8.1 <- quap(
+  alist(
+    score ~ dnorm( mu , sigma ) ,
+    mu <- a[profession_id] + ba[profession_id]*ages + by[profession_id]*yoe,
+    by[profession_id] ~ dnorm( 0 , 1 ) ,
+    ba[profession_id] ~ dnorm( 0 , 1 ) ,
+    a[profession_id] ~ dnorm(0, 1),
+    sigma ~ dexp(1)
+  ), data = df
+) 
+precis(m1.8.1,depth=2)
+
+m1.8.2 <- quap(
+  alist(
+    score ~ dnorm( mu , sigma ) ,
+    mu <- a[profession_id] + ba[profession_id]*ages + by[profession_id]*yoe + bya[profession_id]*yoe*ages,
+    by[profession_id] ~ dnorm( 0 , 1 ) ,
+    ba[profession_id] ~ dnorm( 0 , 1 ) ,
+    bya[profession_id] ~ dnorm( 0 , 1 ) ,
+    a[profession_id] ~ dnorm(0, 1),
+    sigma ~ dexp(1)
+  ), data = df
+) 
+precis(m1.8.2,depth=2)
+
+
+labels1 <- paste( "a[" , 1:5 , "]:" , levels(df$profession) , sep="" )
+labels2 <- paste( "by[" , 1:5  , "]:" , levels(df$profession) , sep="" )
+labels3 <- paste( "ba[" , 1:5  , "]:" , levels(df$profession) , sep="" )
+labels4 <- paste( "bya[" , 1:5  , "]:" , levels(df$profession) , sep="" )
+
+
+precis_plot( precis( m1.8.1 , depth=2 , pars=c("ba","by","a")) , 
+             labels=c(labels2,labels3,labels1),xlab="qualification score" )
+title("Model1.8.1 conditioned on age, yoe, and profession")
+
+
+precis_plot( precis( m1.8.2 , depth=2 , pars=c("ba","by","bya","a")) , 
+             labels=c(labels2,labels3,labels4,labels1),xlab="qualification score" )
+title("Model1.8.2 interaction model conditioned on age, yoe, and profession")
+
+"For model 1.8.1 and 1.8.2 the results generalize for all professions except Graduate Students (by crosses zero)
+and Professionals ba crosses zero. These means that age is not a factor for professionals, whereas
+years of experience is not a factor for graduates.
+
+Concerning the interaction terms in 1.8.2, the coefficients for Graduates and Others cross zero. 
+For all other professions the credible interval for the interaction coefficient is on a negative side.
+
+Note that for all the other coeficients and professions that do not cross zero, their variance 
+overlaps, so we cannot say that age or yoe has a strong effect for certain professions.
+"
+
+"OVERFITTING BY profession Model with interactions shows lower risk of overfitting"
+rethinking::compare(m1.8.2,m1.8.1, func=WAIC)
+#          WAIC    SE dWAIC   dSE pWAIC weight
+# m1.8.2 5234.0 44.89   0.0    NA  18.1      1
+# m1.8.1 5257.5 44.44  23.5 10.17  15.3      0
+rethinking::compare(m1.8.2,m1.8.1, func=PSIS)
+#          PSIS    SE dPSIS   dSE pPSIS weight
+# m1.8.2 5234.0 44.99   0.0    NA  18.3      1
+# m1.8.1 5257.1 44.25  23.1 10.13  15.1      0
