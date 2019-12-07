@@ -17,8 +17,9 @@ generalization by gender and country
 m1.6 <- a + by[gender_id]*yoe + ba[gender_id]*ages
 m1.7 <- a + by[country_id]*yoe + ba[country_id]*ages
 
+Overfitting - computed WAIC and PSIS
 
-TODO: plot the posterior HPDI and PI both models 1.4 and 1.5.1
+Posterior - plotted the posterior HPDI and PI both models 1.4 and 1.5.1
 
 
 "
