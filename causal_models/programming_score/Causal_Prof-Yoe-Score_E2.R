@@ -2,8 +2,8 @@
 Causal models that include Profession (Prf) and Years of Programming Experience (Yoe)
 as covariates of the Programming Score obtained in the qualification test.
 
-The goal of the current study is Is there any additional value in knowing a variable, once I already know all of
-the other predictor variables?
+The goal of the current study is to know 
+If there is any additional value in knowing a variable, once I already know all of the other predictor variables?
 
 So for example once you fit a multiple regression to predict programming score using both
 years of experience and profession category, my model addresses the following questions:
