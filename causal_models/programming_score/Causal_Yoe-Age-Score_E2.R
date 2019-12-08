@@ -32,7 +32,7 @@ library(dplyr)
 library(ggdag)
 library( dagitty )
 library (ggm)
-library(loo) #for running WAIC and Pareto-Smooth Leave One Out Cross-Validation
+#library(loo) #for running WAIC and Pareto-Smooth Leave One Out Cross-Validation
 library(mvtnorm)
 library(devtools)
 
@@ -468,6 +468,14 @@ Model 1.6.2 generalizes only for male gender group. For all others and
 across the coeficient ba, by, and bya, the estimated values cross the zero
 in the credible interval.
 "
+
+"Regarding Male and Female participantes,the coefficients by, ba, and bya 
+do not cross zero, but their variance range overlap. So we cannot interpret as
+gender male or female having distinct impact on score through the coefficients.
+However, the intercepts for Male and Female do not overlap and Male has a is 
+higher intercept, which means that Males start with a higher score on average than
+the Female participants"
+
 "OVERFITTING BY GENDER. Model with interactions shows lower risk of overfitting"
 rethinking::compare(m1.6.2,m1.6.1, func=WAIC)
 #          WAIC    SE dWAIC  dSE pWAIC weight
