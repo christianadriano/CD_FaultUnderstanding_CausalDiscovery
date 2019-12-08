@@ -5,6 +5,7 @@ Load CONSENT data from E2 and create indexes for: profession, qualification_scor
 library(farff)
 library(ggplot2)
 library(dplyr)
+library(tidyr)
 
 path <- "C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data//"
 dataset_E2 <- readARFF(paste0(path, "consent_consolidated_Experiment_2.arff"))
@@ -147,3 +148,7 @@ df_E2$country_id<- factor(df_E2$country_labels,
                           levels=levels(df_E2$country_labels),
                           labels = c(1:3)
 )
+
+#TEST DURATION
+df_E2$testDuration_minutes <- df_E2$testDuration/(1000*60)
+
