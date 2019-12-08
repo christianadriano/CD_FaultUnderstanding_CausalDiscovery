@@ -606,7 +606,46 @@ For all other professions the credible interval for the interaction coefficient 
 
 Note that for all the other coeficients and professions that do not cross zero, their variance 
 overlaps, so we cannot say that age or yoe has a strong effect for certain professions.
+
+Regarding intercepts, except for Professional Developer, all other
+overlap. Hence profession has a distinct effect on score only if the
+person is either a professional developer or nor. 
+
+To compute the magnitude of the effect, we approximated a new
+model. 1.8.3 that considers only these two groups professionals or not.
+
 "
+#Creates new identifiers for professsional (1) or non-professional (2)
+df$is_professional_id <- sapply(df$profession_id,function(x){ ifelse(x==1,1,2)})
+
+m1.8.3 <- quap(
+  alist(
+    score ~ dnorm( mu , sigma ) ,
+    mu <- a[is_professional_id] + ba[is_professional_id]*ages + by[is_professional_id]*yoe,
+    by[is_professional_id] ~ dnorm( 0 , 1 ) ,
+    ba[is_professional_id] ~ dnorm( 0 , 1 ) ,
+    a[is_professional_id] ~ dnorm(0, 1),
+    sigma ~ dexp(1)
+  ), data = df
+) 
+precis(m1.8.3,depth=2)
+
+m1.8.4 <- quap(
+  alist(
+    score ~ dnorm( mu , sigma ) ,
+    mu <- a[is_professional_id] + ba[is_professional_id]*ages + by[is_professional_id]*yoe +bya[is_professional_id]*yoe*ages,
+    by[is_professional_id] ~ dnorm( 0 , 1 ) ,
+    ba[is_professional_id] ~ dnorm( 0 , 1 ) ,
+    bya[is_professional_id] ~ dnorm( 0 , 1 ) ,
+    a[is_professional_id] ~ dnorm(0, 1),
+    sigma ~ dexp(1)
+  ), data = df
+) 
+precis(m1.8.4,depth=2)
+
+"Looking at the intercepts for m1.8.3 and m1.8.4, their CI do not overlap. 
+The difference between the intercepts is about half point (0.5 in m1.8.3 and 0.44 in m1.84)."
+
 
 "OVERFITTING BY profession Model with interactions shows lower risk of overfitting"
 rethinking::compare(m1.8.2,m1.8.1, func=WAIC)
