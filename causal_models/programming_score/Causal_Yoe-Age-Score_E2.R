@@ -534,8 +534,13 @@ precis_plot( precis( m1.7.2 , depth=2 , pars=c("ba","by","bya","a")) ,
              labels=c(labels2,labels3,labels4,labels1),xlab="qualification score" )
 title("Model1.7 conditioned on age, yoe, and country")
 
-"For model 1.7.1 the results generalize for US and Other country groups, but not for INDIA.
-For model 1.7.2 the results generalize only for US.
+"For models 1.7.1 and 1.7.2
+the CI for by does not cross zero only for US and Other country groups.
+the CI for ba and bya do not cross zero only for US
+
+Even though the CI of the intercepts 'a' for all countries do not cross zero, 
+their CIs overlap. Hence, we cannot say depending on country of origin the person 
+would have a distinct fixed initial effect on score.
 "
 
 "OVERFITTING BY COUNTRY Model with interactions shows lower risk of overfitting"
