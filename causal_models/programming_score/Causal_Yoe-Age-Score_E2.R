@@ -455,26 +455,34 @@ labels3 <- paste( "ba[" , 1:3  , "]:" , levels(df$gender) , sep="" )
 labels4 <- paste( "bya[" , 1:3  , "]:" , levels(df$gender) , sep="" )
 
 
-precis_plot( precis( m1.6.2 , depth=2 , pars=c("by","ba","bya","a")) , 
-             labels=c(labels2,labels3,labels4,labels1),xlab="qualification score" )
+precis_plot( precis( m1.6.1 , depth=2 , pars=c("by","ba","bya","a")) , 
+             labels=c(labels2,labels3,labels1),xlab="qualification score" )
 title("Model1.6 conditioned on age, yoe, and gender")
 
-"Model 1.6.1 generalize for male and female gender groups, as
-the coeficients for yoe and age are respectively non-negative and 
-non-positive (Table-x). This is not true for the prefer_not_tell group, 
-maybe because it contained only 5 participants.
+"Model 1.6.1 and Model 1.6.2
+Regarding male and female gender groups, the credible interval for 
+coefficients by, ba, a do cross zero. Moreover, the sign of these coefficients
+is the same as seen in the models for the whole participants (m1.4 and m1.5.1).
+In this sense, we interpret that the model generalizes within male and female gender.
 
-Model 1.6.2 generalizes only for male gender group. For all others and
-across the coeficient ba, by, and bya, the estimated values cross the zero
-in the credible interval.
+Concerning the interaction term coefficient bya, its credible intervals crosses zero
+for all genders, but Male. Hence, we can only suggest that the interaction model
+generalizes only for male participants.
+
+Regarding the groups Other and Prefer_not_tell, the coefficients for by and ba
+cross the zero for m1.6.1 and m1.6.2. The intercepts do not cross, but 
+they overlap their credible interval for these two groups.
 "
 
-"Regarding Male and Female participantes,the coefficients by, ba, and bya 
-do not cross zero, but their variance range overlap. So we cannot interpret as
-gender male or female having distinct impact on score through the coefficients.
-However, the intercepts for Male and Female do not overlap and Male has a is 
-higher intercept, which means that Males start with a higher score on average than
-the Female participants"
+"
+Regarding effect of gender on score, we can only analyze the effect of Male and Female,
+because the CI of by, ba, and a do not cross zero. Does being male or female has distinct 
+effect on the score? For by and ba we cannot tell because the CI for these coefficient
+overlap. However, the intercepts 'a' for Male and Female do not overlap. Male intercept
+has a is higher intercept. This means that Males start with a higher score on average than
+the Female participants. Nonetheless this head start is of only 0.3 points of score in both
+models m1.6.1 and m1.6.2, which is only 0.1 point larger than the size of the credible
+interval for these intercept coefficients. "
 
 "OVERFITTING BY GENDER. Model with interactions shows lower risk of overfitting"
 rethinking::compare(m1.6.2,m1.6.1, func=WAIC)
