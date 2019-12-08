@@ -10,8 +10,10 @@ Models:
 m1.2 <- a + by*yoe (total effect of Years of experience)
 m1.3 <-  a+ ba*ages (total effect of age)
 
-m1.4 <-  a+ ba*ages +by*yoe
-m1.5.1 <-  a+ ba*ages +by*yoe + ba*by*yoe
+m1.4.1 <-  a+ ba*ages +by*yoe
+m1.4.2 <-  a+ ba*ages +by*yoe +bd*testDuration
+m1.5.1 <-  a+ ba*ages +by*yoe + bya*ages*yoe
+m1.5.1.2 <-  a+ ba*ages +by*yoe + bya*ages*yoe + bdy*testDuration*yoe + bda*testDuration*ages + bdya*testDuration*ages*yoe
 
 generalization by gender, country, and profession
 m1.6 <- a + by[gender_id]*yoe + ba[gender_id]*ages
@@ -23,6 +25,8 @@ Overfitting - computed WAIC and PSIS
 
 Posterior - plotted the posterior HPDI and PI both models 1.4 and 1.5.1
 
+Note however that we would expect that duration (as well as other variables) are 
+not linear with score increase...
 
 "
 
@@ -35,12 +39,13 @@ library (ggm)
 #library(loo) #for running WAIC and Pareto-Smooth Leave One Out Cross-Validation
 library(mvtnorm)
 library(devtools)
+library(tidyr)
 
 #Load data
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//load_consent_create_indexes_E2.R")
 
-"Remove participants for whom we do not have years of experience information  (who did not complete the survey)"
-df <- df_E2[complete.cases(df_E2[,"years_programming"]),] #initial 3657, left with 2062 rows
+"Remove participants for whom we did not have years of experience information (who did not complete the survey)"
+df <- df_E2 %>% drop_na(years_programming) #initial 3567, left with 2062 rows
 
 "Outlier in Age. Removing participants who reported to be below 18 years old."
 df <- df[df$age>=18,] #removed one, left with 2061 rows
@@ -114,13 +119,15 @@ age being a confounder. "
 
 #-------------------------------------------------------------
 
-"Remove people who did no qualify to the test (score<2)"
-df <- df[complete.cases(df[,"qualification_score"]),]
+"Remove people who did take the test"
+df <- df[complete.cases(df[,"qualification_score"]),] #left with 1420
 "Scale score and rename"
 df$score <- df$qualification_score #scale(df$qualification_score)
 table(df$score)
 #Score         0   1   2   3   4   5 
-#Participants 240 402 280 157 158 183 
+#Participants 240 402 280 157 158 183
+
+"Remove people who did no qualify to the test (score<2)"
 df_qualified <- df[df$score>=3,]
 table(df_qualified$score)
 
@@ -199,7 +206,7 @@ rethinking::compare(m1.1,m1.2, func=WAIC)
 # m1.2 5425.1 38.61   141 20.79   2.5      0
 
 #Conditioning both on Age and YoE
-m1.4 <- quap(
+m1.4.1 <- quap(
   alist(
     score ~ dnorm( mu , sigma ) ,
     mu <- a + ba*ages + by*yoe,
@@ -209,7 +216,64 @@ m1.4 <- quap(
     sigma ~ dexp(1)
   ), data = df
 ) 
-precis(m1.4)
+precis(m1.4.1)
+
+#        mean   sd  5.5% 94.5%
+# by     0.64 0.05  0.56  0.71
+# ba    -0.46 0.08 -0.58 -0.33
+# a      1.95 0.04  1.88  2.02
+# sigma  1.48 0.03  1.43  1.53
+
+
+#-----------------
+"TEST DURATION"
+"Outliers in DURATION"
+"Code comprehension studies show that a programmer takes from 12 to 24 seconds is also the 
+average minimum time to read one line of code."
+
+"The lower cut to the minimum time to read all 5 questions and corresponding lines of code
+in the qualification test. 
+ Since the test has 5 questions, each question 
+requires the inspection of one line of code, that would require the programmer from 60s to 120s.
+We chose 60s (1 min) as the minimum time-effort one need to read and answer all 5 questions"
+
+df <- df[df$testDuration_minutes<=12 & df$testDuration_minutes>=1 ,]
+boxplot(df$testDuration_minutes)
+summary(df$testDuration_minutes)
+#   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+# 1.000   3.329   5.372   7.267   9.080  41.703
+
+
+#Conditioning both on Age and YoE and testDuration
+m1.4.2 <- quap(
+  alist(
+    score ~ dnorm( mu , sigma ) ,
+    mu <- a + ba*ages + by*yoe + bd*testDuration_minutes,
+    by ~ dnorm( 0 , 1 ) ,
+    ba ~ dnorm( 0 , 1 ) ,
+    bd <- dnorm( 0 , 1 ) ,
+    a ~ dnorm( 0, 1 ),
+    sigma ~ dexp(1)
+  ), data = df
+) 
+precis(m1.4.2)
+
+#
+#        mean   sd  5.5% 94.5%
+# by     0.60 0.05  0.53  0.67
+# ba    -0.51 0.08 -0.63 -0.39
+# bd     0.15 0.02  0.12  0.18
+# a      1.25 0.09  1.12  1.39
+# sigma  1.43 0.03  1.38  1.48
+
+"All coefficients CI do not cross zero. 
+Particularly about duration coefficient, all other variables fixed, for every minute the
+person gains 0.15 points. So on average, to increase one point it would be necessary to
+spend 6.67 minutes more. 
+
+Note however that we would expect that duration (as well as other variables) are 
+not linear with score increase...
+"
 
 "Prior Simulation for m1.4 and m1.5.1
  Value with prior variance= 1. Tried a range of values. 
