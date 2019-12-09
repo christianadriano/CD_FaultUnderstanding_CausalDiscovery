@@ -175,6 +175,27 @@ precis(m_age_yoe.profession, depth = 2)
 # sigma  0.87 0.01  0.85  0.90
 
 
+"---------
+COUNTRY - Is age related to yoe across countries? Except for India, the coefficients for US and 
+the third group of countries are respectively 0.7 and 0.81 and their CI do not cross zero.
+However, they overlap. Hence, we could only distinguish between these two groups of countries.
+"
+m_age_yoe.country <- quap(
+  alist(
+    yoe ~ dnorm( mu , sigma ) ,
+    mu <- a + ba[country_id]*ages,
+    ba[country_id] ~ dnorm( 0 , 1 ) ,
+    a ~ dnorm(0, 1),
+    sigma ~ dexp(1)
+  ), data = df
+) 
+precis(m_age_yoe.country, depth = 2)
+#       mean   sd  5.5% 94.5%
+# ba[1] 0.70 0.03  0.65  0.76
+# ba[2] 0.02 0.03 -0.02  0.06
+# ba[3] 0.81 0.22  0.45  1.16
+# a     0.00 0.02 -0.04  0.03
+# sigma 0.90 0.01  0.88  0.93
 
 
 #-------------------------------------------------------------
