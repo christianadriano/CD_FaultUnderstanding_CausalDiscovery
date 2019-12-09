@@ -92,10 +92,20 @@ adjustmentSets(dag1.1,exposure = "age",outcome = "score",effect = c("direct"))
 adjustmentSets(dag1.1,exposure = "yoe",outcome = "score",effect = c("direct"))
 #{ age } because age is a confounder
 
+-------------------------
+"AGE > YOE
+First look a dependency between yoe and age. 
+Does an increase in age relates to an increase in yoe?
+Does this happen across different categories:
+gender, profession, country?
 
+Results:
+m_age_yoe <- a + ba*ages (for every one age year, there is 0.27 yoe)
+m_age_yoe.gender 
+"
 
-#Are Age and YoE correlated? YES!
-m_correl <- quap(
+#Age > Yoe, Does an increase in age relates to an increase in yoe? YES
+m_age_yoe <- quap(
   alist(
     yoe ~ dnorm( mu , sigma ) ,
     mu <- a + ba*ages,
@@ -104,24 +114,23 @@ m_correl <- quap(
     sigma ~ dexp(1)
   ), data = df
 ) 
-precis(m_correl)
+precis(m_age_yoe)
   # mean   sd  5.5% 94.5%
   # ba    0.27 0.02  0.24  0.30
   # a     0.00 0.02 -0.03  0.03
   # sigma 0.96 0.02  0.94  0.99
 
-"The slope that explain yoe by ages has non-zero value in the credible interval. 
-The mean of the slope correspond to a weak correlation strenght 
-(scale from 0.1 to 0.3). This slope ba=0.27 tells that for each year of age there is 
-an average gain of 3 months of Yoe (0.27 year). Now we looked at the possibility of
-age being a confounder. "
-
+"The slope of 0.27 explain yoe by ages has non-zero value in the credible interval. 
+To have a sense of how strong this is, the Kendall correlation was 0.21 (z = 12.956, p<0.05),
+which is a weak correlation strenght(scale from 0.1 to 0.3)." 
 
 #Generalization across categories
 
-#GENDER - Are Age and YoE correlated? Yes, slightly stronger for males (0.28) 
-#than females (0.25). However, they are not distinguishable as the CI's overlap
-m_correl.gender <- quap(
+ 
+"-------
+GENDER - Is age related to yoe across genders? Yes, slightly stronger for males (0.28) 
+than females (0.25). However, they are not distinguishable as the CI's overlap"
+m_age_yoe.gender <- quap(
   alist(
     yoe ~ dnorm( mu , sigma ) ,
     mu <- a + ba[gender_id]*ages,
@@ -130,7 +139,7 @@ m_correl.gender <- quap(
     sigma ~ dexp(1)
   ), data = df
 ) 
-precis(m_correl.gender, depth = 2)
+precis(m_age_yoe.gender, depth = 2)
 #        mean   sd  5.5% 94.5%
 # ba[1]  0.25 0.05  0.17  0.34
 # ba[2]  0.28 0.02  0.24  0.32
@@ -139,9 +148,14 @@ precis(m_correl.gender, depth = 2)
 # a      0.00 0.02 -0.03  0.03
 # sigma  0.96 0.02  0.94  0.99
 
-#PROFESSION - Are Age and YoE correlated? Yes, it much slightly stronger for males (0.28) 
-#than females (0.25). However, they are not distinguishable as the CI's overlap
-m_correl.profession <- quap(
+"---------
+PROFESSION - Is age related to yoe across genders? Yes, it the strongest by professionals (1.74),
+Hobbyists (0.59), then undergrads (0.37), graduates (0.27), and others (0.07).
+While for professionals and all others categories the CI do not overlap, the CI overlaps among the
+the not-professional developer categories. Hence, we could only distinguish between these two
+groups of profession.
+"
+m_age_yoe.profession <- quap(
   alist(
     yoe ~ dnorm( mu , sigma ) ,
     mu <- a + ba[profession_id]*ages,
@@ -150,14 +164,15 @@ m_correl.profession <- quap(
     sigma ~ dexp(1)
   ), data = df
 ) 
-precis(m_correl.profession, depth = 2)
+precis(m_age_yoe.profession, depth = 2)
 #        mean   sd  5.5% 94.5%
-# ba[1]  0.25 0.05  0.17  0.34
-# ba[2]  0.28 0.02  0.24  0.32
-# ba[3]  0.24 0.45 -0.47  0.96
-# ba[4] -0.08 0.18 -0.36  0.21
-# a      0.00 0.02 -0.03  0.03
-# sigma  0.96 0.02  0.94  0.99
+# ba[1]  1.74 0.08  1.61  1.87
+# ba[2]  0.59 0.05  0.51  0.68
+# ba[3]  0.27 0.11  0.10  0.44
+# ba[4]  0.37 0.06  0.27  0.47
+# ba[5]  0.07 0.02  0.03  0.10
+# a     -0.03 0.02 -0.06  0.00
+# sigma  0.87 0.01  0.85  0.90
 
 
 
