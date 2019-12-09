@@ -117,6 +117,51 @@ an average gain of 3 months of Yoe (0.27 year). Now we looked at the possibility
 age being a confounder. "
 
 
+#Generalization across categories
+
+#GENDER - Are Age and YoE correlated? Yes, slightly stronger for males (0.28) 
+#than females (0.25). However, they are not distinguishable as the CI's overlap
+m_correl.gender <- quap(
+  alist(
+    yoe ~ dnorm( mu , sigma ) ,
+    mu <- a + ba[gender_id]*ages,
+    ba[gender_id] ~ dnorm( 0 , 1 ) ,
+    a ~ dnorm(0, 1),
+    sigma ~ dexp(1)
+  ), data = df
+) 
+precis(m_correl.gender, depth = 2)
+#        mean   sd  5.5% 94.5%
+# ba[1]  0.25 0.05  0.17  0.34
+# ba[2]  0.28 0.02  0.24  0.32
+# ba[3]  0.24 0.45 -0.47  0.96
+# ba[4] -0.08 0.18 -0.36  0.21
+# a      0.00 0.02 -0.03  0.03
+# sigma  0.96 0.02  0.94  0.99
+
+#PROFESSION - Are Age and YoE correlated? Yes, it much slightly stronger for males (0.28) 
+#than females (0.25). However, they are not distinguishable as the CI's overlap
+m_correl.profession <- quap(
+  alist(
+    yoe ~ dnorm( mu , sigma ) ,
+    mu <- a + ba[profession_id]*ages,
+    ba[profession_id] ~ dnorm( 0 , 1 ) ,
+    a ~ dnorm(0, 1),
+    sigma ~ dexp(1)
+  ), data = df
+) 
+precis(m_correl.profession, depth = 2)
+#        mean   sd  5.5% 94.5%
+# ba[1]  0.25 0.05  0.17  0.34
+# ba[2]  0.28 0.02  0.24  0.32
+# ba[3]  0.24 0.45 -0.47  0.96
+# ba[4] -0.08 0.18 -0.36  0.21
+# a      0.00 0.02 -0.03  0.03
+# sigma  0.96 0.02  0.94  0.99
+
+
+
+
 #-------------------------------------------------------------
 
 "Remove people who did take the test"
