@@ -7,10 +7,17 @@ library(stringr)
 library(dplyr)
 
 #Load data
-source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//load_create_indexes_E2.R")
+source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//load_consent_create_indexes_E2.R")
 
-df_E2$yoe <- scale(df_E2$years_programming)
-df_E2$ages <- scale(df_E2$age)
+dim(df_E2) #3657   32
+
+#Remove participants for which we do not have years_programming
+df <- df_E2 %>% drop_na(years_programming) #initial 3567, left with 2062 rows
+
+df$yoe <- scale(df$years_programming)
+df$ages <- scale(df$age)
+
+dim(df) #2062 32 Reduced 1595 rows
 
 #-----------------
 "OUTLIERS in DURATION"
@@ -21,10 +28,16 @@ average minimum time to read one line of code."
 in the qualification test. 
  Since the test has 5 questions, each question 
 requires the inspection of one line of code, that would require the programmer from 60s to 120s.
-We chose 60s (1 min) as the minimum time-effort one need to read and answer all 5 questions"
+We chose 120s (2 min) as the minimum time-effort one need to read and answer all 5 questions"
 
-#The upper cut corresponds to 3 times the minimum. We choose 24s, so 60 min.
+#The upper cut corresponds to 10 times the minimum. We choose 24s, so 60 min.
 
-df_E2_aux <- df_E2[df_E2$testDuration_minutes<=12 & df_E2$testDuration_minutes>=1 ,]
-boxplot(df_E2_aux$testDuration_minutes)
-summary(df_E2_aux$testDuration_minutes)
+df <- df[df$testDuration_minutes<=20 & df$testDuration_minutes>=2 ,]
+dim(df_E2) #1732   32
+
+#Remove participants for whom we do not have test duration
+df <- df %>% drop_na(testDuration_minutes)
+dim(df) #1108   32
+
+boxplot(df$testDuration_minutes)
+summary(df$testDuration_minutes)
