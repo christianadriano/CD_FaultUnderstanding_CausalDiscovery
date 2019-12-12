@@ -41,3 +41,62 @@ dim(df) #1108   32
 
 boxplot(df$testDuration_minutes)
 summary(df$testDuration_minutes)
+
+#-------------------------
+"YOE + AGE > Duration
+Does an increase in age relates to an increase in duration
+Does an increase in yoe relates to an increase in duration
+Does this happen across different categories:
+gender, profession, country?
+
+Results:
+m_age_yoe <- a + ba*ages (for every one age year, there is 0.27 yoe)
+m_age_yoe.gender 
+"
+
+m1.ages.yoe <- quap(
+  alist(
+    testDuration_minutes ~ dnorm( mu , sigma ) ,
+    mu <- a + ba*ages + by*yoe,
+    ba ~ dnorm( 0 , 1 ) ,
+    by ~ dnorm( 0 , 1 ) ,
+    a ~ dnorm(0, 1),
+    sigma ~ dexp(1)
+  ), data = df
+) 
+precis(m1.ages.yoe)
+
+m1.yoe <- quap(
+  alist(
+    testDuration_minutes ~ dnorm( mu , sigma ) ,
+    mu <- a + by*yoe,
+    by ~ dnorm( 0 , 1 ) ,
+    a ~ dnorm(0, 1),
+    sigma ~ dexp(1)
+  ), data = df
+) 
+precis(m1.yoe)
+
+
+m1.ages <- quap(
+  alist(
+    testDuration_minutes ~ dnorm( mu , sigma ) ,
+    mu <- a + ba*ages,
+    ba ~ dnorm( 0 , 1 ) ,
+    a ~ dnorm(0, 1),
+    sigma ~ dexp(1)
+  ), data = df
+) 
+precis(m1.ages)
+
+compare(m1.yoe,m1.ages,m1.ages.yoe, func=PSIS)
+#               PSIS    SE dPSIS  dSE pPSIS weight
+# m1.ages     6051.6 64.42     0   NA   3.7   0.46
+# m1.ages.yoe 6052.7 64.87     1 2.15   4.6   0.27
+# m1.yoe      6052.7 64.78     1 4.05   3.6   0.27
+compare(m1.yoe,m1.ages,m1.ages.yoe, func=WAIC)
+#               WAIC    SE dWAIC  dSE pWAIC weight
+# m1.ages     6051.6 64.49   0.0   NA   3.5   0.46
+# m1.yoe      6052.5 64.77   0.9 4.05   3.4   0.29
+# m1.ages.yoe 6052.8 64.85   1.2 1.95   4.7   0.25
+
