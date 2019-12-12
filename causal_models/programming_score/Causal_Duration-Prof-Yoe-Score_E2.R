@@ -7,7 +7,7 @@ library(stringr)
 library(dplyr)
 
 #Load data
-source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//load_create_indexes_E2.R")
+source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//load_consent_create_indexes_E2.R")
 df_E2$profession_id <- as.integer(df_E2$profession_id)
 
 # standardize variables = (zero centered, standard deviation one)
