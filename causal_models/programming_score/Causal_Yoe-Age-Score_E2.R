@@ -92,7 +92,7 @@ adjustmentSets(dag1.1,exposure = "age",outcome = "score",effect = c("direct"))
 adjustmentSets(dag1.1,exposure = "yoe",outcome = "score",effect = c("direct"))
 #{ age } because age is a confounder
 
--------------------------
+#-------------------------
 "AGE > YOE
 First look a dependency between yoe and age. 
 Does an increase in age relates to an increase in yoe?
