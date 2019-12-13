@@ -1,5 +1,7 @@
 " 
 Does Yoe and Age affect duration of tests?
+
+TODO: test across countries and gender
 "
 
 library(rethinking)
