@@ -114,3 +114,16 @@ m1.ages.yoe.prof <- quap(
   ), data = df
 ) 
 precis(m1.ages.yoe.prof, depth = 2)
+#Similar results across professions. by and ba all cross zero.
+
+m1.yoe.prof <- quap(
+  alist(
+    testDuration_minutes ~ dnorm( mu , sigma ) ,
+    mu <- a[profession_id] + by[profession_id]*yoe,
+    by[profession_id] ~ dnorm( 0 , 1 ) ,
+    a[profession_id] ~ dnorm(0, 1),
+    sigma ~ dexp(1)
+  ), data = df
+) 
+precis(m1.yoe.prof, depth=2)
+#Only for Hobbyists and Undergrads the by did not cross zero.
