@@ -100,3 +100,17 @@ compare(m1.yoe,m1.ages,m1.ages.yoe, func=WAIC)
 # m1.yoe      6052.5 64.77   0.9 4.05   3.4   0.29
 # m1.ages.yoe 6052.8 64.85   1.2 1.95   4.7   0.25
 
+#------------------------------------------
+#PROFESSIONS
+
+m1.ages.yoe.prof <- quap(
+  alist(
+    testDuration_minutes ~ dnorm( mu , sigma ) ,
+    mu <- a[profession_id] + ba[profession_id]*ages + by[profession_id]*yoe,
+    a[profession_id] ~ dnorm( 0 , 1 ) ,
+    ba[profession_id] ~ dnorm( 0 , 1 ) ,
+    by[profession_id] ~ dnorm( 0 , 1 ) ,
+    sigma ~ dexp(1)
+  ), data = df
+) 
+precis(m1.ages.yoe.prof, depth = 2)
