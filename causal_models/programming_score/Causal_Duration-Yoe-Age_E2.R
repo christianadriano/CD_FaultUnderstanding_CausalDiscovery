@@ -32,7 +32,7 @@ We chose 120s (2 min) as the minimum time-effort one need to read and answer all
 
 #The upper cut corresponds to 10 times the minimum. We choose 24s, so 60 min.
 
-df <- df[df$testDuration_minutes<=20 & df$testDuration_minutes>=2 ,]
+df <- df[df$testDuration_minutes<=15 & df$testDuration_minutes>=1 ,]
 dim(df_E2) #1732   32
 
 #Remove participants for whom we do not have test duration
@@ -65,6 +65,11 @@ m1.ages.yoe <- quap(
   ), data = df
 ) 
 precis(m1.ages.yoe)
+#       mean   sd 5.5% 94.5%  (duration bounds [1,15] min)
+# ba    0.36 0.15 0.12  0.61
+# by    0.24 0.09 0.09  0.39
+# a     5.04 0.09 4.90  5.18
+# sigma 3.10 0.06 3.00  3.19
 
 m1.yoe <- quap(
   alist(
@@ -76,7 +81,10 @@ m1.yoe <- quap(
   ), data = df
 ) 
 precis(m1.yoe)
-
+#       mean   sd 5.5% 94.5%  (duration bounds [1,15] min)
+# by    0.34 0.08 0.20  0.47
+# a     5.02 0.09 4.88  5.16
+# sigma 3.10 0.06 3.00  3.20
 
 m1.ages <- quap(
   alist(
@@ -88,6 +96,10 @@ m1.ages <- quap(
   ), data = df
 ) 
 precis(m1.ages)
+#       mean   sd 5.5% 94.5% (duration bounds [1,15] min)
+# ba    0.54 0.14 0.31  0.76
+# a     5.06 0.09 4.92  5.20
+# sigma 3.10 0.06 3.00  3.20
 
 compare(m1.yoe,m1.ages,m1.ages.yoe, func=PSIS)
 #               PSIS    SE dPSIS  dSE pPSIS weight
@@ -114,7 +126,8 @@ m1.ages.yoe.prof <- quap(
   ), data = df
 ) 
 precis(m1.ages.yoe.prof, depth = 2)
-#Similar results across professions. by and ba all cross zero.
+#Does not generalize for all professions.
+#Coefficients ba and by do not cross zero only for hobbyists
 
 m1.yoe.prof <- quap(
   alist(
@@ -126,4 +139,28 @@ m1.yoe.prof <- quap(
   ), data = df
 ) 
 precis(m1.yoe.prof, depth=2)
-#Only for Hobbyists and Undergrads the by did not cross zero.
+#Only for Hobbyists, Undergrads, and Others it does not cross zero
+
+m1.ages.prof <- quap(
+  alist(
+    testDuration_minutes ~ dnorm( mu , sigma ) ,
+    mu <- a[profession_id] + ba[profession_id]*ages,
+    ba[profession_id] ~ dnorm( 0 , 1 ) ,
+    a[profession_id] ~ dnorm(0, 1),
+    sigma ~ dexp(1)
+  ), data = df
+) 
+precis(m1.ages.prof, depth=2)
+#Similar results across professions. Coefficient ba cross zero for all professions.
+#Only for Hobbyists and Others the coefficient ba does not cross zero
+
+" The conclusion is that the following models can be used to 
+explain the causal effect of yoe and ages on duration for the following 
+professions:
+Hobbyists: m1.ages, m1.yoe, m1.ages.yoe
+Undergrad: m1.yoe
+Others: m1.ages, m1.yoe,
+Professionals: none
+Graduates: none
+
+"
