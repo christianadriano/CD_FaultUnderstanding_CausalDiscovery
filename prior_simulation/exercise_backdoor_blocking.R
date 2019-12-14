@@ -58,3 +58,40 @@ adjustmentSets(dag1,exposure = c("W"),outcome = "Y",effect = c("direct"))
 # { B, Z }
 # { A, Z }
 # { X }
+
+
+#Create
+dag2 <- dagitty( "dag {
+Duration -> Score
+Yoe -> Score
+Age -> Score
+Age -> Yoe
+Yoe-> Duration
+Age -> Duration
+}")
+
+#Plot
+coordinates(dag2) <- list( x=c(Age=0,Yoe=2,Duration=1, Score=1) , 
+                           y=c(Age=0,Yoe=0,Duration=1, Score=2) )
+plot( dag2)
+tidy_dagitty(dag2)
+ggdag(dag2, layout = "circle")
+
+#Conditional independence assumptions
+paths(dag2,from="Duration",to="Score",directed = FALSE)
+# $paths
+# [1] "Duration -> Score"               "Duration <- Age -> Score"       
+# [3] "Duration <- Age -> Yoe -> Score" "Duration <- Yoe -> Score"       
+# [5] "Duration <- Yoe <- Age -> Score"
+# 
+# $open
+# [1] TRUE TRUE TRUE TRUE TRUE
+
+adjustmentSets(dag2,exposure = c("Duration"),outcome = "Score",effect = c("direct"))
+#{ Age, Yoe }
+
+adjustmentSets(dag2,exposure = c("Duration","Yoe"),outcome = "Score",effect = c("direct"))
+#{ Age }
+
+adjustmentSets(dag2,exposure = c("Yoe"),outcome = "Duration",effect = c("direct"))
+#{ Age }
