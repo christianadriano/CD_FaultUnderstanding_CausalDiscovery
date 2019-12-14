@@ -33,9 +33,28 @@ tidy_dagitty(dag1.1)
 ggdag(dag1.1, layout = "circle")
 
 #Conditional independence assumptions
-paths(dag1.1,c("YoE"),"Score",directed = TRUE)
-# $paths [1] "YoE -> Prof -> Score" "YoE -> Score"        
-# $open [1] TRUE TRUE
+paths(dag1,from="D",to="Y",directed = FALSE)
+# $paths
+# [1] "D -> Y"                               "D <- C -> Z -> X -> W -> Y"          
+# [3] "D <- C -> Z -> Y"                     "D <- C -> Z <- B -> A -> X -> W -> Y"       
+# $open
+# [1]  TRUE  TRUE  TRUE FALSE
 
-adjustmentSets(dag1.1,exposure = "Prof",outcome = "Score",effect = c("direct"))
-#{ YoE } because YoE is a confounder.
+
+adjustmentSets(dag1,exposure = "D",outcome = "Y",effect = c("direct"))
+# { W, Z }
+# { X, Z }
+# { A, Z }
+# { B, Z }
+# { C }
+
+adjustmentSets(dag1,exposure = c("D","W"),outcome = "Y",effect = c("direct"))
+# { C, X }
+# { Z }
+
+adjustmentSets(dag1,exposure = c("W"),outcome = "Y",effect = c("direct"))
+# { D, Z }
+# { C, Z }
+# { B, Z }
+# { A, Z }
+# { X }
