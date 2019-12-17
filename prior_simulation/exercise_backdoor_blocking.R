@@ -19,7 +19,6 @@ X -> W
 W -> Y
 C -> Z
 C -> D
-D -> Y
 Z -> X
 Z -> Y
 
@@ -31,6 +30,37 @@ coordinates(dag1) <- list( x=c(A=0,B=0,C=2, D=2, X=0, Y=2, Z=1, W=1) ,
 plot( dag1)
 tidy_dagitty(dag1.1)
 ggdag(dag1.1, layout = "circle")
+
+#Conditional independence assumptions
+paths(dag1,from="D",to="Y",directed = FALSE)
+# $paths
+# [1] "B -> A -> X -> W -> Y <- D <- C -> Z"
+# [2] "B -> A -> X -> W -> Y <- Z"          
+# [3] "B -> A -> X <- Z"                    
+# 
+# $open
+# [1] FALSE FALSE FALSE
+
+#Computing direct effect from D to Y, 
+#1. remove the edge D -> Y 
+#2. find the d-separation set
+#see Pearl Primer book pages 84 and 85.
+dagstr <-  "dag {
+B -> Z
+B -> A
+A -> X
+X -> W
+W -> Y
+C -> Z
+C -> D
+Z -> X
+Z -> Y
+}"
+adjustmentSets(dag1,exposure = "D",outcome = "Y",effect = c("direct"))
+#{ W, Z } ,{ X, Z }, { A, Z },{ B, Z },{ C }
+dseparated( dagstr, "D", "Y",c("Z","W"))
+# [1] TRUE
+
 
 #Conditional independence assumptions
 paths(dag1,from="D",to="Y",directed = FALSE)
