@@ -93,5 +93,8 @@ adjustmentSets(dag2,exposure = c("Duration"),outcome = "Score",effect = c("direc
 adjustmentSets(dag2,exposure = c("Duration","Yoe"),outcome = "Score",effect = c("direct"))
 #{ Age }
 
-adjustmentSets(dag2,exposure = c("Yoe"),outcome = "Duration",effect = c("direct"))
+adjustmentSets(dag2,exposure = c("Yoe"),outcome = "Duration",effect = c("total"))
 #{ Age }
+
+adjustmentSets(dag2,exposure = c("Age"),outcome = "Yoe",effect = c("total"))
+#{  }
