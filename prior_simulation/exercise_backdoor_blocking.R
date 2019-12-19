@@ -20,6 +20,7 @@ W -> Y
 C -> Z
 C -> D
 Z -> X
+D -> Y
 Z -> Y
 
 }")
@@ -32,7 +33,7 @@ tidy_dagitty(dag1.1)
 ggdag(dag1.1, layout = "circle")
 
 #Conditional independence assumptions
-paths(dag1,from="D",to="Y",directed = FALSE)
+paths(dag1,from="X",to="Y",directed = FALSE)
 # $paths
 # [1] "B -> A -> X -> W -> Y <- D <- C -> Z"
 # [2] "B -> A -> X -> W -> Y <- Z"          
@@ -89,6 +90,8 @@ adjustmentSets(dag1,exposure = c("W"),outcome = "Y",effect = c("direct"))
 # { A, Z }
 # { X }
 
+adjustmentSets(dag1,exposure = c("X"),outcome = "Y",effect = c("direct"))
+
 
 #Create
 dag2 <- dagitty( "dag {
@@ -128,3 +131,27 @@ adjustmentSets(dag2,exposure = c("Yoe"),outcome = "Duration",effect = c("total")
 
 adjustmentSets(dag2,exposure = c("Age"),outcome = "Yoe",effect = c("total"))
 #{  }
+
+
+#Create
+dag3 <- dagitty( "dag {
+X -> W
+W -> Y
+Z -> Y
+Z-> X
+}")
+
+#Plot
+coordinates(dag3) <- list( x=c(X=0, Z=1, Y=2, W=1) , 
+                           y=c(X=2, Z=1, Y=2, W=2) )
+plot( dag3)
+
+adjustmentSets(dag3,exposure = c("X"),outcome = "Y",effect = c("total"))
+dseparated( dagstr, "X", "Y",c("Z","W"))
+dseparated( dagstr, "X", "Y",c("W"))
+dseparated( dagstr, "X", "Y",c("Z"))
+impliedConditionalIndependencies(dag3,type="basis.set")
+
+impliedConditionalIndependencies(dag3,type="missing.edge")
+
+
