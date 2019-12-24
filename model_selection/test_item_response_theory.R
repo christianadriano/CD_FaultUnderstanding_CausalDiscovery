@@ -9,3 +9,9 @@ How to measure discriminating power?
 
 "
 
+install.packages("ltm") #logistic distribution estimation
+install.packages("psych") #normal distribution estimation
+install.packages("mirt") #polytomous package
+library(ltm)
+library(psych)
+library(mirt)
