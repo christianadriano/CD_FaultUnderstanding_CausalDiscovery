@@ -96,3 +96,5 @@ person.fit(IRT_model)
 #is either significant or not (p-value in the last column Pr(<Lz))
 #L0 is a statistic based on Levine and Rubin 1979 (see help documentation)
 #Lz is another statistic bsed on Drasgow 1985 
+
+#Continue analysis - https://www.youtube.com/watch?v=VtWsyUCGfhg&pbjreload=10
