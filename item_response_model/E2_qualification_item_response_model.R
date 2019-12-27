@@ -1,9 +1,7 @@
 "
 Item response model of the programming test qualification E1
 "
-
 library(dplyr)
-
 library(ltm)
 library(psych)
 library(mirt)
@@ -20,21 +18,23 @@ df$test3_ <-  ifelse(df$test3=="true",1,0)
 df$test4_ <-  ifelse(df$test4=="true",1,0)
 df$test5_ <-  ifelse(df$test5=="true",1,0)
 
-df <- df %>% select(test1_,test2_,test3_,test4_,test5_)
+df <- df %>% dplyr::select(test1_,test2_,test3_,test4_,test5_)
 
 IRT_model <- ltm(df ~ z1, IRT.param=TRUE)
 
 IRT_model
-Dffclt    Dscrmn
-test1_ 1.8085255 1.3342712
-test2_ 0.6030424 0.3566581
-test3_ 0.9294014 7.5319611
-test4_ 2.3272393 0.2682696
+# Coefficients:
+#          Dffclt  Dscrmn
+# test1_   0.126   2.997
+# test2_   0.173   1.572
+# test3_   0.330   2.067
+# test4_   0.071   0.700
+# test5_   0.606   1.598
 
-"Coefficients for dffclt show the test was difficult. First an last question were more.
+"Coefficients for dffclt show the test was not so difficult. 
 
-Regarding discrimation, first and third questions were the most discriminating.
-
+Regarding discrimation, except for question 4, all other question 
+were very discriminating.
 "
 
 plot(IRT_model, type="ICC")
