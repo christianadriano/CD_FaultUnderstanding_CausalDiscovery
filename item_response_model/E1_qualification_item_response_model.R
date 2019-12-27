@@ -24,11 +24,11 @@ df <- df %>% dplyr::select(test1_,test2_,test3_,test4_)
 IRT_model <- ltm(df ~ z1, IRT.param=TRUE)
 
 IRT_model
-        Dffclt    Dscrmn
-test1_ 1.8085255 1.3342712
-test2_ 0.6030424 0.3566581
-test3_ 0.9294014 7.5319611
-test4_ 2.3272393 0.2682696
+#         Dffclt    Dscrmn
+# test1_ 1.8085255 1.3342712
+# test2_ 0.6030424 0.3566581
+# test3_ 0.9294014 7.5319611
+# test4_ 2.3272393 0.2682696
 
 "Coefficients for dffclt show the test was difficult. First an last question were more.
 
@@ -74,5 +74,11 @@ factor.scores.ltm(IRT_model)
 # 16      1      1      1      1  127   67.244  1.387 0.563
 
 "Factor scores shows tha the most frequent combination (Obs) was
-peple who did not get any questions correct"
+people who did not get any tests correct (1012), only test2 (878),
+only test4 (590). These last two groups show how test 2 and test 4
+are the ones with flatter slope, i.e., lower discrimination value 
+than test 1 and test3. Note however, that test4 was considered the most
+difficulty, whereas test2 the easiest. This shows that both difficulty 
+and discrimination are important to evaluate how the test is able to
+evaluate a opulation over a spectrum of ability.
 
