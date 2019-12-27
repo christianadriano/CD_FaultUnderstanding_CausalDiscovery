@@ -2,8 +2,6 @@
 Item response model of the programming test qualification E1
 "
 
-library(rethinking)
-library(stringr)
 library(dplyr)
 
 library(ltm)
@@ -21,7 +19,7 @@ df$test2_ <-  ifelse(df$test2=="true",1,0)
 df$test3_ <-  ifelse(df$test3=="true",1,0)
 df$test4_ <-  ifelse(df$test4=="true",1,0)
 
-df <- df %>% select(test1_,test2_,test3_,test4_)
+df <- df %>% dplyr::select(test1_,test2_,test3_,test4_)
 
 IRT_model <- ltm(df ~ z1, IRT.param=TRUE)
 
