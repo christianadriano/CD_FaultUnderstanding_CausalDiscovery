@@ -80,5 +80,28 @@ are the ones with flatter slope, i.e., lower discrimination value
 than test 1 and test3. Note however, that test4 was considered the most
 difficulty, whereas test2 the easiest. This shows that both difficulty 
 and discrimination are important to evaluate how the test is able to
-evaluate a opulation over a spectrum of ability.
+evaluate a opulation over a spectrum of ability."
 
+
+"alpha is discrimination of item i (tells me that for every one unit increase 
+in trait, there is a alpha increase in the log(odds) probability of getting the item correct. 
+Alpha equal to one is equivalente to Probability equal to 73%. Alpha =2 (P=88%), Alpha=3 (95%), 
+Alpha=4 (P=98%). " 
+
+#log(odds(p)) = alpha*trait + beta
+#odds(p) = p/1-p = exp(alpha)
+
+# > exp(1) / (1+ exp(1))
+# [1] 0.7310586
+# > p = exp(2) / (1+ exp(2))
+# > 0.8807971
+# > p = exp(3) / (1+ exp(3))
+# > 0.9525741
+# > p = exp(4) / (1+ exp(4))
+# > 0.9820138
+
+"The larger the alpha, more influence the trait has in the probability of getting the item correct. 
+Putting in another way, more the trait explains the score. However, when the alpha is small, 
+then the score is more explained by the difficulty of the item (the beta), 
+which is the same for all levels of trait. This is not good because this means 
+that item is not able to discriminate among different trait levels, which is what we want."
