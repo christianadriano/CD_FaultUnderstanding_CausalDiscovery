@@ -20,6 +20,9 @@ df$test5_ <-  ifelse(df$test5=="true",1,0)
 
 df <- df %>% dplyr::select(test1_,test2_,test3_,test4_,test5_)
 
+write.csv(df,"C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//E2_QualificationTestResults.csv")
+
+
 IRT_model <- ltm(df ~ z1, IRT.param=TRUE)
 
 IRT_model
