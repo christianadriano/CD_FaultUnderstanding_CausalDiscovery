@@ -28,7 +28,7 @@ write.csv(df,"C://Users//Christian//Documents//GitHub//CausalModel_FaultUndersta
 
 IRT_model_2PL <- ltm(df ~ z1, IRT.param=TRUE)
 
-IRT_model
+IRT_model_2PL
 #         Dffclt    Dscrmn
 # test1_ 1.8085255 1.3342712
 # test2_ 0.6030424 0.3566581
@@ -113,6 +113,7 @@ then the score is more explained by the difficulty of the item (the beta),
 which is the same for all levels of trait. This is not good because this means 
 that item is not able to discriminate among different trait levels, which is what we want."
 
+
 #------------------------------------
 "3PL model"
 IRT_model_3PL <- tpm(df, type="latent.trait", IRT.param=TRUE)
@@ -123,3 +124,15 @@ plot(IRT_model_3PL, type="ICC")
 plot(IRT_model_3PL, type="IIC", items=0)
 
 factor.scores.tpm(IRT_model_3PL)
+
+anova(IRT_model_2PL,IRT_model_3PL)
+
+# Likelihood Ratio Table
+#                     AIC      BIC  log.Lik    LRT df p.value
+# IRT_model_2PL 15778.58 15828.30 -7881.29                  
+# IRT_model_3PL 15663.92 15738.51 -7819.96 122.66  4  <0.001
+
+"First the p.value shows that the models are distinct (p-value<0.001)
+Second, the AIC tells that the 3PL model is more parcimonious, which 
+means that it has lower risk of overfitting."
+
