@@ -23,7 +23,10 @@ df <- df %>% dplyr::select(test1_,test2_,test3_,test4_)
 
 write.csv(df,"C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//E1_QualificationTestResults.csv")
 
-IRT_model <- ltm(df ~ z1, IRT.param=TRUE)
+#------------------------------------------------------
+"Run the 2PL model, only difficulty and discrimination"
+
+IRT_model_2PL <- ltm(df ~ z1, IRT.param=TRUE)
 
 IRT_model
 #         Dffclt    Dscrmn
@@ -35,12 +38,11 @@ IRT_model
 "Coefficients for dffclt show the test was difficult. First an last question were more.
 
 Regarding discrimation, first and third questions were the most discriminating.
-
 "
 
-plot(IRT_model, type="ICC")
+plot(IRT_model_2PL, type="ICC")
 
-plot(IRT_model, type="ICC", items=c(1,3))
+plot(IRT_model_2PL, type="ICC", items=c(1,3))
 
 "Plot the information, which tells me which are in the
 x-axis gives me more information in terms of discrimination 
@@ -52,9 +54,9 @@ ability.
 The plot shows the test information covers from 0 to 2 with peak on one 
 standard deviation of the ability."
 
-plot(IRT_model, type="IIC", items=0)
+plot(IRT_model_2PL, type="IIC", items=0)
 
-factor.scores.ltm(IRT_model)
+factor.scores.ltm(IRT_model_2PL)
 # Scoring Method: Empirical Bayes
 # Factor-Scores for observed response patterns:
 #     test1_ test2_ test3_ test4_  Obs      Exp     z1 se.z1
@@ -110,3 +112,14 @@ Putting in another way, more the trait explains the score. However, when the alp
 then the score is more explained by the difficulty of the item (the beta), 
 which is the same for all levels of trait. This is not good because this means 
 that item is not able to discriminate among different trait levels, which is what we want."
+
+#------------------------------------
+"3PL model"
+IRT_model_3PL <- tpm(df, type="latent.trait", IRT.param=TRUE)
+
+IRT_model_3PL
+
+plot(IRT_model_3PL, type="ICC")
+plot(IRT_model_3PL, type="IIC", items=0)
+
+factor.scores.tpm(IRT_model_3PL)
