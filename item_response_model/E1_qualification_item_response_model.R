@@ -84,6 +84,9 @@ difficulty, whereas test2 the easiest. This shows that both difficulty
 and discrimination are important to evaluate how the test is able to
 evaluate a opulation over a spectrum of ability."
 
+"Exp = is the expected number of people who were predicted to fall into that response pattern"
+"z1 = is the difficulty of the response pattern taking into account that certain items are more
+difficult than others. This explains why this column is not perfectly ordered."
 
 "alpha is discrimination of item i (tells me that for every one unit increase 
 in trait, there is a alpha increase in the log(odds) probability of getting the item correct. 
