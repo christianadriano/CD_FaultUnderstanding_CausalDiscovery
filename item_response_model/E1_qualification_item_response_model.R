@@ -113,6 +113,8 @@ then the score is more explained by the difficulty of the item (the beta),
 which is the same for all levels of trait. This is not good because this means 
 that item is not able to discriminate among different trait levels, which is what we want."
 
+person.fit(IRT_model_2PL)
+
 
 #------------------------------------
 "3PL model"
@@ -124,6 +126,9 @@ plot(IRT_model_3PL, type="ICC")
 plot(IRT_model_3PL, type="IIC", items=0)
 
 factor.scores.tpm(IRT_model_3PL)
+
+person.fit(IRT_model_3PL)
+
 
 anova(IRT_model_2PL,IRT_model_3PL)
 
