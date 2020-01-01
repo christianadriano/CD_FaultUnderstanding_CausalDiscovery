@@ -141,3 +141,22 @@ anova(IRT_model_2PL,IRT_model_3PL)
 Second, the AIC tells that the 3PL model is more parcimonious, which 
 means that it has lower risk of overfitting."
 
+#--------------------------------------------------------------
+
+"Polytomous item - Item Factor Analysis (Multidimensional Item Response Theory)"
+
+PolyModel <- mirt(df, model = 1, itemtype = "gpcm")
+# Full-information item factor analysis with 1 factor(s).
+# FAILED TO CONVERGE within 1e-04 tolerance after 500 EM iterations.
+# mirt version: 1.31 
+# M-step optimizer: BFGS 
+# EM acceleration: Ramsay 
+# Number of rectangular quadrature: 61
+# Latent density type: Gaussian 
+# 
+# Log-likelihood = -7881.807
+# Estimated parameters: 8 
+# AIC = 15779.61; AICc = 15779.65
+# BIC = 15829.34; SABIC = 15803.92
+# G2 (7) = 193.11, p = 0
+# RMSEA = 0.085, CFI = NaN, TLI = NaN
