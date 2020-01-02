@@ -35,11 +35,11 @@ We chose 120s (2 min) as the minimum time-effort one need to read and answer all
 #The upper cut corresponds to 10 times the minimum. We choose 24s, so 60 min.
 
 df <- df[df$testDuration_minutes<=15 & df$testDuration_minutes>=1 ,]
-dim(df_E2) #1732   32
+dim(df) # 1853   32
 
 #Remove participants for whom we do not have test duration
 df <- df %>% drop_na(testDuration_minutes)
-dim(df) #1108   32
+dim(df) #1229   32
 
 boxplot(df$testDuration_minutes)
 summary(df$testDuration_minutes)
