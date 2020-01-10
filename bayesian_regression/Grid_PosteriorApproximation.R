@@ -22,7 +22,7 @@ unstandardized_posterior <- likelihood * prior
 standardized_posterior <- unstandardized_posterior / sum(unstandardized_posterior)
 
 
-plot(p_grid, posterior, type="b",
+plot(p_grid, standardized_posterior, type="b",
      xlab="probability of water", 
      ylab="posterior probability")
 mtext("20 points")
