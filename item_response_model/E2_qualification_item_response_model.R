@@ -1,5 +1,5 @@
 "
-Item response model of the programming test qualification E1
+Item response model of the programming test qualification E2
 "
 library(dplyr)
 library(ltm)
