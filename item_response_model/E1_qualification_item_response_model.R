@@ -35,9 +35,9 @@ IRT_model_2PL
 # test3_ 0.9294014 7.5319611
 # test4_ 2.3272393 0.2682696
 
-"Coefficients for dffclt show the test was difficult. First an last question were more.
+"Coefficients for dffclt show the test was difficult. First and last question were more.
 
-Regarding discrimation, first and third questions were the most discriminating.
+Regarding discrimation, first and fourth questions were the most discriminating.
 "
 
 plot(IRT_model_2PL, type="ICC")
@@ -81,16 +81,24 @@ factor.scores.ltm(IRT_model_2PL)
 people who did not get any tests correct (1012), only test2 (878),
 only test4 (590). These last two groups show how test 2 and test 4
 are the ones with flatter slope, i.e., lower discrimination value 
-than test 1 and test3. Note however, that test4 was considered the most
+than test 1 and test3. Note, however, that test4 was considered the most
 difficulty, whereas test2 the easiest. This shows that both difficulty 
 and discrimination are important to evaluate how the test is able to
 evaluate a opulation over a spectrum of ability."
 
-"Exp = is the expected number of people who were predicted to fall into that response pattern"
-"z1 = is the difficulty of the response pattern taking into account that certain items are more
-difficult than others. This explains why this column is not perfectly ordered."
+"Exp = is the expected number of people who were predicted to fall 
+into that response pattern"
 
-"alpha is discrimination of item i (tells me that for every one unit increase 
+"z1 = is the difficulty of the response pattern taking into account that 
+certain items are more difficult than others. This explains why this column 
+is not perfectly ordered."
+
+#LEFT JOIN to associate the new difficulty scores (z1) to the partipants.
+df_new <- left_join(df,df_score.dat,by=c("test1_"="test1_","test2_"="test2_","test3_"="test3_","test4_"="test4_"))
+
+
+
+"alpha is the discrimination of item i (tells me that for every one unit increase 
 in trait, there is a alpha increase in the log(odds) probability of getting the item correct. 
 Alpha equal to one is equivalente to Probability equal to 73%. Alpha =2 (P=88%), Alpha=3 (95%), 
 Alpha=4 (P=98%). " 
