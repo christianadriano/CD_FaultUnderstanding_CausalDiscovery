@@ -19,14 +19,14 @@ df$test2_ <-  ifelse(df$test2=="true",1,0)
 df$test3_ <-  ifelse(df$test3=="true",1,0)
 df$test4_ <-  ifelse(df$test4=="true",1,0)
 
-df <- df %>% dplyr::select(test1_,test2_,test3_,test4_)
+df_tests <- df %>% dplyr::select(test1_,test2_,test3_,test4_)
 
-write.csv(df,"C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//E1_QualificationTestResults.csv")
+write.csv(df_tests,"C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//E1_QualificationTestResults.csv")
 
 #------------------------------------------------------
 "Run the 2PL model, only difficulty and discrimination"
 
-IRT_model_2PL <- ltm(df ~ z1, IRT.param=TRUE)
+IRT_model_2PL <- ltm(df_tests ~ z1, IRT.param=TRUE)
 
 IRT_model_2PL
 #         Dffclt    Dscrmn
@@ -56,7 +56,8 @@ standard deviation of the ability."
 
 plot(IRT_model_2PL, type="IIC", items=0)
 
-factor.scores.ltm(IRT_model_2PL)
+factors <- factor.scores.ltm(IRT_model_2PL)
+factors
 # Scoring Method: Empirical Bayes
 # Factor-Scores for observed response patterns:
 #     test1_ test2_ test3_ test4_  Obs      Exp     z1 se.z1
@@ -93,10 +94,21 @@ into that response pattern"
 certain items are more difficult than others. This explains why this column 
 is not perfectly ordered."
 
+#----------------------------------------------------------------
+
+df_score.dat <- data.frame(factors$score.dat)
+
 #LEFT JOIN to associate the new difficulty scores (z1) to the partipants.
 df_new <- left_join(df,df_score.dat,by=c("test1_"="test1_","test2_"="test2_","test3_"="test3_","test4_"="test4_"))
 
+#Store in the original file the new difficulty scores (z1) of the partipants
+write.csv(df_new,"C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//E1_QualificationTest_IRT.csv")
 
+#Visualizing the results
+plot(df_new$years_programming, df_new$z1)
+plot(df_new$years_programming, df_new$qualification_score)
+
+#----------------------------------------------------------------
 
 "alpha is the discrimination of item i (tells me that for every one unit increase 
 in trait, there is a alpha increase in the log(odds) probability of getting the item correct. 
