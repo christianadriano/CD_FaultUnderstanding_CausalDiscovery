@@ -33,7 +33,7 @@ df$test4_ <-  ifelse(df$test4=="true",1,0)
 
 "Count how many people got two items incorrect. Do this for the combination of all 4 items 2 by 2."
 
-df_test_all <- dplyr::filter(df,!c(test1_==0 & test2_==0 & test3_==0 & test4_==0))
+df <- dplyr::filter(df,!c(test1_==0 & test2_==0 & test3_==0 & test4_==0))
 
 trbl <- tribble(
     ~pair,~count,
@@ -47,24 +47,39 @@ trbl <- tribble(
 
 #count each combination of two answers incorrect
 #1 and 2
-trbl[trbl$pair=="1&2",2] = dim(dplyr::filter(df_test_all,!c(test1_==0 & test2_==0)))[1]
 
-trbl[trbl$pair=="1&3",2] = dim(dplyr::filter(df_test_all,!c(test1_==0 & test3_==0)))[1]
+dim(df)[1] #3699
 
-trbl[trbl$pair=="1&4",2] = dim(dplyr::filter(df_test_all,!c(test1_==0 & test4_==0)))[1]
+dfff <- filter(df,!c(test1_==0 & test3_==0))
+dim(dfff)[1] # 884
 
-trbl[trbl$pair=="2&4",2] = dim(dplyr::filter(df_test_all,!c(test2_==0 & test4_==0)))[1]
+d_clean <- filter(df,!c(test1_==0 & test2_==0 & test3_==0 & test4_==0))
+dim(d_clean)[1] #2687
+dfclean <- filter(d_clean,!c(test1_==0 & test3_==0))
+dim(dfclean)[1] #884
 
-trbl[trbl$pair=="3&4",2] = dim(dplyr::filter(df_test_all,!c(test3_==0 & test4_==0)))[1]
 
-trbl[trbl$pair=="2&3",2] = dim(dplyr::filter(df_test_all,!c(test2_==0 & test3_==0)))[1]
+
+trbl[trbl$pair=="1&2",2] = dim(dplyr::filter(df, test1_==0, test2_==0))[1]
+
+trbl[trbl$pair=="1&3",2] = dim(dplyr::filter(df, test1_==0, test3_==0))[1]
+
+trbl[trbl$pair=="1&4",2] = dim(dplyr::filter(df, test1_==0, test4_==0))[1]
+
+trbl[trbl$pair=="2&4",2] = dim(dplyr::filter(df, test2_==0, test4_==0))[1]
+
+trbl[trbl$pair=="3&4",2] = dim(dplyr::filter(df, test3_==0, test4_==0))[1]
+
+trbl[trbl$pair=="2&3",2] = dim(dplyr::filter(df, test2_==0, test3_==0))[1]
 
 df_sorted <- trbl[order(-trbl$count),]
 df_sorted
 
-#the item pair that most people got incorrect was 2&4 = 2422.
+#The item pair that most people got incorrect was 1&3 = 1803
+#Interestingly, 1 and 3 are not the less difficult items according to 
+#the IRT PL2 model. However, 1 and 3 are most discriminative items.
 
-''
+
 "Run the 2PL model, only difficulty and discrimination"
 
 IRT_model_2PL <- ltm(df_tests ~ z1, IRT.param=TRUE)
