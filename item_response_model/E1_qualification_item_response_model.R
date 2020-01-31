@@ -19,9 +19,12 @@ df$test2_ <-  ifelse(df$test2=="true",1,0)
 df$test3_ <-  ifelse(df$test3=="true",1,0)
 df$test4_ <-  ifelse(df$test4=="true",1,0)
 
+
+#df_tests <- dplyr::filter(df,!c(test1_==0 & test2_==0 & test3_==0 & test4_==0))
 df_tests <- df %>% dplyr::select(test1_,test2_,test3_,test4_)
 
-write.csv(df_tests,"C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//E1_QualificationTestResults.csv")
+
+#write.csv(df_tests,"C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//E1_QualificationTestResults.csv")
 
 #------------------------------------------------------
 "Run the 2PL model, only difficulty and discrimination"
