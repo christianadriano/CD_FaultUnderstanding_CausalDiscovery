@@ -13,7 +13,7 @@ source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding/
 "Remove participants for whom we did not take the qualification test" 
 df <- df_E1[complete.cases(df_E1[,"qualification_score"]),] #left with 3699 rows
 
-"Replace false for 0(zero) and true for one(1)"
+"Replace false for 0(zero) and true for 1(one)"
 df$test1_ <-  ifelse(df$test1=="true",1,0)
 df$test2_ <-  ifelse(df$test2=="true",1,0)
 df$test3_ <-  ifelse(df$test3=="true",1,0)
