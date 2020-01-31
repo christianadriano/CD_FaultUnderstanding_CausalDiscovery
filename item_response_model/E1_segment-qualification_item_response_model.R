@@ -46,30 +46,11 @@ trbl <- tribble(
     )
 
 #count each combination of two answers incorrect
-#1 and 2
-
-dim(df)[1] #3699
-
-dfff <- filter(df,!c(test1_==0 & test3_==0))
-dim(dfff)[1] # 884
-
-d_clean <- filter(df,!c(test1_==0 & test2_==0 & test3_==0 & test4_==0))
-dim(d_clean)[1] #2687
-dfclean <- filter(d_clean,!c(test1_==0 & test3_==0))
-dim(dfclean)[1] #884
-
-
-
 trbl[trbl$pair=="1&2",2] = dim(dplyr::filter(df, test1_==0, test2_==0))[1]
-
 trbl[trbl$pair=="1&3",2] = dim(dplyr::filter(df, test1_==0, test3_==0))[1]
-
 trbl[trbl$pair=="1&4",2] = dim(dplyr::filter(df, test1_==0, test4_==0))[1]
-
 trbl[trbl$pair=="2&4",2] = dim(dplyr::filter(df, test2_==0, test4_==0))[1]
-
 trbl[trbl$pair=="3&4",2] = dim(dplyr::filter(df, test3_==0, test4_==0))[1]
-
 trbl[trbl$pair=="2&3",2] = dim(dplyr::filter(df, test2_==0, test3_==0))[1]
 
 df_sorted <- trbl[order(-trbl$count),]
@@ -85,11 +66,11 @@ df_sorted
 IRT_model_2PL <- ltm(df_tests ~ z1, IRT.param=TRUE)
 
 IRT_model_2PL
-#         Dffclt    Dscrmn
-# test1_ 1.8085255 1.3342712
-# test2_ 0.6030424 0.3566581
-# test3_ 0.9294014 7.5319611
-# test4_ 2.3272393 0.2682696
+#          Dffclt  Dscrmn
+# test1_   0.957   4.770
+# test2_   1.136  -0.438
+# test3_   1.361   1.039
+# test4_   0.356   0.188
 
 "
 So, the two easier items are test_2 and test_3, hence we will use these items to segment the group.
