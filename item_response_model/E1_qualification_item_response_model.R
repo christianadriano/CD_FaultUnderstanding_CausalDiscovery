@@ -81,7 +81,7 @@ factors
 # 15      1      1      1      0   68   80.037  1.314 0.484
 # 16      1      1      1      1  127   67.244  1.387 0.563
 
-"Factor scores shows tha the most frequent combination (Obs) was
+"Factor scores show that the most frequent combination (Obs) was
 people who did not get any tests correct (1012), only test2 (878),
 only test4 (590). These last two groups show how test 2 and test 4
 are the ones with flatter slope, i.e., lower discrimination value 
