@@ -21,6 +21,13 @@ g_0 <- dagitty(
 tidy_dagitty(g_0)
 ggdag(g_0, layout = "circle")
 
+tidy_dagitty(g_0, layout = "fr") %>%
+  ggplot(aes(x = x, y = y, xend = xend, yend = yend)) +
+  geom_dag_node(col="lightgrey") +
+  geom_dag_text(col="black") +
+  geom_dag_edges_arc() +
+  theme_dag()
+
 impliedConditionalIndependencies(g_0)
 # Accuracy _||_ Complexity | Difficulty
 # Accuracy _||_ Skill | Difficulty
@@ -41,7 +48,15 @@ g_SA <- dagitty(
 )
 
 tidy_dagitty(g_SA)
-ggdag(g_SA, layout = "circle")
+#ggdag(g_SA, layout = "circle")
+
+tidy_dagitty(g_CSA, layout = "fr") %>%
+  ggplot(aes(x = x, y = y, xend = xend, yend = yend)) +
+  geom_dag_node(col="lightgrey") +
+  geom_dag_text(col="black") +
+  geom_dag_edges() +
+  theme_dag()
+
 
 impliedConditionalIndependencies(g_SA)
 # Accuracy _||_ Complexity | Difficulty, Skill
@@ -62,7 +77,15 @@ g_CA <- dagitty(
 )
 
 tidy_dagitty(g_CA)
-ggdag(g_CA, layout = "circle")
+#ggdag(g_CA, layout = "circle")
+
+tidy_dagitty(g_CSA, layout = "fr") %>%
+  ggplot(aes(x = x, y = y, xend = xend, yend = yend)) +
+  geom_dag_node(col="lightgrey") +
+  geom_dag_text(col="black") +
+  geom_dag_edges() +
+  theme_dag()
+
 
 impliedConditionalIndependencies(g_CA)
 # Accuracy _||_ Skill | Complexity, Difficulty
@@ -85,7 +108,14 @@ g_CSA <- dagitty(
 )
 
 tidy_dagitty(g_CSA)
-ggdag(g_CSA, layout = "circle")
+#ggdag(g_CSA, layout = "circle")
+
+tidy_dagitty(g_CSA, layout = "fr") %>%
+  ggplot(aes(x = x, y = y, xend = xend, yend = yend)) +
+  geom_dag_node(col="lightgrey") +
+  geom_dag_text(col="black") +
+  geom_dag_edges() +
+  theme_dag()
 
 impliedConditionalIndependencies(g_CSA)
 # Complexity _||_ Skill
