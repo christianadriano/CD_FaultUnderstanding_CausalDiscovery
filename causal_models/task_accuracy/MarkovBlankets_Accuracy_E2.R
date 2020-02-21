@@ -50,7 +50,7 @@ cat("node", ":", "Markov Blanket",":","Independent Set", "\n",
      node,":", MB,":",setdiff(names(graph),c(MB,node)), "\n" )
 
 #node     : Markov Blanket          : Independent Set 
-#Accuracy : Confidence Explanation  : Accuracy Answer.Type Code.Complexity Difficulty Duration Programmer.Skill Task.Type 
+#Accuracy : Confidence Explanation  : Answer.Type Code.Complexity Difficulty Duration Programmer.Skill Task.Type 
 
 "
 Verifying Implications
