@@ -28,8 +28,9 @@ library (ggm)
 #   }"
 # )
 
+d <- 'a means "casa" '
 
-graph <- dagitty(' dag {
+dag <- ' dag {
 bb="-0.5,-0.5,0.5,0.5";
 Accuracy [outcome,pos="-0.018,0.091"];
 AnswerType [pos="-0.254,0.002"];
@@ -53,7 +54,7 @@ ProgrammerSkill -> PerceivedDifficulty;
 TaskType -> ExplanationSize;
 TaskType -> PerceivedDifficulty;
 }'
-)
+graph <- dagitty(dag)
 
 tidy_dagitty(graph)
 ggdag(graph, layout = "circle")
@@ -69,7 +70,7 @@ p <- paths(graph,c("ProgrammerSkill"),"Accuracy",directed = TRUE)
 #$open TRUE FALSE
 
 
-adjustmentSets(g,exposure = "TaskType",outcome = "Accuracy",effect = c("direct"))
+adjustmentSets(graph,exposure = "TaskType",outcome = "Accuracy",effect = c("direct"))
 #{ Confidence, ExplanationSize }
 #{ Duration, ExplanationSize }
 #{ Difficulty }
