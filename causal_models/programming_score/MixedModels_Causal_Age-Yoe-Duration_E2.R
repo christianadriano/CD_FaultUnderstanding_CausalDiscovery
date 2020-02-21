@@ -1,14 +1,18 @@
 " 
 Modeling Age and YoE as Poisson Distributions
 
+Using Rethinking package and BRMs package.
+
 Learn how to use the function brm
 https://cran.r-project.org/web/packages/brms/vignettes/brms_distreg.html
 https://bookdown.org/ajkurz/Statistical_Rethinking_recoded/monsters-and-mixtures.html
 "
 
 install.packages("brms") #Bayesian Regression Models using 'Stan'
-library(brms)
+
 library(rethinking)
+detach(package:rethinking, unload = T)
+library(brms)
 library(stringr)
 library(dplyr)
 
@@ -67,3 +71,23 @@ m1.ages.yoe <- quap(
   ), data = df
 ) 
 precis(m1.ages.yoe)
+
+
+#-------------------------
+#Fitting using brms directly
+m2.ages.yoe <- brm(
+  alist(
+    yoe ~ dnorm( mu , sigma ) ,
+    mu <- a + ba*ages,
+    ba ~ ZIPoisson( 0 , 1 ) ,
+    a ~ dnorm(0, 1),
+    sigma ~ dexp(1)
+  )
+) 
+
+brm(data = df, family = zero_inflated_poisson,
+    yoe ~ dnorm( mu , sigma ),
+    prior = c(prior(normal(0, 1), class = Intercept),
+              prior(beta(2, 2), class = zi)),  # the brms default is beta(1, 1)
+    cores = 4,
+    seed = 11) 
