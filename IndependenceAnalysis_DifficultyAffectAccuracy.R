@@ -2,9 +2,9 @@ install.packages("ggm")
 install.packages("ggdag")
 
 library(ggdag)
-
 library( dagitty )
 library (ggm)
+library(tidyr)
 
 g_0 <- dagitty(
   "dag{
@@ -50,7 +50,7 @@ g_SA <- dagitty(
 tidy_dagitty(g_SA)
 #ggdag(g_SA, layout = "circle")
 
-tidy_dagitty(g_CSA, layout = "fr") %>%
+tidy_dagitty(g_SA, layout = "fr") %>%
   ggplot(aes(x = x, y = y, xend = xend, yend = yend)) +
   geom_dag_node(col="lightgrey") +
   geom_dag_text(col="black") +
