@@ -53,6 +53,21 @@ Programmer.Score -> Difficulty
 graph <- dagitty(dag)
 plot(graph)
 
+#Equivalent DAGs = 2
+length(equivalentDAGs( graph))
+eq_dags <- equivalentDAGs(graph)
+
+dag_eqv_2 <- eq_dags[2]
+dag_eqv_2 <- gsub("\n"," ",dag_eqv_2)
+graph_eqv_2 <- dagitty(dag_eqv_2)
+plot(graph_eqv_2)
+
+#The only difference is that the reversal of the arrow from 
+#Duration to Explanation. This will be relevant when we model
+
+#This means that the implied conditional independencies can be produced by two 
+#different graphs.
+
 impliedConditionalIndependencies(graph)
 
 "INDEPENDENCIES IMPLIED BY THE CAUSAL GRAPH
@@ -97,7 +112,33 @@ Explanations. It does so only indirectly through Difficulty
 Claim 1.6 and 1.7
 Code.Complexity _||_ Duration | Difficulty
 Code.Complexity _||_ Explanation | Difficulty
+
 Consequence: These indepependencies of Code.Complexity claim that 
 there are not paths between Code.Complexity and Duration or Explanation
 
+VERIFYING THE MODEL
+
+How many regression equations (tests) are needed to ensure that the model is fully verified? 
+i.e., if the model passes all tests, then we can be certain that the model
+cannot be refuted by additional tests of these kind. A test consists of
+fitting a regression model where one of the conditionally independent variable
+is explained by both the other conditionally independent variable and 
+the variables that are conditioned on. To pass the test, zero must be in the
+credible interval of the coefficient of the independent variable.
+
+To discover the minimum set of tests, we just need the basis set
 "
+impliedConditionalIndependencies( graph, type="basis.set" )
+"
+Accuracy _||_ Duration | Code.Complexity, Confidence, Difficulty, Explanation, Programmer.Score
+Code.Complexity _||_ Programmer.Score
+Confidence _||_ Explanation | Code.Complexity, Difficulty, Duration, Programmer.Score
+Duration _||_ Code.Complexity, Programmer.Score | Difficulty, Explanation
+Explanation _||_ Code.Complexity, Programmer.Score | Difficulty
+
+We need 5 regressions. We will compute these in the following file
+
+Verify_CondIndep_E2.R
+
+"
+
