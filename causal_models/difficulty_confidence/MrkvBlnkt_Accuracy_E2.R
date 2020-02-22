@@ -1,16 +1,21 @@
 "
 Implications on Accuracy by conditioning on its Markov Blanket (Experiment-2)
 
-Claim:
-Accuracy _||_ (Difficulty, Duration, Answer.Type) | MB(Accuracy), where  
-MB(Accuracy) is the Markov Blanket of Accuracy which consists of the set {Confidence Explanation}.
+Propostion:
+Pr(A|MB(A),B)= Pr(A|MB(A)), MB(A) states for Markov Blanket of A.
 
-This means that if we condition on Confidence and Explanation, then Accuracy is 
-independent of Difficulty, Duration, Answer.Type and all of the exposure variables.
+The propostion means if we condition on MB(A), A is indepenent of B, i.e.,
+A _||_ B | MB(A)
 
-See file MarkovBlankets_Tasks_E2.R for implications of the Markov Blankets of other variables.
+What I want in my case is to prove the following claim:
+Claim type:
+Accuracy _||_ Covariates(I) | MB(Accuracy), where  
+MB(Accuracy) is the Markov Blanket of Accuracy.
 
+This means that if we condition on the Markov Blanket, then Accuracy is 
+independent of the Covariates(I).
 "
+
 library(ggdag)
 library( dagitty )
 library (ggm)
@@ -67,7 +72,7 @@ be zero or the credible interval will cover zero.
 "Build regression models where 
 Accuracy <- Confidence + Explanation + Code.Complexity + Duration + Programmer.Skill + Difficulty + Task.Type + Answer.Type
 
-Assumptions: Difficulty is continuous
+Assumptions: Difficulty and Confidence are considered continuous
 
 Build one model for each of the four pairs of Answer.Type, Task.Type.
 
