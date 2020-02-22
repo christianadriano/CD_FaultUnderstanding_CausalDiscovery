@@ -53,92 +53,51 @@ Programmer.Score -> Difficulty
 graph <- dagitty(dag)
 plot(graph)
 
-
-
-tidy_dagitty(graph)
-ggdag(graph, layout = "circle")
-#check layout and color options:
-#https://cran.r-project.org/web/packages/ggdag/vignettes/intro-to-ggdag.html
-
-tidy_dagitty(graph, layout = "fr") %>%
-  ggplot(aes(x = x, y = y, xend = xend, yend = yend)) +
-  geom_dag_node(col="lightgrey") +
-  geom_dag_text(col="black") +
-  geom_dag_edges() +
-  theme_dag()
-
 impliedConditionalIndependencies(graph)
 
 "INDEPENDENCIES IMPLIED BY THE CAUSAL GRAPH
 
 After applying the d-separation criterion to all pairs of variables, we
-obtained a set of independencies that are implied by the causal graph model."
+obtained a set of independencies that are implied by the causal graph model.
 
-"Marginal independencies
+1 Marginal independencies
 Some marginal independencies exist by definition, because the covariates are exposure
 variables that were randomized in the experiment design.
 
-Expected marginal independencies because of the randomized task design
-Code.Complexity _||_ Task.Type
+1.1 Expected marginal independencies from the randomized task allocation
 
-Expected marginal independencies because of the randomized task allocation
-Answer.Type _||_ Code.Complexity
-Answer.Type _||_ Difficulty
-Answer.Type _||_ Duration
-Answer.Type _||_ Explanation
-Answer.Type _||_ Programmer.Skill
-Answer.Type _||_ Task.Type
-Code.Complexity _||_ Programmer.Skill
-Programmer.Skill _||_ Task.Type
+Claim 1.1: 
+Code.Complexity _||_ Programmer.Score
 
-Conditional Independencies 
+
+1.2 Conditional Independencies 
 
 Related to the Outcome Variable
-Below are equivalent sets of independencies. They are equivalent in a sense that 
-the results (independence) should hold by conditioning on any of the different 
-sets of covariates listed. These equivalences will be used to verify if the
-graph against the data.
 
-Accuracy _||_ Answer.Type | Confidence, Duration, Programmer.Skill
-Accuracy _||_ Answer.Type | Confidence, Difficulty, Duration, Task.Type
-Accuracy _||_ Answer.Type | Confidence, Explanation
-
-Accuracy _||_ Code.Complexity | Difficulty, Programmer.Skill, Task.Type
-Accuracy _||_ Code.Complexity | Difficulty, Explanation, Programmer.Skill
-Accuracy _||_ Code.Complexity | Duration, Explanation, Programmer.Skill
-Accuracy _||_ Code.Complexity | Confidence, Difficulty, Duration, Task.Type
-Accuracy _||_ Code.Complexity | Confidence, Explanation
-
-Accuracy _||_ Difficulty | Duration, Explanation, Programmer.Skill
-Accuracy _||_ Difficulty | Confidence, Explanation
-
-Accuracy _||_ Duration | Confidence, Explanation
-
-Accuracy _||_ Programmer.Skill | Confidence, Difficulty, Duration, Task.Type
-Accuracy _||_ Programmer.Skill | Confidence, Explanation
-
-Accuracy _||_ Task.Type | Difficulty, Explanation, Programmer.Skill
-Accuracy _||_ Task.Type | Duration, Explanation, Programmer.Skill
-Accuracy _||_ Task.Type | Confidence, Explanation
+Claim 1.2:
+Accuracy _||_ Duration | Code.Complexity, Confidence, Difficulty, Explanation, Programmer.Score
+Consequence: Accuracy is not affected directly by Duration.
 
 Dependent variables related
-Code.Complexity _||_ Confidence | Duration, Programmer.Skill
-Code.Complexity _||_ Confidence | Difficulty, Explanation, Programmer.Skill
-Code.Complexity _||_ Confidence | Difficulty, Programmer.Skill, Task.Type
-Code.Complexity _||_ Duration | Difficulty, Explanation
-Code.Complexity _||_ Duration | Difficulty, Task.Type
-Code.Complexity _||_ Explanation | Difficulty, Task.Type
 
-Confidence _||_ Difficulty | Duration, Programmer.Skill
-Confidence _||_ Explanation | Difficulty, Duration, Task.Type
-Confidence _||_ Explanation | Duration, Programmer.Skill
-Confidence _||_ Task.Type | Difficulty, Explanation, Programmer.Skill
-Confidence _||_ Task.Type | Duration, Programmer.Skill
+Claim 1.3:
+Confidence _||_ Explanation | Difficulty, Duration
+Consequence: No path between Confidence and Explanation
 
-Duration _||_ Programmer.Skill | Difficulty, Task.Type
-Duration _||_ Programmer.Skill | Difficulty, Explanation
-Duration _||_ Task.Type | Difficulty, Explanation
+Claim 1.4
+Duration _||_ Programmer.Score | Difficulty
+Consequence: Programmer score does not affect Duration directly.
+It only affects duration by affecting Difficulty
 
-Explanation _||_ Programmer.Skill | Difficulty, Task.Type
+Claim 1.5
+Explanation _||_ Programmer.Score | Difficulty
+Consequence: Programmers score does not affect the size of
+Explanations. It does so only indirectly through Difficulty
+
+Claim 1.6 and 1.7
+Code.Complexity _||_ Duration | Difficulty
+Code.Complexity _||_ Explanation | Difficulty
+Consequence: These indepependencies of Code.Complexity claim that 
+there are not paths between Code.Complexity and Duration or Explanation
 
 "
