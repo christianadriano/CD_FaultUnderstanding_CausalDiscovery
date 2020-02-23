@@ -182,3 +182,15 @@ df_E2$answer_id <- factor(df_E2$answer,
                     )
 
 df_E2$explanation.size <- sapply(strsplit(df_E2$explanation, " "), length);
+
+
+#Transform answer as factor again
+df_E2$isAnswerCorrect_bol <- as.integer(as.logical(df_E2$isAnswerCorrect))
+
+# df_E2$isAnswerCorrect <- factor(df_E2$isAnswerCorrect, 
+#                        levels = c("FALSE","TRUE")
+# )
+# df_E2$isAnswerCorrect_id <- factor(df_E2$isAnswerCorrect,
+#                           levels=levels(df_E2$isAnswerCorrect),
+#                           labels=c(0,1)
+# )
