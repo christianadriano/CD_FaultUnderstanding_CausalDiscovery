@@ -25,4 +25,5 @@ Next we will look at the alternatives of adjustments sets to compute the
 effect of Difficulty on Accuracy.
 
 "
-
+source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//causal_models//difficulty_confidence//DAG_Tasks_E2.R")
+       
