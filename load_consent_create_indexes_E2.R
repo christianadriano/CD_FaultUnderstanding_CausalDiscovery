@@ -7,9 +7,14 @@ library(ggplot2)
 library(dplyr)
 library(tidyr)
 
-path <- "C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data//"
-dataset_E2 <- readARFF(paste0(path, "consent_consolidated_Experiment_2.arff"))
-df_E2 <- data.frame(dataset_E2)
+#path <- "C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data//"
+#dataset_E2 <- readARFF(paste0(path, "consent_consolidated_Experiment_2.arff"))
+#df_E2 <- data.frame(dataset_E2)
+
+source("C://Users//Christian//Documents//GitHub//ML_FaultUnderstanding//analysis//descriptive//accuracy//load_apply_ground_truth.R")
+#data is loaded on df2_ground
+
+df_E2 <- df2_ground
 
 "PROFESSION"
 #Convert profession from factor to character 
@@ -155,3 +160,23 @@ df_E2$testDuration_minutes <- df_E2$testDuration/(1000*60)
 df_E2$duration_minutes <- df_E2$duration/(1000*60)
 
 
+#Transform isBugCovering as factor again
+df_E2$isBugCovering <- factor(df_E2$isBugCovering, 
+                           levels = c("TRUE","FALSE")
+                          )
+df_E2$isBugCovering_id <- factor(df_E2$isBugCovering,
+                                 levels=levels(df_E2$isBugCovering),
+                                 labels=c(1,0)
+                          )
+
+
+#Transform answer as factor again
+df_E2$answer <- factor(df_E2$answer, 
+                       levels = c("YES_THERE_IS_AN_ISSUE",
+                                  "NO_THERE_IS_NOT_AN_ISSUE",
+                                  "I_DO_NOT_KNOW")
+                       )
+df_E2$answer_id <- factor(df_E2$answer,
+                          levels=levels(df_E2$answer),
+                          labels=c(1,0,2)
+                    )
