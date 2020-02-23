@@ -118,26 +118,26 @@ tribble_cnty <- df_tb %>% group_by(participants)
 tribble_cnty <- tribble_cnty %>% summarise(countries_by_participants = n())
 tribble_cnty$participants_labels <- as.factor(tribble_cnty$participants)
 
-barplot(tribble_cnty$countries_by_participants,
-        names.arg = tribble_cnty$participants,
-        xlab="Countries with N participants",
-        ylab="Number of countries",
-        main="Countries by number of participants - E2",
-        ymin=0, ymax=15
-        )
-
-ggplot(data=tribble_cnty, aes(x=participants_labels, y=countries_by_participants)) +
-  geom_bar(stat="identity", fill="lightgray")+
-  geom_text(aes(label=countries_by_participants), vjust=-0.3, color="black", size=3.0)+
-  theme_minimal()+
-  theme(plot.title = element_text("Helvetica-Narrow", face="plain", colour="black", size=10))+
-  theme(axis.title.x = element_text("Helvetica-Narrow", face="plain", colour="black", size=8))+
-  theme(axis.title.y = element_text("Helvetica-Narrow", face="plain", colour="black", size=8))+
-  theme(axis.text.x  = element_text("Helvetica-Narrow", face="plain", colour="black", size=8))+
-  theme(axis.text.y  = element_text("Helvetica-Narrow", face="plain", colour="black", size=8))+
-  xlab("Number of participants")+
-  ylab("Number of countries")+
-  ggtitle("Countries by number of participants - E2")
+# barplot(tribble_cnty$countries_by_participants,
+#         names.arg = tribble_cnty$participants,
+#         xlab="Countries with N participants",
+#         ylab="Number of countries",
+#         main="Countries by number of participants - E2",
+#         ymin=0, ymax=15
+#         )
+# 
+# ggplot(data=tribble_cnty, aes(x=participants_labels, y=countries_by_participants)) +
+#   geom_bar(stat="identity", fill="lightgray")+
+#   geom_text(aes(label=countries_by_participants), vjust=-0.3, color="black", size=3.0)+
+#   theme_minimal()+
+#   theme(plot.title = element_text("Helvetica-Narrow", face="plain", colour="black", size=10))+
+#   theme(axis.title.x = element_text("Helvetica-Narrow", face="plain", colour="black", size=8))+
+#   theme(axis.title.y = element_text("Helvetica-Narrow", face="plain", colour="black", size=8))+
+#   theme(axis.text.x  = element_text("Helvetica-Narrow", face="plain", colour="black", size=8))+
+#   theme(axis.text.y  = element_text("Helvetica-Narrow", face="plain", colour="black", size=8))+
+#   xlab("Number of participants")+
+#   ylab("Number of countries")+
+#   ggtitle("Countries by number of participants - E2")
 
 df_E2$country <- unlist(lapply(df_E2$country, 
                                function(v) {
@@ -180,3 +180,5 @@ df_E2$answer_id <- factor(df_E2$answer,
                           levels=levels(df_E2$answer),
                           labels=c(1,0,2)
                     )
+
+df_E2$explanation.size <- sapply(strsplit(df_E2$explanation, " "), length);
