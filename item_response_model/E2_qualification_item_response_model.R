@@ -56,9 +56,9 @@ standard deviation of the ability."
 
 plot(IRT_model, type="IIC", items=0)
 
-factor.scores.ltm(IRT_model)
+factors <- factor.scores.ltm(IRT_model)
+factors
 # Scoring Method: Empirical Bayes
-# Factor-Scores for observed response patterns:
 # Factor-Scores for observed response patterns:
 #   test1_ test2_ test3_ test4_ test5_ Obs     Exp     z1 se.z1
 # 1       0      0      0      0      0 241 287.560 -0.898 0.659
@@ -96,3 +96,26 @@ factor.scores.ltm(IRT_model)
 
 "Factor scores shows tha the most frequent combination (Obs) were
 all wrong (241), all correct (189), and only test_4 correct (145)
+"
+
+hist(factors$score.dat$z1 )
+hist(df_E2$qualification_score)
+
+"Merge this with the data from E2"
+
+#----------------------------------------------------------------
+
+df_score.dat <- data.frame(factors$score.dat)
+
+#LEFT JOIN to associate the new difficulty scores (z1) to the partipants.
+df_new <- left_join(df,df_score.dat,by=c("test1_"="test1_","test2_"="test2_","test3_"="test3_","test4_"="test4_","test5_"="test5_"))
+
+#Store in the original file the new difficulty scores (z1) of the partipants
+write.csv(df_new,"C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//E2_QualificationTest_IRT.csv")
+
+#Visualizing the results
+plot(df_new$years_programming, df_new$z1)
+plot(df_new$years_programming, df_new$qualification_score)
+
+#----------------------------------------------------------------
+
