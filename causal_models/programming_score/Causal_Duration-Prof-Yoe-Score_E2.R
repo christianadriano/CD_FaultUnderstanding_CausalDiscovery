@@ -16,6 +16,7 @@ df_E2$profession_id <- as.integer(df_E2$profession_id)
 df_E2$yoe <- df_E2$years_programming
 df_E2$score <- df_E2$qualification_score
 
+df_E2_aux <- df_E2
 
 
 #-----------------
@@ -140,6 +141,75 @@ precis(m4,2)
 # by[4]  0.04 0.01  0.02  0.05
 # by[5]  0.02 0.01  0.01  0.03
 # sigma  0.80 0.01  0.78  0.82
+
+#VISUALIZE Coefficients with credible intervals
+labels1 <- paste( "a[" , 1:5 , "]:" , levels(df_E2$profession) , sep="" )
+labels3 <- paste( "bt[" , 1:5 , "]:" , levels(df_E2$profession) , sep="" )
+labels4 <- paste( "by[" , 1:5 , "]:" , levels(df_E2$profession) , sep="" )
+
+precis_plot( precis( m4 , depth=2 , pars=c("bt","by")) , 
+             labels=c(labels3,labels4) ,
+             xlab="qualification score" )
+title("Model score = bt*duration + by*yoe")
+
+
+m4.1 <- quap(
+  alist(
+    score ~ dnorm( mu , sigma ) ,
+    mu <- a[profession_id] + ba[profession_id]*age+ by[profession_id]*yoe +bt[profession_id]*testDuration_minutes,
+    a[profession_id] ~ dnorm( 0 , 1.0 ),
+    ba[profession_id] ~ dnorm( 0 , 1.0 ),
+    bt[profession_id] ~ dnorm( 0 , 1.0 ) ,
+    by[profession_id] ~ dnorm( 0 , 1.0 ) ,
+    sigma ~ dexp(1)
+  ), data = df_E2_aux
+) 
+
+precis(m4.1,2)
+#        mean   sd  5.5% 94.5%
+# a[1]   5.25 0.14  5.03  5.47
+# a[2]   4.17 0.14  3.94  4.40
+# a[3]   3.90 0.27  3.47  4.33
+# a[4]   4.21 0.14  3.98  4.45
+# a[5]   3.05 0.20  2.73  3.37
+# ba[1] -0.04 0.01 -0.05 -0.03
+# ba[2]  0.00 0.00  0.00  0.01
+# ba[3]  0.00 0.01 -0.02  0.02
+# ba[4] -0.02 0.01 -0.03 -0.01
+# ba[5]  0.03 0.01  0.02  0.04
+# bt[1]  0.00 0.00  0.00  0.00
+# bt[2]  0.00 0.00  0.00  0.00
+# bt[3] -0.02 0.01 -0.03 -0.01
+# bt[4]  0.00 0.00  0.00  0.00
+# bt[5]  0.00 0.00  0.00  0.00
+# by[1]  0.02 0.00  0.01  0.03
+# by[2] -0.01 0.00 -0.02  0.00
+# by[3]  0.07 0.02  0.04  0.09
+# by[4]  0.03 0.01  0.01  0.04
+# by[5] -0.01 0.01 -0.02  0.01
+# sigma  0.78 0.01  0.76  0.80
+
+compare(m4,m4.1,func=PSIS)
+#               PSIS    SE dPSIS  dSE pPSIS weight
+# m1.ages     6051.6 64.42     0   NA   3.7   0.46
+# m1.ages.yoe 6052.7 64.87     1 2.15   4.6   0.27
+# m1.yoe      6052.7 64.78     1 4.05   3.6   0.27
+compare(m4,m4.1,func=WAIC)
+#               WAIC    SE dWAIC  dSE pWAIC weight
+# m1.ages     6051.6 64.49   0.0   NA   3.5   0.46
+# m1.yoe      6052.5 64.77   0.9 4.05   3.4   0.29
+# m1.ages.yoe 6052.8 64.85   1.2 1.95   4.7   0.25
+
+#VISUALIZE Coefficients with credible intervals
+labels1 <- paste( "a[" , 1:5 , "]:" , levels(df_E2$profession) , sep="" )
+labels2 <- paste( "ba[" , 1:5 , "]:" , levels(df_E2$profession) , sep="" )
+labels3 <- paste( "bt[" , 1:5 , "]:" , levels(df_E2$profession) , sep="" )
+labels4 <- paste( "by[" , 1:5 , "]:" , levels(df_E2$profession) , sep="" )
+
+precis_plot( precis( m4.1 , depth=2 , pars=c("ba","bt","by")) , 
+             labels=c(labels2,labels3,labels4) ,
+             xlab="qualification score" )
+title("Model score = ba*age + bt*duration + by*yoe")
 
 
 #Three way interaction
