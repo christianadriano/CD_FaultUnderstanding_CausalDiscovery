@@ -109,9 +109,11 @@ Explanation _||_ Programmer.Score | Difficulty
 Consequence: Programmers score does not affect the size of
 Explanations. It does so only indirectly through Difficulty
 
-Claim 1.6 and 1.7
-Code.Complexity _||_ Duration | Difficulty
+Claim 1.6 
 Code.Complexity _||_ Explanation | Difficulty
+
+Claim 1.7
+Code.Complexity _||_ Duration | Difficulty
 
 Consequence: These indepependencies of Code.Complexity claim that 
 there are not paths between Code.Complexity and Duration or Explanation
