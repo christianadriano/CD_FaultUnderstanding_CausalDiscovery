@@ -24,14 +24,17 @@ condition on a collider node.
 Next we will look at the alternatives of adjustments sets to compute the 
 effect of Difficulty on Accuracy.
 
+References: http://dagitty.net/primer/
+
 "
+#Load the graph
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//causal_models//difficulty_confidence//DAG_Tasks_E2.R")
 
 #result is on the variable graph
 
 "The graph is set with the following exposure variables:"
-exposures(graph)
-#"Code.Complexity"  "Programmer.Score
+exposures(graph) #"Code.Complexity"  "Programmer.Score
+outcomes(graph) #"Accuracy"
 
 "However, I want investigate the effect of a exposure to a certain Difficulty level, hence 
 need to change the exposures from the default ones."
@@ -68,7 +71,15 @@ This will be done in a different script.
 
 
 "
+adjustedNodes(graph)
+adjustmentSets(graph,exposure = "Difficulty", outcome="Accuracy", type="all", effect = "total")
+adjustmentSets(graph,exposure = "Difficulty", outcome="Accuracy", type="minimal", effect = "direct")
 
+adjustedNodes(graph) <- c("Confidence")
+adjustmentSets(graph,exposure = "Difficulty", outcome="Accuracy", type="all", effect = "total")
+adjustmentSets(graph,exposure = "Difficulty", outcome="Accuracy", type="minimal", effect = "direct")
+
+#There is no effect on the adjustment sets by adding confidence as an adjustedNode.
 
 
 
