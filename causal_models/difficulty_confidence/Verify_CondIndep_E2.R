@@ -22,10 +22,16 @@ Confirmed, Explanation coefficient crosses zero
 Test generalized Non-students and Students, but did not for Professionals Programmers, 
 for whom explanation and confidence are not independent given Difficulty and Duration
 
+# Claim 1.4: Duration _||_ Programmer.Score | Difficulty
+Confirmed for Students, Non-Students.
+Not confirmed for All and professional developers.
 
 
+# Claim 1.5: Explanation _||_ Programmer.Score | Difficulty
+Not confirmed 
 
 "
+
 
 #Load data
 "Load data with treatment field (isBugCovering) and ground truth (answer correct)"
@@ -196,10 +202,79 @@ precis(claim1.3(dataframe=df[df$profession=="Professional_Developer",]))
 #NOT CONFIRMED. Only Duration crosses Zero
 
 
+#-------------------------------------
+
+# Claim 1.4
+# Duration _||_ Programmer.Score | Difficulty
+
+claim1.4 <- function(dataframe){
+  quap( alist(
+    duration_minutes ~ dnorm( mu , sigma ) ,
+    mu <- a + bscore*qualification_score + bdif*difficulty,
+    bscore ~ dnorm( 0 , 1 ) ,
+    bdif ~ dnorm( 0 , 1 ) ,
+    a ~ dnorm(0, 1),
+    sigma ~ dexp(1)
+  ), data = dataframe
+  ) 
+}
+
+precis(claim1.4(df))
+#         mean   sd  5.5% 94.5%
+# bscore  0.06 0.02  0.03  0.10
+# bdif    0.11 0.02  0.08  0.13
+# a      -0.32 0.05 -0.40 -0.24
+# sigma   0.99 0.01  0.97  1.01
+#NOT CONFIRMED
+precis(claim1.4(dataframe=df[df$profession=="Graduate_Student" 
+                             | df$profession=="Undergraduate_Student" ,]))
+#CONFIRMED. Score coefficient crosses zero
+
+precis(claim1.4(dataframe=df[df$profession=="Professional_Developer"
+                             | df$profession=="Hobbyist"
+                             | df$profession=="Other",]))
+#NOT CONFIRMED.
+
+precis(claim1.4(dataframe=df[df$profession=="Professional_Developer",]))
+#CONFIRMED. Score coefficient crosses zero
 
 
-claim1.3.All <- glm(confidence ~ explanation.size + difficulty + duration_minutes,
-                    family=binomial(link='logit'),
-                    data=df[df$profession=="Graduate_Student" | df$profession=="Undergraduate_Student" ,])
-summary(claim1.2.Students)
-#no coefficient is significant
+#-----------------------------------------------
+# Claim 1.5
+# Explanation _||_ Programmer.Score | Difficulty
+claim1.5 <- function(dataframe){
+  quap( alist(
+    explanation.size ~ dnorm( mu , sigma ) ,
+    mu <- a + bscore*qualification_score + bdif*difficulty,
+    bscore ~ dnorm( 0 , 1 ) ,
+    bdif ~ dnorm( 0 , 1 ) ,
+    a ~ dnorm(0, 1),
+    sigma ~ dexp(1)
+  ), data = dataframe
+  ) 
+}
+
+precis(claim1.5(df))
+#         mean   sd  5.5% 94.5%
+# bscore  0.07 0.02  0.04  0.10
+# bdif   -0.04 0.02 -0.06 -0.01
+# a       0.11 0.05  0.03  0.19
+# sigma   1.00 0.01  0.97  1.02
+#NOT CONFIRMED
+precis(claim1.5(dataframe=df[df$profession=="Graduate_Student" 
+                             | df$profession=="Undergraduate_Student" ,]))
+#NOT CONFIRMED
+
+precis(claim1.5(dataframe=df[df$profession=="Professional_Developer"
+                             | df$profession=="Hobbyist"
+                             | df$profession=="Other",]))
+#NOT CONFIRMED, only difficulty crosses zero
+
+precis(claim1.5(dataframe=df[df$profession=="Professional_Developer",]))
+#CONFIRMED. Both Score and Difficulty coefficient cross zero
+
+#Same happened with a frequentist model.
+model <- lm(explanation.size ~ qualification_score + difficulty, data=df)
+summary(model) #p-values < 0.05
+
+
