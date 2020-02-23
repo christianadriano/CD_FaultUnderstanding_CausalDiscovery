@@ -149,6 +149,9 @@ df_E2$country_id<- factor(df_E2$country_labels,
                           labels = c(1:3)
 )
 
-#TEST DURATION
+#DURATION in Minutes
 df_E2$testDuration_minutes <- df_E2$testDuration/(1000*60)
+
+df_E2$duration_minutes <- df_E2$duration/(1000*60)
+
 
