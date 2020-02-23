@@ -12,10 +12,10 @@ dag_score <- ' dag {
 Programmer.Score[Outcome];
 Years.Experience;
 Test.Duration;
-Age;
-Age->Years.Experience;
-Age->Programmer.Score;
-Age->Test.Duration;
+Years.Age;
+Years.Age->Years.Experience;
+Years.Age->Programmer.Score;
+Years.Age->Test.Duration;
 Years.Experience->Programmer.Score;
 Years.Experience->Test.Duration;
 Test.Duration->Programmer.Score
@@ -23,8 +23,8 @@ Test.Duration->Programmer.Score
 
 graph_score <- dagitty(dag_score)
 coordinates(graph_score) <- list( 
-                           x=c(Years.Experience=0,Test.Duration=1,Age=2,Programmer.Score=1) ,
-                           y=c(Years.Experience=0,Test.Duration=1,Age=0,Programmer.Score=2))
+                           x=c(Years.Experience=2,Test.Duration=1,Years.Age=0,Programmer.Score=1) ,
+                           y=c(Years.Experience=0,Test.Duration=1,Years.Age=0,Programmer.Score=2))
 plot(graph_score)
 
 impliedConditionalIndependencies(graph_score)
