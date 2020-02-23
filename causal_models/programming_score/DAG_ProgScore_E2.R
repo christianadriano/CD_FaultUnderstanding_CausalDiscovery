@@ -27,4 +27,12 @@ coordinates(graph_score) <- list(
                            y=c(Years.Experience=0,Test.Duration=1,Age=0,Programmer.Score=2))
 plot(graph_score)
 
-impliedConditionalIndependencies(dag_score)
+impliedConditionalIndependencies(graph_score)
+
+node <-"Programmer.Score"
+MB <- markovBlanket( graph_score, node )
+cat("\n",
+    "Node",  ":", node,"\n",
+    "Markov Blanket",":",MB,"\n",
+    "Independent Set", ":",setdiff(names(graph_score),c(MB,node)),"\n"
+)
