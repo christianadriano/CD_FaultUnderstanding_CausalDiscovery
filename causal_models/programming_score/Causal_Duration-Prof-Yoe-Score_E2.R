@@ -211,6 +211,29 @@ precis_plot( precis( m4.1 , depth=2 , pars=c("ba","bt","by")) ,
              xlab="qualification score" )
 title("Model score = ba*age + bt*duration + by*yoe")
 
+#---------------------------------------------
+
+#Generate simulated input data
+Yoe_seq <- seq( from=min(df_E2_aux$yoe) , to=max(df_E2_aux$yoe) , length.out=50 )
+Prof_seq <- seq( from=1, to=5)
+
+
+#PROFESSIONAL DEVELOPERS
+#Simulate the posterior with synthetic data 
+sim4.1 <- sim(m4.1, data=data.frame(yoe=Yoe_seq,profession_id=1, age=24, testDuration_minutes=15))
+mu <- link(m4.1, data = data.frame(yoe=Yoe_seq,profession_id=1, age=24, testDuration_minutes=15))
+
+mu.mean = apply(mu,2,mean)
+mu.PI = apply(sim4.1,2, PI, prob=0.89) #mean with the percentile intervals
+mu.HPDI = apply(mu,2,HPDI, prob=0.89) #mean with highest posterior density interval
+
+plot(score ~ yoe, df_E2_aux,col=col.alpha(rangi2,0.5)) #plot raw data
+title(paste("Professional Developer","score=by*yoe"))
+lines(Yoe_seq,mu.mean, col="red")
+shade(mu.HPDI,Yoe_seq)
+shade(mu.PI,Yoe_seq)
+
+#---------------------------------------------------
 
 #Three way interaction
 m5 <- quap(
