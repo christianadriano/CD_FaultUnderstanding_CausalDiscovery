@@ -26,9 +26,15 @@ for whom explanation and confidence are not independent given Difficulty and Dur
 Confirmed for Students, Non-Students.
 Not confirmed for All and professional developers.
 
-
 # Claim 1.5: Explanation _||_ Programmer.Score | Difficulty
 Not confirmed 
+
+#Claim 1.6: Code.Complexity _||_ Explanation | Difficulty
+Confirmed and Generalized across all professions
+
+#Claim 1.7: Code.Complexity _||_ Duration | Difficulty
+Confirmed and Generalized across all professions
+
 
 "
 
@@ -68,7 +74,8 @@ df <- df_E2
 
 df <- select(df,"difficulty","confidence", "duration_minutes", 
              "explanation.size", "qualification_score",
-              "isBugCovering_id","isAnswerCorrect_bol","profession")
+              "isBugCovering_id","isAnswerCorrect_bol","profession",
+             "LOC_original","LOC_inspection")
 
 dim(df[df$duration_minutes>=60,])
 #[1] 27  7
@@ -276,5 +283,91 @@ precis(claim1.5(dataframe=df[df$profession=="Professional_Developer",]))
 #Same happened with a frequentist model.
 model <- lm(explanation.size ~ qualification_score + difficulty, data=df)
 summary(model) #p-values < 0.05
+
+#-------------------------------------------------
+
+# Claim 1.6 
+# Code.Complexity _||_ Explanation | Difficulty
+
+claim1.6 <- function(dataframe){
+  quap( alist(
+    explanation.size ~ dnorm( mu , sigma ) ,
+    mu <- a + bloc*LOC_inspection + bdif*difficulty,
+    bloc ~ dnorm( 0 , 1 ) ,
+    bdif ~ dnorm( 0 , 1 ) ,
+    a ~ dnorm(0, 1),
+    sigma ~ dexp(1)
+  ), data = dataframe
+  ) 
+}
+
+precis(claim1.6(df))
+#         mean   sd  5.5% 94.5%
+# bloc   0.01 0.01  0.00  0.03
+# bdif  -0.04 0.02 -0.07 -0.02
+# a      0.09 0.05  0.00  0.18
+# sigma  1.00 0.01  0.98  1.02
+#CONFIRMED coefficient for LOC_inspection crosses zero
+
+precis(claim1.6(dataframe=df[df$profession=="Graduate_Student" 
+                             | df$profession=="Undergraduate_Student" ,]))
+#CONFIRMED coefficient for LOC_inspection crosses zero
+
+precis(claim1.6(dataframe=df[df$profession=="Professional_Developer"
+                             | df$profession=="Hobbyist"
+                             | df$profession=="Other",]))
+#CONFIRMED coefficient for LOC_inspection crosses zero
+
+precis(claim1.6(dataframe=df[df$profession=="Professional_Developer",]))
+#CONFIRMED coefficient for LOC_inspection crosses zero
+
+model <- lm(explanation.size ~ LOC_inspection + difficulty, data=df)
+summary(model) #coefficient for LOC_inspection p-value=0.10031 
+#CONFIRMED 
+
+#-------------------------------------------------
+
+# Claim 1.7
+# Code.Complexity _||_ Duration | Difficulty
+
+claim1.7 <- function(dataframe){
+  quap( alist(
+    duration_minutes ~ dnorm( mu , sigma ) ,
+    mu <- a + bloc*LOC_inspection + bdif*difficulty,
+    bloc ~ dnorm( 0 , 1 ) ,
+    bdif ~ dnorm( 0 , 1 ) ,
+    a ~ dnorm(0, 1),
+    sigma ~ dexp(1)
+  ), data = dataframe
+  ) 
+}
+
+precis(claim1.7(df))
+#         mean   sd  5.5% 94.5%
+# bloc   0.01 0.01  0.00  0.03
+# bdif  -0.04 0.02 -0.07 -0.02
+# a      0.09 0.05  0.00  0.18
+# sigma  1.00 0.01  0.98  1.02
+#CONFIRMED coefficient for LOC_inspection crosses zero
+
+precis(claim1.7(dataframe=df[df$profession=="Graduate_Student" 
+                             | df$profession=="Undergraduate_Student" ,]))
+#CONFIRMED coefficient for LOC_inspection crosses zero
+
+precis(claim1.7(dataframe=df[df$profession=="Professional_Developer"
+                             | df$profession=="Hobbyist"
+                             | df$profession=="Other",]))
+#CONFIRMED coefficient for LOC_inspection crosses zero
+
+precis(claim1.7(dataframe=df[df$profession=="Professional_Developer",]))
+#CONFIRMED coefficient for LOC_inspection crosses zero
+
+model <- lm(duration_minutes ~ LOC_inspection + difficulty, data=df)
+summary(model) #coefficient for LOC_inspection p-value=0.232 
+#CONFIRMED 
+
+
+
+
 
 
