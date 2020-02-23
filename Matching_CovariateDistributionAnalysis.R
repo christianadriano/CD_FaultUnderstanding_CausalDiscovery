@@ -78,6 +78,6 @@ print(matched_Tab1, smd=TRUE)
 # explanation_size (mean (SD))        26.89 (25.51)         28.12 (27.39)      0.046
 
 #RESULTS DISCUSSION
-#Looking at the results, we can see that the data is not very imbalanced across 
-#all covariates. The only covariate with higher unbablance is duration.
-#Hence matching as menas to correct covariantes imbalance is not necessary.
+# Looking at the results, we can see that the data is not very imbalanced across all covariates. 
+# The only covariate with higher imbalance is duration. 
+# Hence matching as means to correct covariates imbalance is not necessary.
