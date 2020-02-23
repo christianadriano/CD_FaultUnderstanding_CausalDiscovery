@@ -10,7 +10,7 @@ and the outcome variable Y and that contains an arrow into X.
 If the set of variables Z satisfies the backdoor criterion for X and Y, then 
 we can compute the causal effect of X on Y by the following formula:
 
-P(Y = | do(X=x)) = SUM_over_Z{ P(Y=y|X=x,Z=z)P(Z=z) }
+E(Y = y | do(X=x)) = SUM_over_Z{ P(Y=y|X=x,Z=z)P(Z=z) }
 
 The Z set is also called adjustment set.
 
@@ -26,4 +26,49 @@ effect of Difficulty on Accuracy.
 
 "
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//causal_models//difficulty_confidence//DAG_Tasks_E2.R")
-       
+
+#result is on the variable graph
+
+"The graph is set with the following exposure variables:"
+exposures(graph)
+#"Code.Complexity"  "Programmer.Score
+
+"However, I want investigate the effect of a exposure to a certain Difficulty level, hence 
+need to change the exposures from the default ones."
+exposures(graph) <- c() #remove exposure info
+exposures(graph) <- c("Difficulty") #remove exposure info
+
+adjustmentSets(graph,exposure = "Difficulty", outcome="Accuracy", type="minimal", effect = "total")
+"For total effect, I would need to adjust for { Code.Complexity, Programmer.Score }.
+The total effect considers all non-spurious paths between Difficulty and Accuracy
+
+However, if I want to include in my formula only the direct effect of difficulty, then I would need
+a larger adjustment set. { Code.Complexity, Confidence, Explanation, Programmer.Score }. This means 
+that I would need to include Confidence and Explanation.
+"
+
+adjustmentSets(graph,exposure = "Difficulty", outcome="Accuracy", type="minimal", effect = "direct")
+
+"CONDITIONAL INTERVENTIONS AND COVARIATE-SPECIFIC EFFECTS
+
+I am also interested in kwowing the total effect of Difficulty D for the specific value of Confidence C,
+for instance, high confidence.
+
+For that we need to average the conditional probabilities 
+
+E(Accuracy | do(D=5), C=5 ) = SUM_over_Z{ P(Y=y|D=5,Z=z,C=5)P(Z=z|C=5) }
+5 means high confidence and 1 means low confidence.
+
+So, basically, what we are doing is to condition the distribution probability of the 
+adjustment set Z to the Confidence-specific effect P(Z=z|C=5). We use this condition probability 
+to obtain the weighted average of the joint probability distribution  P(Y=y|D=5,Z=z,C=5). 
+
+Next we need to fit a regression model for these interventions. 
+This will be done in a different script.
+
+
+"
+
+
+
+

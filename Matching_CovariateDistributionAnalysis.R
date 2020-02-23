@@ -68,10 +68,10 @@ matched_Tab1 <- CreateTableOne(vars=xvars, strata="isBugCovering", data=matched,
 print(matched_Tab1, smd=TRUE)
 
 #                                 Stratified by isBugCovering
-#                                 FALSE                 TRUE                  SMD   
+#                                       FALSE                 TRUE                  SMD   
 # n                                     503                   503                   
-# qualification_score (mean (SD))      4.21 (0.82)           4.22 (0.82)       0.015
-# years_programming (mean (SD))        8.79 (8.81)           8.89 (8.89)       0.011
+# qualification_score (mean (SD))       4.21 (0.82)           4.22 (0.82)       0.015
+# years_programming (mean (SD))         8.79 (8.81)           8.89 (8.89)       0.011
 # confidence (mean (SD))               3.33 (1.56)           3.34 (1.56)       0.006
 # difficulty (mean (SD))               3.18 (1.22)           3.17 (1.22)       0.007
 # duration (mean (SD))            437865.43 (910123.29) 501707.41 (960203.38)  0.068
