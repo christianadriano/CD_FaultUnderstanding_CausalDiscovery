@@ -9,18 +9,19 @@ library(mirt)
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//load_consent_create_indexes_E2.R")
 
 "Remove participants for whom we did not take the qualification test" 
-df <- df_E2[complete.cases(df_E2[,"qualification_score"]),] #left with 1438 rows
+df_E2 <- df_E2[complete.cases(df_E2[,"qualification_score"]),]
+#Original size: 3657   30 , new size 1438 30
 
 "Replace false for 0(zero) and true for one(1)"
-df$test1_ <-  ifelse(df$test1=="true",1,0)
-df$test2_ <-  ifelse(df$test2=="true",1,0)
-df$test3_ <-  ifelse(df$test3=="true",1,0)
-df$test4_ <-  ifelse(df$test4=="true",1,0)
-df$test5_ <-  ifelse(df$test5=="true",1,0)
+df_E2$test1_ <-  ifelse(df_E2$test1=="true",1,0)
+df_E2$test2_ <-  ifelse(df_E2$test2=="true",1,0)
+df_E2$test3_ <-  ifelse(df_E2$test3=="true",1,0)
+df_E2$test4_ <-  ifelse(df_E2$test4=="true",1,0)
+df_E2$test5_ <-  ifelse(df_E2$test5=="true",1,0)
 
-df <- df %>% dplyr::select(test1_,test2_,test3_,test4_,test5_)
+df <- df_E2 %>% dplyr::select(test1_,test2_,test3_,test4_,test5_)
 
-write.csv(df,"C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//E2_QualificationTestResults.csv")
+#write.csv(df,"C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//E2_QualificationTestResults.csv")
 
 
 IRT_model <- ltm(df ~ z1, IRT.param=TRUE)
@@ -101,21 +102,23 @@ all wrong (241), all correct (189), and only test_4 correct (145)
 hist(factors$score.dat$z1 )
 hist(df_E2$qualification_score)
 
-"Merge this with the data from E2"
-
 #----------------------------------------------------------------
+"Merge this with the Session data from E2"
 
 df_score.dat <- data.frame(factors$score.dat)
 
 #LEFT JOIN to associate the new difficulty scores (z1) to the partipants.
-df_new <- left_join(df,df_score.dat,by=c("test1_"="test1_","test2_"="test2_","test3_"="test3_","test4_"="test4_","test5_"="test5_"))
+df_new <- left_join(df_E2,df_score.dat,by=c("test1_"="test1_","test2_"="test2_","test3_"="test3_","test4_"="test4_","test5_"="test5_"))
+
 
 #Store in the original file the new difficulty scores (z1) of the partipants
 write.csv(df_new,"C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//E2_QualificationTest_IRT.csv")
 
 #Visualizing the results
 plot(df_new$years_programming, df_new$z1)
+title("Factor Scores by Years of Programming - E2")
 plot(df_new$years_programming, df_new$qualification_score)
+title("Average Scores by Years of Programming - E2")
 
 #----------------------------------------------------------------
 
