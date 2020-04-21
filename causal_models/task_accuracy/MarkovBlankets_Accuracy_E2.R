@@ -57,7 +57,27 @@ Verifying Implications
 To test all other implications we just need to fit a regression model that has the 
 markov blanket plus the variable of interest. If the data and the model are
 consistent with each other, then the coefficient for the variable of interest will 
-be zero or the credible interval cover zero.
+be zero or the credible interval will cover zero.
 "
 
+"Build regression models where 
+Accuracy <- Confidence + Explanation + Code.Complexity + Duration + Programmer.Skill + Difficulty + Task.Type + Answer.Type
 
+Assumptions: Difficulty is continuous
+
+Build one model for each of the four pairs of Answer.Type, Task.Type.
+
+Label meannings
+MB for Markov Blanket, ACC for accuracy, Bug for Task with Bug, Pos for Positive Answer (Yes's)
+NBug for Task with No Bug, Neg for Negative Answer (No's or IDK's)
+
+MB.ACC.Bug.Pos (accuracy of true positives)
+MB.ACC.NBug.Neg (accuracy of true negatives)
+MB.ACC.Bug.Pos (accuracy of false positives)
+MB.ACC.NBug.Neg (accuracy of false negatives)
+
+
+
+
+
+"
