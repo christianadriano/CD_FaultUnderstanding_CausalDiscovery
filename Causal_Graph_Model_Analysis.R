@@ -20,13 +20,13 @@ library(devtools)
 
 dag <- ' dag {
 bb="-0.5,-0.5,0.5,0.5";
-Accuracy [outcome,pos="0.061,-0.034"];
+Accuracy [outcome,pos="0.061,-0.054"];
 Programmer.Skill [exposure,pos="-0.327,-0.120"];
-Task.Type [exposure,pos="-0.044,-0.233"];
-Code.Complexity [exposure, pos="-0.327,-0.233"];
-Answer.Type [pos="-0.327,-0.034"];
-Confidence [pos="-0.142,-0.034"];
-Duration [pos="-0.037,-0.095"];
+Task.Type [exposure,pos="-0.037,-0.225"];
+Code.Complexity [exposure, pos="-0.327,-0.225"];
+Answer.Type [pos="-0.327,-0.054"];
+Confidence [pos="-0.142,-0.054"];
+Duration [pos="-0.037,-0.120"];
 Explanation [pos="0.061,-0.179"];
 Difficulty [pos="-0.142,-0.179"];
 Answer.Type -> Confidence;
