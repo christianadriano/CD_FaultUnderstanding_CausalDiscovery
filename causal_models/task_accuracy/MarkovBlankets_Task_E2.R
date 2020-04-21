@@ -43,7 +43,7 @@ Task.Type -> Difficulty;
 graph <- dagitty(dag)
 plot(graph)
 
-for( v in names( graph ) ){
+`for( v in names( graph ) ){
   cat(v, ":", markovBlanket( graph, v ), "\n" )
 }
 "
