@@ -7,28 +7,39 @@ library(ggplot2)
 library(dplyr)
 library(tidyr)
 
+#What is the difference between:
+# "consent_consolidated_Experiment_2.arff"  [1] 3658   21 has everyone
+#  consolidated_Final_Experiment_2.arff" [1] 2580   32 only has the ones who passed the test
+#There is a BUG in this file consolidated_Final_Experiment_2.arff 
+#this worker_id 3AI7C4g38-9_3 should not have tasks associated!
+
 #path <- "C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data//"
-#dataset_E2 <- readARFF(paste0(path, "consent_consolidated_Experiment_2.arff"))
-#df_E2 <- data.frame(dataset_E2)
+path <- "C://Users//Christian//Documents//GitHub//DW_Microtasks//output//"
+dataset_E2 <- readARFF(paste0(path, "consent_consolidated_Experiment_2.arff"))
+df_consent <- data.frame(dataset_E2)
 
-source("C://Users//Christian//Documents//GitHub//ML_FaultUnderstanding//analysis//descriptive//accuracy//load_apply_ground_truth.R")
+#file_path <-
+#  "C://Users//Christian//Documents//GitHub//ML_FaultUnderstanding//data//consolidated_Final_Experiment_2.arff"
+#df_consolidated_final <-  readARFF(file_path)
+
+
+#source("C://Users//Christian//Documents//GitHub//ML_FaultUnderstanding//analysis//descriptive//accuracy//load_apply_ground_truth.R")
 #data is loaded on df2_ground
-
-df_E2 <- df2_ground
+#df_consent <- df2_ground
 
 "PROFESSION"
 #Convert profession from factor to character 
-df_E2$profession <- as.character(df_E2$experience)
+df_consent$profession <- as.character(df_consent$experience)
 #Replaces 'Other...something' for only 'Other'
-df_E2[grep("Other",df_E2$profession),"profession"] <- "Other"
+df_consent[grep("Other",df_consent$profession),"profession"] <- "Other"
 #Transform profession as factor again
-df_E2$profession <- factor(df_E2$profession, 
+df_consent$profession <- factor(df_consent$profession, 
                            levels = c("Professional_Developer","Hobbyist",
                                       "Graduate_Student","Undergraduate_Student",
                                       "Other")
 )
-df_E2$profession_id <- factor(df_E2$profession,
-                              levels=levels(df_E2$profession),
+df_consent$profession_id <- factor(df_consent$profession,
+                              levels=levels(df_consent$profession),
                               labels=c(1:5)
 )
 
@@ -36,83 +47,83 @@ df_E2$profession_id <- factor(df_E2$profession,
 
 #Transform profession as factor again
 
-df_E2$qualification_score_label<- factor(df_E2$qualification_score, 
+df_consent$qualification_score_label<- factor(df_consent$qualification_score, 
                                           levels = c(5:0),
                                           labels = c("100%","80%","60%","40%","20%","0%")
                                           )
-df_E2$qualification_score_id <- factor(df_E2$qualification_score_label,
-                              levels=levels(df_E2$qualification_score_label),
+df_consent$qualification_score_id <- factor(df_consent$qualification_score_label,
+                              levels=levels(df_consent$qualification_score_label),
                               labels=c(5:0)
 )
 
 "FILE_NAME"
 
-df_E2 <- df_E2[df_E2$file_name!="null",]
+df_consent <- df_consent[df_consent$file_name!="null",]
 
-df_E2$file_name<- factor(df_E2$file_name, 
+df_consent$file_name<- factor(df_consent$file_name, 
                          levels = c("HIT01_8","HIT02_24","HIT03_6","HIT04_7",
                                     "HIT05_35","HIT06_51","HIT07_33","HIT08_54")
                         )
-df_E2$file_name_id <- factor(df_E2$file_name,
-                             levels=levels(df_E2$file_name),
+df_consent$file_name_id <- factor(df_consent$file_name,
+                             levels=levels(df_consent$file_name),
                              labels=c(1:8)
 )
 
 "GENDER"
 
-df_E2$gender<- factor(df_E2$gender, 
+df_consent$gender<- factor(df_consent$gender, 
                       levels = c("Female","Male","Prefer_not_to_tell","Other")
 )
 
-df_E2$gender_id<- factor(df_E2$gender, 
-                         levels=levels(df_E2$gender),
+df_consent$gender_id<- factor(df_consent$gender, 
+                         levels=levels(df_consent$gender),
                          labels = c(1:4)
 )
 
 "COUNTRY"
 
 
-df_E2$country <- unlist(lapply(df_E2$country, function(v) {
+df_consent$country <- unlist(lapply(df_consent$country, function(v) {
   if (is.character(v)) return(toupper(v))
   else return(v)
 }))
 
-df_E2$country <- gsub("\\bUNITED STATES OF AMERICA\\b","US",df_E2$country)
-df_E2$country <- gsub("\\bUNITED STATES\\b","US",df_E2$country)
-df_E2$country <- gsub("\\bUNITES STATES\\b","US",df_E2$country)
-df_E2$country <- gsub("\\bUNITEDE STATES\\b","US",df_E2$country)
-df_E2$country <- gsub("\\bUNITED STAETS\\b","US",df_E2$country)
-df_E2$country <- gsub("\\bUNITED\\b","US",df_E2$country)
-df_E2$country <- gsub("\\bUNIT\\b","US",df_E2$country)
-df_E2$country <- gsub("\\bAMERICA\\b","US",df_E2$country)
-df_E2$country <- gsub("LOS ANGELES","US",df_E2$country)
-df_E2$country <- gsub("ILLINOIS","US",df_E2$country)
-df_E2$country <- gsub("WISCONSIN","US",df_E2$country)
-df_E2$country <- gsub("RIVERSIDE","US",df_E2$country)
-df_E2$country <- gsub("SAN JOSE CA","US",df_E2$country)
-df_E2$country <- gsub("SAN DIEGO","US",df_E2$country)
-df_E2$country <- gsub("LOUISIANA","US",df_E2$country)
-df_E2$country <- gsub("CALIFORNIA","US",df_E2$country)
-df_E2$country <- gsub("ARIZONA","US",df_E2$country)
-df_E2$country <- gsub("OHIO","US",df_E2$country)
-df_E2$country <- gsub("MARYLAND","US",df_E2$country)
-df_E2$country <- gsub("CINCINNATI","US",df_E2$country)
-df_E2$country <- gsub("\\bIL\\b","US",df_E2$country)
-df_E2$country <- gsub("\\bIN\\b","US",df_E2$country)
+df_consent$country <- gsub("\\bUNITED STATES OF AMERICA\\b","US",df_consent$country)
+df_consent$country <- gsub("\\bUNITED STATES\\b","US",df_consent$country)
+df_consent$country <- gsub("\\bUNITES STATES\\b","US",df_consent$country)
+df_consent$country <- gsub("\\bUNITEDE STATES\\b","US",df_consent$country)
+df_consent$country <- gsub("\\bUNITED STAETS\\b","US",df_consent$country)
+df_consent$country <- gsub("\\bUNITED\\b","US",df_consent$country)
+df_consent$country <- gsub("\\bUNIT\\b","US",df_consent$country)
+df_consent$country <- gsub("\\bAMERICA\\b","US",df_consent$country)
+df_consent$country <- gsub("LOS ANGELES","US",df_consent$country)
+df_consent$country <- gsub("ILLINOIS","US",df_consent$country)
+df_consent$country <- gsub("WISCONSIN","US",df_consent$country)
+df_consent$country <- gsub("RIVERSIDE","US",df_consent$country)
+df_consent$country <- gsub("SAN JOSE CA","US",df_consent$country)
+df_consent$country <- gsub("SAN DIEGO","US",df_consent$country)
+df_consent$country <- gsub("LOUISIANA","US",df_consent$country)
+df_consent$country <- gsub("CALIFORNIA","US",df_consent$country)
+df_consent$country <- gsub("ARIZONA","US",df_consent$country)
+df_consent$country <- gsub("OHIO","US",df_consent$country)
+df_consent$country <- gsub("MARYLAND","US",df_consent$country)
+df_consent$country <- gsub("CINCINNATI","US",df_consent$country)
+df_consent$country <- gsub("\\bIL\\b","US",df_consent$country)
+df_consent$country <- gsub("\\bIN\\b","US",df_consent$country)
 
-df_E2$country <- gsub("U\\.S\\.A\\.","US",df_E2$country)
-df_E2$country <- gsub("U\\.S\\.","US",df_E2$country)
-df_E2$country <- gsub("U\\.S","US",df_E2$country)
-df_E2$country <- gsub("\\bUSA\\b","US",df_E2$country)
-df_E2$country <- gsub("GG","OTHER",df_E2$country)
-df_E2$country <- gsub("NO","OTHER",df_E2$country)
-df_E2$country <- gsub("GURGAON, INDIA","INDIA",df_E2$country)
-df_E2$country <- gsub("INDIAN","INDIA",df_E2$country)
-df_E2$country <- gsub("MADURAI","INDIA",df_E2$country)
-df_E2$country <- gsub("SRILANKA","SRI LANKA",df_E2$country)
-df_E2$country <- gsub("ENGLAND","UK",df_E2$country)
+df_consent$country <- gsub("U\\.S\\.A\\.","US",df_consent$country)
+df_consent$country <- gsub("U\\.S\\.","US",df_consent$country)
+df_consent$country <- gsub("U\\.S","US",df_consent$country)
+df_consent$country <- gsub("\\bUSA\\b","US",df_consent$country)
+df_consent$country <- gsub("GG","OTHER",df_consent$country)
+df_consent$country <- gsub("NO","OTHER",df_consent$country)
+df_consent$country <- gsub("GURGAON, INDIA","INDIA",df_consent$country)
+df_consent$country <- gsub("INDIAN","INDIA",df_consent$country)
+df_consent$country <- gsub("MADURAI","INDIA",df_consent$country)
+df_consent$country <- gsub("SRILANKA","SRI LANKA",df_consent$country)
+df_consent$country <- gsub("ENGLAND","UK",df_consent$country)
 
-df_tb <-  data.frame(table(df_E2$country))
+df_tb <-  data.frame(table(df_consent$country))
 colnames(df_tb) <- c("country","participants")
 tribble_cnty <- df_tb %>% group_by(participants)
 tribble_cnty <- tribble_cnty %>% summarise(countries_by_participants = n())
@@ -139,58 +150,59 @@ tribble_cnty$participants_labels <- as.factor(tribble_cnty$participants)
 #   ylab("Number of countries")+
 #   ggtitle("Countries by number of participants - E2")
 
-df_E2$country <- unlist(lapply(df_E2$country, 
+df_consent$country <- unlist(lapply(df_consent$country, 
                                function(v) {
                                  if(v %in%  c("US","INDIA")) return(v)
                                  else return("OTHER")
                                }))
 
-df_E2$country_labels<- factor(df_E2$country,
+df_consent$country_labels<- factor(df_consent$country,
                               levels = c("US","INDIA","OTHER")
 )
 
-df_E2$country_id<- factor(df_E2$country_labels, 
-                          levels=levels(df_E2$country_labels),
+df_consent$country_id<- factor(df_consent$country_labels, 
+                          levels=levels(df_consent$country_labels),
                           labels = c(1:3)
 )
 
 #DURATION in Minutes
-df_E2$testDuration_minutes <- df_E2$testDuration/(1000*60)
+df_consent$testDuration_minutes <- df_consent$testDuration/(1000*60)
 
-df_E2$duration_minutes <- df_E2$duration/(1000*60)
+#df_consent$duration_minutes <- df_consent$duration/(1000*60)
 
 
 #Transform isBugCovering as factor again
-df_E2$isBugCovering <- factor(df_E2$isBugCovering, 
-                           levels = c("TRUE","FALSE")
-                          )
-df_E2$isBugCovering_id <- factor(df_E2$isBugCovering,
-                                 levels=levels(df_E2$isBugCovering),
-                                 labels=c(1,0)
-                          )
+#df_consent$isBugCovering <- factor(df_consent$isBugCovering, 
+#                           levels = c("TRUE","FALSE")
+#                          )
+#df_consent$isBugCovering_id <- factor(df_consent$isBugCovering,
+#                                 levels=levels(df_consent$isBugCovering),
+#                                 labels=c(1,0)
+#                         )
 
 
 #Transform answer as factor again
-df_E2$answer <- factor(df_E2$answer, 
-                       levels = c("YES_THERE_IS_AN_ISSUE",
-                                  "NO_THERE_IS_NOT_AN_ISSUE",
-                                  "I_DO_NOT_KNOW")
-                       )
-df_E2$answer_id <- factor(df_E2$answer,
-                          levels=levels(df_E2$answer),
-                          labels=c(1,0,2)
-                    )
+#df_consent$answer <- factor(df_consent$answer, 
+#                       levels = c("YES_THERE_IS_AN_ISSUE",
+#                                  "NO_THERE_IS_NOT_AN_ISSUE",
+#                                  "I_DO_NOT_KNOW")
+#                       )
+#df_consent$answer_id <- factor(df_consent$answer,
+#                          levels=levels(df_consent$answer),
+#                          labels=c(1,0,2)
+#                    )
 
-df_E2$explanation.size <- sapply(strsplit(df_E2$explanation, " "), length);
+#df_consent$explanation.size <- sapply(strsplit(df_consent$explanation, " "), length);
 
 
 #Transform answer as factor again
-df_E2$isAnswerCorrect_bol <- as.integer(as.logical(df_E2$isAnswerCorrect))
+#df_consent$isAnswerCorrect_bol <- as.integer(as.logical(df_consent$isAnswerCorrect))
 
-# df_E2$isAnswerCorrect <- factor(df_E2$isAnswerCorrect, 
+# df_consent$isAnswerCorrect <- factor(df_consent$isAnswerCorrect, 
 #                        levels = c("FALSE","TRUE")
 # )
-# df_E2$isAnswerCorrect_id <- factor(df_E2$isAnswerCorrect,
-#                           levels=levels(df_E2$isAnswerCorrect),
+# df_consent$isAnswerCorrect_id <- factor(df_consent$isAnswerCorrect,
+#                           levels=levels(df_consent$isAnswerCorrect),
 #                           labels=c(0,1)
 # )
+
