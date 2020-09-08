@@ -1,5 +1,5 @@
 " 
-Diagnosis the differences in covariate distribution for E2
+Analyzes the differences in covariate distribution for E2
 Creates groups that have balanced distribution based on a controlled variable, which in my case is the
 variable named isBugCovering
 
