@@ -13,7 +13,6 @@ library(MatchIt)
 library(dplyr)
 
 data(lalonde)
-#df <- scale(lalonde[c("age", "educ", "re74", "re75"),])
 
 df <- lalonde %>% mutate_at(
                       c("age", "educ","married", "re74", "re75","re78"), 
@@ -46,3 +45,14 @@ var_married_0 = var(married_0)
 
 mean(lalonde[lalonde$treat==1,]$re78) - mean(lalonde[lalonde$treat==0,]$re78)
 mean(df$married)
+
+
+#------------------------------------
+#Compute Propensity Score
+
+psmodel <- glm(treat ~ age+educ+married+re74+re75+re78, family=binomial(),data=df)
+summary(psmodel)
+
+
+min(psmodel$fitted.values)
+max(psmodel$fitted.values)
