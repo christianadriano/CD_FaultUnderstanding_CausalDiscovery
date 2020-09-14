@@ -2,32 +2,25 @@
 Propensity score matching
 "
 
-install.packages("tableone")
-install.packages("Matching")
-install.packages("MatchIt")
-
 library(tableone)
 library(Matching)
 #Now load the lalonde data (which is in the MatchIt package):
 library(MatchIt)
+
 library(dplyr)
 
 data(lalonde)
 
+#Center (mean==0) and scale (0,1) the confounding covariates
 df <- lalonde %>% mutate_at(
-                      c("age", "educ","married", "re74", "re75","re78"), 
+                      c("age", "educ","married","nodegree", "black","hispan","re74", "re75"), 
                       ~(scale(.) %>% as.vector)
                       ) 
+#----------------------------------------
 
-#For each variable,find the standardized differences (mean treatment - mean control)
-#Age
-df_married <- df[df$married==1,]
-mean_Age_diff <- mean(df_married[df_married$treat==1,]$age) -  mean(df_married[df_married$treat==0,]$age)
-mean_Edu_diff <-  mean(df_married[df_married$treat==1,]$edu) -  mean(df_married[df_married$treat==0,]$edu)
-mean_re74_diff <-  mean(df_married[df_married$treat==1,]$re74) -  mean(df_married[df_married$treat==0,]$re74)
-mean_re75_diff <-  mean(df_married[df_married$treat==1,]$re75) -  mean(df_married[df_married$treat==0,]$re75)
-
-mean_Age_diff + mean_Edu_dif + mean_re74_diff + mean_Edu_re75
+#For the column married, find the standardized differences: 
+#difference between the means divided by the square-root of the sum
+#sample variances divided by 2
 
 married_1 = df[df$treat==1,]$married
 married_0 = df[df$treat==0,]$married
@@ -37,22 +30,58 @@ avg_married_0 = mean(married_0)
 var_married_1 = var(married_1)
 var_married_0 = var(married_0)
 
-#difference between the means divided by the square-root of the sum
-#sample variances divided by 2
+
 (avg_married_0 - avg_married_1) / (sqrt((var_married_0+var_married_1)/2))
 #[1] 0.719492
-
-
-mean(lalonde[lalonde$treat==1,]$re78) - mean(lalonde[lalonde$treat==0,]$re78)
-mean(df$married)
 
 
 #------------------------------------
 #Compute Propensity Score
 
-psmodel <- glm(treat ~ age+educ+married+re74+re75+re78, family=binomial(),data=df)
-summary(psmodel)
-
+psmodel <- glm(treat ~ age+educ+married+black+hispan+nodegree+re74+re75, 
+               family=binomial(),data=df)
 
 min(psmodel$fitted.values)
 max(psmodel$fitted.values)
+
+hist(psmodel$fitted.values)
+
+#-------------------------------------
+#Do Matching on the Propensity Score
+
+logit<-function(x) log(x/(1-x))
+
+set.seed(931139)
+#Match on the propensity score itself, not logit of the propensity score.
+#Obtain the standardized differences for the matched data.
+
+psmatch <- Match(Tr=df$treat,M=1,X=psmodel$fitted.values, replace=FALSE)
+matched <- df[unlist(psmatch[c("index.treated","index.control")]),]
+xvars <- c("age", "educ","married","nodegree", "black","hispan","re74", "re75") 
+
+matchedtab1 <- CreateTableOne(var=xvars,strata = "treat",
+                              data=matched,test=FALSE)
+
+print(matchedtab1, smd=TRUE)
+#SMD is the standard difference
+
+#                        Stratified by treat
+#                         0            1            SMD   
+# n                      185          185              
+# age (mean (SD))      -0.22 (1.06) -0.16 (0.72)  0.069
+# educ (mean (SD))      0.11 (1.01)  0.03 (0.76)  0.085
+# married (mean (SD))  -0.41 (0.83) -0.46 (0.80)  0.054
+# nodegree (mean (SD))  0.04 (0.99)  0.16 (0.94)  0.127
+# black (mean (SD))     0.15 (1.02)  0.91 (0.74)  0.852
+# hispan (mean (SD))    0.32 (1.29) -0.18 (0.74)  0.479
+# re74 (mean (SD))     -0.34 (0.65) -0.38 (0.75)  0.062
+# re75 (mean (SD))     -0.17 (0.80) -0.20 (0.98)  0.034
+
+#Compute standardized difference
+avg_married_1 <- matchedtab1$ContTable$`1`["married","mean"]
+avg_married_0 <- matchedtab1$ContTable$`0`["married","mean"]
+sd_married_1 <- matchedtab1$ContTable$`1`["married","sd"]
+sd_married_0 <- matchedtab1$ContTable$`0`["married","sd"]
+
+(avg_married_1 - avg_married_0) / (sqrt((sd_married_0^2+sd_married_1^2)/2))
+
