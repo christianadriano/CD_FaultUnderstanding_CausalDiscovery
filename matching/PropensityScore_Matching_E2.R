@@ -92,20 +92,42 @@ psmatch <- Match(Tr=df$treat,M=1,X=psmodel$fitted.values,
                  caliper = 0.1,
                  replace=FALSE)
 matched <- df[unlist(psmatch[c("index.treated","index.control")]),]
-xvars <- c("age", "educ","married","nodegree", "black","hispan","re74", "re75") 
+xvars <- c("age", "educ","married","nodegree", "black","hispan","re74", "re75","re78") 
 
 matchedtab1 <- CreateTableOne(var=xvars,strata = "treat",
                               data=matched,test=FALSE)
 
 print(matchedtab1, smd=TRUE)
-#                         Stratified by treat
-#                          0            1            SMD   
-# n                      111          111              
-# age (mean (SD))      -0.11 (1.12) -0.12 (0.73)  0.006
-# educ (mean (SD))      0.04 (1.01) -0.01 (0.88)  0.047
-# married (mean (SD))  -0.35 (0.87) -0.35 (0.87) <0.001
-# nodegree (mean (SD))  0.06 (0.99)  0.04 (0.99)  0.019
-# black (mean (SD))     0.66 (0.92)  0.70 (0.90)  0.040
-# hispan (mean (SD))   -0.03 (0.97) -0.06 (0.93)  0.029
-# re74 (mean (SD))     -0.29 (0.73) -0.36 (0.89)  0.086
-# re75 (mean (SD))     -0.07 (0.96) -0.29 (0.93)  0.239
+#                             Stratified by treat
+#                            0                 1             SMD   
+# n                        111               111                 
+# age (mean (SD))        -0.11 (1.12)      -0.12 (0.73)     0.006
+# educ (mean (SD))        0.04 (1.01)      -0.01 (0.88)     0.047
+# married (mean (SD))    -0.35 (0.87)      -0.35 (0.87)    <0.001
+# nodegree (mean (SD))    0.06 (0.99)       0.04 (0.99)     0.019
+# black (mean (SD))       0.66 (0.92)       0.70 (0.90)     0.040
+# hispan (mean (SD))     -0.03 (0.97)      -0.06 (0.93)     0.029
+# re74 (mean (SD))       -0.29 (0.73)      -0.36 (0.89)     0.086
+# re75 (mean (SD))       -0.07 (0.96)      -0.29 (0.93)     0.239
+# re78 (mean (SD))     4904.37 (5832.77) 6151.18 (6710.66)  0.198
+
+#Comparing the difference in means for re78 between treatment and control
+#note taht re78 was not a confounder, so it was not included in the 
+#propensity score model, but we can still look at its value after matching
+avg_re78_1 <- matchedtab1$ContTable$`1`["re78","mean"]
+avg_re78_0 <- matchedtab1$ContTable$`0`["re78","mean"]
+avg_re78_1-avg_re78_0
+#[1] 1246.806
+
+#effect of treatment on earnings (re78)
+re78_1 <- matched[matched$treat==1,]$re78
+re78_0 <- matched[matched$treat==0,]$re78
+t.test(re78_1,re78_0,paired = TRUE)
+
+# Paired t-test
+# data:  re78_1 and re78_0
+# t = 1.4824, df = 110, p-value = 0.1411 NON-SIGNIFICANT
+# alternative hypothesis: true difference in means is not equal to 0
+# 95 percent confidence interval: [-420.0273,2913.6398]
+# sample estimates:
+#   mean of the differences : 1246.806 
