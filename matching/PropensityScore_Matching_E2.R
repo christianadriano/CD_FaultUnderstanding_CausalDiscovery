@@ -91,7 +91,9 @@ set.seed(931139)
 psmatch <- Match(Tr=df$treat,M=1,X=psmodel$fitted.values, 
                  caliper = 0.1,
                  replace=FALSE)
+
 matched <- df[unlist(psmatch[c("index.treated","index.control")]),]
+
 xvars <- c("age", "educ","married","nodegree", "black","hispan","re74", "re75","re78") 
 
 matchedtab1 <- CreateTableOne(var=xvars,strata = "treat",
