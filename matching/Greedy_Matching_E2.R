@@ -4,6 +4,11 @@ Creates groups that have balanced distribution based on a controlled variable, w
 variable named isBugCovering
 
 See the results discussion at the end. It seems that all looks good in terms of covariate balance for E2.
+
+TODO: 
+- add complexity of tasks as a covariate as well.
+- check imbalance by worker profession
+
 "
 
 install.packages("tableone")
