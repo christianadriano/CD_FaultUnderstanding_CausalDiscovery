@@ -116,5 +116,148 @@ mean(weight[treatment==1]*age[treatment==1])/mean(weight[treatment==1])
 #since they the number of elements is the same (n), the formula 
 #can be simplified by the ratio of the means.
 
-#----------------------
-#MARGINAL STRUTURAL MODEL
+#-----------------------------------------------------------------
+"MARGINAL STRUTURAL MODEL
+Intervention (treatment) is rhc vs not
+Outcome Y is the variable 'died' yes/no
+g() is the link function
+Two steps here:
+1- use the log link to get the causal relative risk
+2- use an identity link to get the causal risk difference
+
+"
+#-----------------
+# Relative Causal Risk
+
+#Model to fit: 
+# Log(Yt) = intercept + treatment*coeff
+
+
+glm.obj <- glm(died~treatment,weights=weight, family = binomial(link="logit"))
+summary(glm.obj) #shows the coefficient is statistically significan
+betaiptw <- coef(glm.obj)
+betaiptw
+# (Intercept)   treatment 
+# 0.5342068   0.2288326 
+
+
+#to properly account for weightig we use here asymptoptic (sandwich lib) variance
+#this is necessary to compensate for the fact that the pseudo-population is larger
+#than the actual population. 
+SE <- sqrt(diag(vcovHC(glm.obj,type="HC0")))
+SE 
+# (Intercept)   treatment 
+# 0.03602006  0.06485999 
+
+#now get point estimates and confidence interval for a relative risk,
+#which is needed to exponentiate
+treat_coefficient = betaiptw[2]
+two_standar_errors = 1.96*SE[2] #i.e., 95% confidence interval
+#this is because the outcome is a log function, so, to 
+#to obtain the value back I just need to exponentiate
+causal_relative_risk <- exp(treat_coefficient) 
+lower_causal_bound <- exp(treat_coefficient - two_standar_errors)
+upper_causal_bound <- exp(treat_coefficient + two_standar_errors)
+c(lower_causal_bound,causal_relative_risk,upper_causal_bound)
+# lower     mean      upper 
+# 1.107059  1.257132  1.427548 
+
+#So the 95% CI is between (1.10, 1,43)
+# value greater than 1 means that there is higher risk of death for 
+# the treated group
+
+#-------------------------------------
+#Now compute the risk differences
+
+#Model to fit: 
+# E(Yt) = intercept + treatment*coeff
+
+glm.obj <- glm(died~treatment,weights=weight, family = binomial(link="identity"))
+summary(glm.obj) #shows the coefficient is statistically significan
+betaiptw <- coef(glm.obj)
+betaiptw
+# (Intercept)   treatment 
+# 0.63046375  0.05154951 
+
+SE <- sqrt(diag(vcovHC(glm.obj,type="HC0")))
+SE 
+# (Intercept)   treatment 
+# 0.008391924 0.014396571 
+
+#now get point estimates and confidence interval for a relative risk,
+#which is needed to exponentiate
+treat_coefficient = betaiptw[2]
+two_standar_errors = 1.96*SE[2] #i.e., 95% confidence interval
+#this is because the outcome is a log function, so, to 
+#to obtain the value back I just need to exponentiate
+causal_relative_risk <- treat_coefficient
+lower_causal_bound <- treat_coefficient - two_standar_errors
+upper_causal_bound <- treat_coefficient + two_standar_errors
+c(lower_causal_bound,causal_relative_risk,upper_causal_bound)
+# lower      mean       upper 
+# 0.02333223 0.05154951 0.07976679 
+
+#---------------------------------------------
+#Another option is to use the iptw package
+
+#First check the weights (propensity scores)
+
+weightmodel <- ipwpoint(exposure = treatment, family= "binomial", link="logit",
+                        denominator=~age+female+meanbp1+ARF+CHF+Cirr+colcan+
+                          Coma+lungcan+MOSF+sepsis, data=mydata)
+
+#numeric summary of weights
+summary(weightmodel$ipw.weights)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+# 1.046   1.405   1.721   2.001   2.280  21.606 
+
+#plot of weights
+ipwplot(weights=weightmodel$ipw.weights, logscale=FALSE, 
+        main="weights", xlim=c(0,22))
+
+#Second, fit the marginal structural model (risk difference)
+msm <- svyglm(died~treatment,design=svydesign(~1,weights=~weight,data=mydata))
+coef(msm)
+# (Intercept)   treatment 
+# 0.63046375  0.05154951 
+
+confint(msm)
+#                 2.5 %     97.5 %
+# (Intercept) 0.61401445 0.64691305
+# treatment   0.02333029 0.07976873
+
+
+#----------------------------------
+#TRUNCATE WEIGHTS
+#this might be necessary if there are weights that are too large
+truncweight <- replace(weight,weight>10,10) #if greater than 10, replace with 10
+#get causal risk difference
+glm.obj <- glm(died~treatment,weights=truncweight, family = binomial(link="identity"))
+summary(glm.obj) #shows the coefficient is statistically significan
+
+#or using the IPW package
+weightmodel <- ipwpoint(exposure = treatment, family= "binomial", link="logit",
+                        denominator=~age+female+meanbp1+ARF+CHF+Cirr+colcan+
+                        Coma+lungcan+MOSF+sepsis, data=mydata, 
+                        trunc = 0.01 #truncates 1% and 99% percentile
+                        ) 
+
+#numeric summary of weights
+summary(weightmodel$weights.trunc)
+# Min.   1st Qu.  Median  Mean   3rd Qu.   Max. 
+# 1.081   1.405   1.721   1.972   2.280   6.379 
+
+
+ipwplot(weights=weightmodel$weights.trunc, logscale=FALSE, 
+        main="weights", xlim=c(0,22))
+
+mydata$wt <- weightmodel$weights.trunc
+#Second, fit the marginal structural model (risk difference)
+msm <- svyglm(died~treatment,design=svydesign(~1,weights=~wt,data=mydata))
+coef(msm)
+# (Intercept)   treatment 
+#  0.63045533  0.05494865
+confint(msm)
+#                 2.5 %     97.5 %
+# (Intercept) 0.61400659 0.64690406
+# treatment   0.02822931 0.08166799
