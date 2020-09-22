@@ -106,3 +106,15 @@ print(weightedtable,smd=TRUE)
 # aps (mean (SD))         52.91 (19.30)   58.56 (19.84)  0.289
 # treatment (mean (SD))    0.00 (0.00)     1.00 (0.00)     Inf
 # died (mean (SD))         0.63 (0.48)     0.68 (0.47)   0.109
+
+#Compute the reweighted value for a single covariate
+#in the case below it will be the age for treated (61.43)
+mean(weight[treatment==1]*age[treatment==1])/mean(weight[treatment==1])
+#[1] 61.42933
+#the weight vector has the propensity scores for each row
+#eventhough the formula involves a sum both in the denomintaor and the numerator,
+#since they the number of elements is the same (n), the formula 
+#can be simplified by the ratio of the means.
+
+#----------------------
+#MARGINAL STRUTURAL MODEL
