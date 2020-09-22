@@ -6,6 +6,9 @@ library(tableone)
 library(ipw)
 library(sandwich)
 library(survey)
+library(ggplot2)
+#install.packages("hrbrthemes")
+library(hrbrthemes)
 
 load(url("http://biostat.mc.vanderbilt.edu/wiki/pub/Main/DataSets/rhc.sav"))
 View(rhc)
@@ -27,6 +30,9 @@ treatment <- as.numeric(rhc$swang1=="RHC")
 meanbp1 <- rhc$meanbp1
 aps <- rhc$aps1
 
+covariate_names <- c("ARF","CHF","Cirr","colcan","Coma","lungcan","MOSF","sepsis","age","female","meanbp1","aps")
+
+
 #new dataset
 mydata <- cbind(ARF,CHF,Cirr,colcan,Coma,lungcan,MOSF,sepsis,
                 age,female,meanbp1,aps,treatment,died)
@@ -39,6 +45,8 @@ psmodel <- glm(treatment~age+female+meanbp1+ARF+CHF+Cirr+colcan+
 
 #value of the propensity score for each subject
 ps <- predict(psmodel,type = "response")
+mydata$psvalue <- ps
+
 summary(psmodel)
 # Coefficients:
 #                Estimate Std. Error z value Pr(>|z|)    
@@ -57,10 +65,26 @@ summary(psmodel)
 #   ---
 #  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
+#Distribution of Propensity Score before Matching
+m <- split(mydata$psvalue, mydata$treatment)
+
+df_control <- data.frame(value=m$`0`)
+df_treat <- data.frame(value=m$`1`)
+
+p <- ggplot() + aes(x=value)+
+  geom_histogram( data=df_control, aes(y = ..density..), fill="#69b3a2" ) +
+  geom_label( aes(x=0.6, y=2.5, label="control"), color="#69b3a2") +
+  geom_histogram(data=df_treat,  aes(y = -..density..), fill= "#404080") +
+  geom_label( aes(x=0.6, y=-3.5, label="treatment"), color="#404080") +
+  theme_ipsum() +
+  xlab("Propensity Score")
+p
 #Create the weights for treated and non-treated
 weight <- ifelse(treatment==1,1/(ps),1/(1-ps))
 #Apply the weights to the data
 weighted_data <- svydesign(ids=~1,data=mydata,weights=~weight)
+
+
 #weighted table 1
 weightedtable = svyCreateTableOne(strata="treatment",
                                   data=weighted_data, test=FALSE)
