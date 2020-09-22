@@ -41,8 +41,8 @@ psmodel <- glm(treatment~age+female+meanbp1+ARF+CHF+Cirr+colcan+
 ps <- predict(psmodel,type = "response")
 summary(psmodel)
 # Coefficients:
-#   Estimate Std. Error z value Pr(>|z|)    
-# (Intercept) -0.7299670  0.1997692  -3.654 0.000258 ***
+#                Estimate Std. Error z value Pr(>|z|)    
+#   (Intercept) -0.7299670  0.1997692  -3.654 0.000258 ***
 #   age         -0.0031374  0.0017289  -1.815 0.069567 .  
 #   female      -0.1697903  0.0583574  -2.909 0.003620 ** 
 #   meanbp1     -0.0109824  0.0008217 -13.366  < 2e-16 ***
@@ -57,3 +57,28 @@ summary(psmodel)
 #   ---
 #  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
+#Create the weights for treated and non-treated
+weight <- ifelse(treatment==1,1/(ps),1/(1-ps))
+#Apply the weights to the data
+weighted_data <- svydesign(ids=~1,data=mydata,weights=~weight)
+#weighted table 1
+weightedtable = svyCreateTableOne(strata="treatment",
+                                  data=weighted_data, test=FALSE)
+print(weightedtable,smd=TRUE)
+#                           Stratified by treatment
+#                               0               1         SMD   
+# n                         5732.49         5744.88               
+# ARF (mean (SD))          0.44 (0.50)     0.44 (0.50)   0.010
+# CHF (mean (SD))          0.08 (0.27)     0.08 (0.27)   0.005
+# Cirr (mean (SD))         0.04 (0.19)     0.04 (0.19)   0.001
+# colcan (mean (SD))       0.00 (0.04)     0.00 (0.06)   0.042
+# Coma (mean (SD))         0.08 (0.26)     0.07 (0.25)   0.023
+# lungcan (mean (SD))      0.01 (0.08)     0.01 (0.09)   0.014
+# MOSF (mean (SD))         0.07 (0.26)     0.07 (0.26)   0.004
+# sepsis (mean (SD))       0.21 (0.41)     0.22 (0.41)   0.002
+# age (mean (SD))         61.36 (17.56)   61.43 (15.33)  0.004
+# female (mean (SD))       0.45 (0.50)     0.45 (0.50)   0.001
+# meanbp1 (mean (SD))     78.60 (37.58)   79.26 (40.31)  0.017
+# aps (mean (SD))         52.91 (19.30)   58.56 (19.84)  0.289
+# treatment (mean (SD))    0.00 (0.00)     1.00 (0.00)     Inf
+# died (mean (SD))         0.63 (0.48)     0.68 (0.47)   0.109
