@@ -1,8 +1,13 @@
 "
 -------------------------------------------------------
-Loads the ground truth for both experiment E2.
-Stores the data as a new column in the data frame 
-Colunm name is 'ground_truth'
+
+- Loads the ground truth for experiment E2
+- Join worker demographics and qualification test info to each task (which is a row in the dataframe)
+- Includes IRT (item response theory) equalization of the grades
+- Includes Add Halstead complexity of each program statement
+
+Regarding the ground truth data:
+Stores the data as a new colunm name is 'ground_truth'
 
 This script also evaluates each answer against the grond truth.
 The result ist stored in a new data frame column named 'answer_correct'
