@@ -40,6 +40,10 @@ xvars <- c("qualification_score",
 
 df2_fileName <- df_E2_ground[df_E2_ground$file_name=="HIT01_8",]
 
+library(tableone)
+library(Matching)
+#Now load the lalonde data (which is in the MatchIt package):
+library(MatchIt)
 #Without Matching
-raw_table <- CreateTableOne(vars=xvars,strata="isBugCovering",data=df2_ground,test=FALSE)
+raw_table <- CreateTableOne(vars=xvars,strata="isBugCovering",data=df_E2_ground,test=FALSE)
 print(raw_table, smd=TRUE)
