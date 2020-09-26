@@ -69,4 +69,5 @@ isCorrectList <- (df_E2_ground$answer=="YES_THERE_IS_AN_ISSUE" &  df_E2_ground$i
 
 df_E2_ground$isAnswerCorrect <- isCorrectList
 
+print("data loaded on df_E2_ground")
 
