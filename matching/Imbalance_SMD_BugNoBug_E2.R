@@ -11,6 +11,10 @@ Analyze imbalance for each Task (HIT01 to HIT08)
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_ground_truth_E2.R")
 #summary(df_E2_ground)
 
+source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//create_indexes_E2.R")
+
+df_E2_ground<- run(df_E2_ground)
+
 "Determine the covariates that need to taken into account w.r.t. imbalance.
 The covariates are the ones that are confounders of the treatment (bug/nobug) and the 
 effect (accuracy of the task)"
