@@ -1,5 +1,4 @@
-"
--------------------------------------------------------
+"-------------------------------------------------------
 
 - Loads the ground truth for experiment E2
 - Join worker demographics and qualification test info to each task (which is a row in the dataframe)
@@ -37,7 +36,6 @@ df_tasks <- read.csv(str_c(path, "merged_tasks_complexity_E2.csv"))
 #Score factors computed through IRT Model fitting
 df_irt <- read.csv("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//E2_QualificationTest_IRT.csv")
 df_irt <-  dplyr::select(df_irt, worker_id,z1)
-
 
 #Ground truth for tasks
 df_truth <- read.csv(str_c(path, "ground_truth_E2.csv"))
