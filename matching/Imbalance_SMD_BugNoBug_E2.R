@@ -11,7 +11,7 @@ Analyze imbalance for each Task (HIT01 to HIT08)
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_ground_truth_E2.R")
 #summary(df_E2_ground)
 
-source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//create_indexes_E2.R")
+source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//create_indexes_E2.R")
 
 df_E2_ground<- run(df_E2_ground)
 
@@ -31,6 +31,7 @@ We could evaluate balance by each file_name, which is a separate experiment.
 
 df_E2_ground <-
   select(df_E2_ground,
+         'years_programming',
          'qualification_score',
          'volume_Halstead',
          'profession',
