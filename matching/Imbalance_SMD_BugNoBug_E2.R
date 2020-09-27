@@ -38,7 +38,8 @@ df_E2_ground <-
          'isBugCovering',
           'file_name');
 
-xvars <- c("qualification_score",
+xvars <- c("years_programming",
+           "qualification_score",
            "volume_Halstead",
            "profession"
           );
