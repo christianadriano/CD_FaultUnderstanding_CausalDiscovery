@@ -8,7 +8,7 @@ run <- function(data_E2){
   
   "PROFESSION"
   #Convert profession from factor to character 
-  data_E2$profession <- as.character(data_E2$experience)
+  data_E2$profession <- as.character(data_E2$profession)
   #Replaces 'Other...something' for only 'Other'
   data_E2[grep("Other",data_E2$profession),"profession"] <- "Other"
   #Transform profession as factor again
@@ -170,8 +170,8 @@ run <- function(data_E2){
                             levels=levels(data_E2$answer),
                             labels=c(1,0,2)
   )
-  
-  data_E2$explanation.size <- sapply(strsplit(data_E2$explanation, " "), length);
+
+  data_E2$explanation.size <- sapply(strsplit(as.character(data_E2$explanation)," "), length);
   
   
   #Transform answer as factor again
@@ -184,5 +184,5 @@ run <- function(data_E2){
   #                           levels=levels(data_E2$isAnswerCorrect),
   #                           labels=c(0,1)
   # )
-  
+  return(data_E2);
 }
