@@ -29,14 +29,17 @@ effect (accuracy of the task)"
 We could evaluate balance by each file_name, which is a separate experiment.
 "
 
-df_E2_ground <-
-  select(df_E2_ground,
-         'years_programming',
-         'qualification_score',
-         'volume_Halstead',
-         'profession',
-         'isBugCovering',
-          'file_name');
+library(dplyr)
+
+df_selected <-
+  dplyr::select(df_E2_ground,profession, 
+                years_programming,
+                qualification_score,
+                volume_Halstead,
+                profession,
+                isBugCovering,
+                file_name
+                );
 
 xvars <- c("years_programming",
            "qualification_score",
@@ -53,3 +56,17 @@ library(MatchIt)
 #Without Matching
 raw_table <- CreateTableOne(vars=xvars,strata="isBugCovering",data=df_E2_ground,test=FALSE)
 print(raw_table, smd=TRUE)
+
+#Data is imbalanced as the SMD is larger than 0.1
+# Stratified by isBugCovering
+#                                    TRUE            FALSE           SMD   
+# n                                  278            1184                
+# years_programming (mean (SD))    10.78 (10.71)    8.72 (8.63)    0.212
+# qualification_score (mean (SD))   4.23 (0.79)     4.13 (0.79)    0.127
+# volume_Halstead (mean (SD))     299.43 (437.96) 116.17 (137.63)  0.565
+# profession (%)                                                   0.149
+# Professional_Developer          120 (43.2)      474 (40.0)         
+# Hobbyist                         55 (19.8)      229 (19.3)         
+# Graduate_Student                 32 (11.5)      149 (12.6)         
+# Undergraduate_Student            41 (14.7)      231 (19.5)         
+# Other                            30 (10.8)      101 ( 8.5)    
