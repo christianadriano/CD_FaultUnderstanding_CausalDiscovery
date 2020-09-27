@@ -47,11 +47,16 @@ condIndep #{}
 # file_name _||_ profession
 # file_name _||_ qualification_score
 # file_name _||_ volume_Halstead
+# file_name _||_ years_programming
 # isBugCovering _||_ profession
 # isBugCovering _||_ qualification_score
 # isBugCovering _||_ volume_Halstead
+# isBugCovering _||_ years_programming
 # profession _||_ volume_Halstead
+# profession _||_ years_programming
 # qualification_score _||_ volume_Halstead
+# volume_Halstead _||_ years_programming
 #All of these independencies hold, because they are all exogenous variables
 
-#Qualification_score is affected by profession. (build the model here)
+#Qualification_score is affected by profession and years_programming 
+#(build the model here)
