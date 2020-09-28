@@ -47,15 +47,16 @@ xvars <- c("years_programming",
            "profession"
           );
 
-df2_fileName <- df_E2_ground[df_E2_ground$file_name=="HIT01_8",]
 
 library(tableone)
 library(Matching)
 #Now load the lalonde data (which is in the MatchIt package):
 library(MatchIt)
 #Without Matching
-raw_table <- CreateTableOne(vars=xvars,strata="isBugCovering",data=df_E2_ground,test=FALSE)
-print(raw_table, smd=TRUE)
+
+# ALL FILE NAMES
+raw_table_all <- CreateTableOne(vars=xvars,strata="isBugCovering",data=df_E2_ground,test=FALSE)
+print(raw_table_all, smd=TRUE)
 
 #Data is imbalanced as the SMD is larger than 0.1
 # Stratified by isBugCovering
@@ -70,3 +71,23 @@ print(raw_table, smd=TRUE)
 # Graduate_Student                 32 (11.5)      149 (12.6)         
 # Undergraduate_Student            41 (14.7)      231 (19.5)         
 # Other                            30 (10.8)      101 ( 8.5)    
+
+#HIT01_8
+df_file_name <- df_E2_ground[df_E2_ground$file_name=="HIT01_8",]
+raw_table <- CreateTableOne(vars=xvars,strata="isBugCovering",data=df_file_name,test=FALSE)
+print(raw_table, smd=TRUE)
+#                                 Stratified by isBugCovering
+#                                   TRUE           FALSE         SMD   
+# n                                   27           103               
+# years_programming (mean (SD))    11.93 (11.29)  9.16 (9.37)   0.267
+# qualification_score (mean (SD))   4.15 (0.77)   4.17 (0.79)   0.022
+# volume_Halstead (mean (SD))     101.74 (44.29) 95.70 (74.35)  0.099
+# profession (%)                                                0.437
+# Professional_Developer           11 (40.7)     39 (37.9)        
+# Hobbyist                          4 (14.8)     14 (13.6)        
+# Graduate_Student                  5 (18.5)     12 (11.7)        
+# Undergraduate_Student             4 (14.8)     32 (31.1)        
+# Other                             3 (11.1)      6 ( 5.8)  
+
+
+df2_fileName <- df_E2_ground[df_E2_ground$file_name=="HIT02_4",]
