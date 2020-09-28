@@ -90,4 +90,18 @@ print(raw_table, smd=TRUE)
 # Other                             3 (11.1)      6 ( 5.8)  
 
 
-df2_fileName <- df_E2_ground[df_E2_ground$file_name=="HIT02_4",]
+df_file_name <- df_E2_ground[df_E2_ground$file_name=="HIT02_24",]
+raw_table <- CreateTableOne(vars=xvars,strata="isBugCovering",data=df_file_name,test=FALSE)
+print(raw_table, smd=TRUE)
+#                                 Stratified by isBugCovering
+#                                   TRUE           FALSE         SMD 
+# n                                  22            26               
+# years_programming (mean (SD))   18.27 (13.18) 13.94 (11.04)  0.356
+# qualification_score (mean (SD))  4.09 (0.81)   4.00 (0.94)   0.104
+# volume_Halstead (mean (SD))     52.84 (30.27) 48.94 (6.83)   0.178
+# profession (%)                                               0.612
+# Professional_Developer           8 (36.4)     16 (61.5)        
+# Hobbyist                         8 (36.4)      4 (15.4)        
+# Graduate_Student                 0 ( 0.0)      0 ( 0.0)        
+# Undergraduate_Student            4 (18.2)      5 (19.2)        
+# Other                            2 ( 9.1)      1 ( 3.8) 
