@@ -105,3 +105,96 @@ print(raw_table, smd=TRUE)
 # Graduate_Student                 0 ( 0.0)      0 ( 0.0)        
 # Undergraduate_Student            4 (18.2)      5 (19.2)        
 # Other                            2 ( 9.1)      1 ( 3.8) 
+
+df_file_name <- df_E2_ground[df_E2_ground$file_name=="HIT03_6",]
+raw_table <- CreateTableOne(vars=xvars,strata="isBugCovering",data=df_file_name,test=FALSE)
+print(raw_table, smd=TRUE)
+#                                 Stratified by isBugCovering
+#                                   TRUE           FALSE         SMD 
+# n                                   45            155               
+# years_programming (mean (SD))    10.42 (8.53)    9.01 (8.02)   0.171
+# qualification_score (mean (SD))   4.18 (0.81)    4.15 (0.75)   0.038
+# volume_Halstead (mean (SD))     488.84 (563.39) 90.72 (97.40)  0.985
+# profession (%)                                                 0.359
+# Professional_Developer           28 (62.2)      77 (49.7)        
+# Hobbyist                          7 (15.6)      28 (18.1)        
+# Graduate_Student                  2 ( 4.4)      21 (13.5)        
+# Undergraduate_Student             6 (13.3)      22 (14.2)        
+# Other                             2 ( 4.4)       7 ( 4.5)  
+
+df_file_name <- df_E2_ground[df_E2_ground$file_name=="HIT04_7",]
+raw_table <- CreateTableOne(vars=xvars,strata="isBugCovering",data=df_file_name,test=FALSE)
+print(raw_table, smd=TRUE)
+#                                 Stratified by isBugCovering
+#                                   TRUE           FALSE         SMD 
+# n                                   73             441                
+# years_programming (mean (SD))     8.23 (10.54)    7.61 (8.72)    0.064
+# qualification_score (mean (SD))   4.21 (0.80)     4.14 (0.77)    0.085
+# volume_Halstead (mean (SD))     254.61 (300.61) 160.44 (173.94)  0.383
+# profession (%)                                                   0.134
+# Professional_Developer           22 (30.1)      147 (33.3)         
+# Hobbyist                         13 (17.8)       84 (19.0)         
+# Graduate_Student                 13 (17.8)       70 (15.9)         
+# Undergraduate_Student            17 (23.3)      106 (24.0)         
+# Other                             8 (11.0)       34 ( 7.7)  
+
+df_file_name <- df_E2_ground[df_E2_ground$file_name=="HIT05_35",]
+raw_table <- CreateTableOne(vars=xvars,strata="isBugCovering",data=df_file_name,test=FALSE)
+print(raw_table, smd=TRUE)
+#                                 Stratified by isBugCovering
+#                                   TRUE           FALSE         SMD 
+# n                                   28            56               
+# years_programming (mean (SD))    10.29 (8.18)  10.34 (8.06)   0.007
+# qualification_score (mean (SD))   4.14 (0.89)   4.14 (0.88)  <0.001
+# volume_Halstead (mean (SD))     114.95 (34.26) 95.03 (40.20)  0.533
+# profession (%)                                                0.067
+# Professional_Developer           17 (60.7)     33 (58.9)        
+# Hobbyist                          3 (10.7)      6 (10.7)        
+# Graduate_Student                  2 ( 7.1)      5 ( 8.9)        
+# Undergraduate_Student             2 ( 7.1)      4 ( 7.1)        
+# Other                             4 (14.3)      8 (14.3) 
+df_file_name <- df_E2_ground[df_E2_ground$file_name=="HIT06_51",]
+raw_table <- CreateTableOne(vars=xvars,strata="isBugCovering",data=df_file_name,test=FALSE)
+print(raw_table, smd=TRUE)
+#                                 Stratified by isBugCovering
+#                                   TRUE           FALSE         SMD 
+# n                                   31            145               
+# years_programming (mean (SD))    11.58 (10.39)   8.83 (8.35)   0.292
+# qualification_score (mean (SD))   4.52 (0.68)    4.18 (0.75)   0.471
+# volume_Halstead (mean (SD))     408.51 (387.85) 57.39 (68.17)  1.261
+# profession (%)                                                 0.292
+# Professional_Developer           13 (41.9)      59 (40.7)        
+# Hobbyist                          7 (22.6)      28 (19.3)        
+# Graduate_Student                  6 (19.4)      19 (13.1)        
+# Undergraduate_Student             3 ( 9.7)      24 (16.6)        
+# Other                             2 ( 6.5)      15 (10.3)  
+df_file_name <- df_E2_ground[df_E2_ground$file_name=="HIT07_33",]
+raw_table <- CreateTableOne(vars=xvars,strata="isBugCovering",data=df_file_name,test=FALSE)
+print(raw_table, smd=TRUE)
+#                                 Stratified by isBugCovering
+#                                   TRUE           FALSE         SMD 
+# n                                  21            48               
+# years_programming (mean (SD))    9.48 (8.91)  10.17 (7.00)   0.086
+# qualification_score (mean (SD))  4.52 (0.75)   4.27 (0.74)   0.340
+# volume_Halstead (mean (SD))     71.11 (45.85) 88.17 (54.17)  0.340
+# profession (%)                                               0.516
+# Professional_Developer           7 (33.3)     26 (54.2)        
+# Hobbyist                         9 (42.9)     14 (29.2)        
+# Graduate_Student                 1 ( 4.8)      2 ( 4.2)        
+# Undergraduate_Student            1 ( 4.8)      0 ( 0.0)        
+# Other                            3 (14.3)      6 (12.5)  
+df_file_name <- df_E2_ground[df_E2_ground$file_name=="HIT08_54",]
+raw_table <- CreateTableOne(vars=xvars,strata="isBugCovering",data=df_file_name,test=FALSE)
+print(raw_table, smd=TRUE)
+#                                 Stratified by isBugCovering
+#                                   TRUE           FALSE         SMD 
+# n                                   31             210                
+# years_programming (mean (SD))    11.55 (13.08)    9.16 (8.54)    0.217
+# qualification_score (mean (SD))   4.13 (0.72)     4.03 (0.83)    0.129
+# volume_Halstead (mean (SD))     689.43 (746.43) 112.97 (146.47)  1.072
+# profession (%)                                                   0.389
+# Professional_Developer           14 (45.2)       77 (36.7)         
+# Hobbyist                          4 (12.9)       51 (24.3)         
+# Graduate_Student                  3 ( 9.7)       20 ( 9.5)         
+# Undergraduate_Student             4 (12.9)       38 (18.1)         
+# Other                             6 (19.4)       24 (11.4)  
