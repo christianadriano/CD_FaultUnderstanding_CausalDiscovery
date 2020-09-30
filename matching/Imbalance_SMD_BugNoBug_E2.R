@@ -198,3 +198,4 @@ print(raw_table, smd=TRUE)
 # Graduate_Student                  3 ( 9.7)       20 ( 9.5)         
 # Undergraduate_Student             4 (12.9)       38 (18.1)         
 # Other                             6 (19.4)       24 (11.4)  
+
