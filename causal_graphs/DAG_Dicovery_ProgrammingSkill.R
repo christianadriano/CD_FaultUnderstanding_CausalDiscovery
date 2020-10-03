@@ -36,11 +36,10 @@ source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding/
 #summary(df_E2_ground)
 
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//create_indexes_E2.R")
-
+source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//util//Multiplot.R")
 df_E2_ground<- run(df_E2_ground)
 
 library(dplyr)
-
 df_selected <-
   dplyr::select(df_E2_ground,profession, 
                 years_programming,
@@ -50,4 +49,20 @@ df_selected <-
                 gender
   );
 
-bn.gs <- gs(df_selected)
+#
+bn.gs <- gs(df_selected[df_selected$profession=="Other",])
+plot(bn.gs)
+
+#Constraint
+bn.pc <- pc.stable(df_selected)
+plot(bn.pc)
+
+#Hill-Climbing algorithm
+professions = c("Other", "Undergraduate_Student","Graduate_Student","Hobbyist","Profession")
+plot_vector = vector("list",length(professions))
+for (i in 1:length(professions)) {
+  choice = professions[i]
+  bn.hc <- hc(df_selected[df_selected$profession==choice,])
+  plot_vector[i] <-  plot(bn.hc,main=choice);
+}
+multiplot(plot_vector, col=2)
