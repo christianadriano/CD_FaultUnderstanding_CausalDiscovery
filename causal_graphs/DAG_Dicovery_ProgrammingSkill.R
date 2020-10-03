@@ -41,7 +41,8 @@ df_E2_ground<- run(df_E2_ground)
 
 library(dplyr)
 df_selected <-
-  dplyr::select(df_E2_ground,profession, 
+  dplyr::select(df_E2_ground,
+                profession, 
                 years_programming,
                 qualification_score,
                 age,
@@ -59,10 +60,8 @@ plot(bn.pc)
 
 #Hill-Climbing algorithm
 professions = c("Other", "Undergraduate_Student","Graduate_Student","Hobbyist","Profession")
-plot_vector = vector("list",length(professions))
 for (i in 1:length(professions)) {
   choice = professions[i]
-  bn.hc <- hc(df_selected[df_selected$profession==choice,])
-  plot_vector[i] <-  plot(bn.hc,main=choice);
+  bn <- gs(df_selected[df_selected$profession==choice,])
+  plot(bn,main=choice);
 }
-multiplot(plot_vector, col=2)
