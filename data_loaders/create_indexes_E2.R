@@ -22,6 +22,9 @@ run <- function(data_E2){
                                 labels=c(1:5)
   )
   
+  "YEARS OF PROGRAMMING"
+  data_E2$years_programming <- as.numeric(data_E2$years_programming)
+  
   "QUALIFICATION_SCORE"
   
   #Transform profession as factor again
@@ -34,6 +37,8 @@ run <- function(data_E2){
                                          levels=levels(data_E2$qualification_score_label),
                                          labels=c(5:0)
   )
+  data_E2$qualification_score <- as.numeric(data_E2$qualification_score);
+  
   
   "FILE_NAME"
   
@@ -58,6 +63,11 @@ run <- function(data_E2){
                            levels=levels(data_E2$gender),
                            labels = c(1:4)
   )
+  
+  "AGE"
+  
+  data_E2$age <- as.factor(data_E2$age);
+  
   
   "COUNTRY"
   
@@ -171,7 +181,7 @@ run <- function(data_E2){
                             labels=c(1,0,2)
   )
 
-  data_E2$explanation.size <- sapply(strsplit(as.character(data_E2$explanation)," "), length);
+  data_E2$explanation.size <- as.numeric(sapply(strsplit(as.character(data_E2$explanation)," "), length));
   
   
   #Transform answer as factor again
