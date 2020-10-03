@@ -30,7 +30,7 @@ file_name [exogenous] work as block, because programmers were tested for each fi
 need to consider unique worker-id, i.e., programmer took a single qualification test, even
 if they have taken multiple tasks.
 " 
-install.packages("tidyverse")
+#install.packages("tidyverse")
 "Load data with treatment field (isBugCovering) and ground truth (answer correct)"
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_ground_truth_E2.R")
 #summary(df_E2_ground)
@@ -38,3 +38,16 @@ source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding/
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//create_indexes_E2.R")
 
 df_E2_ground<- run(df_E2_ground)
+
+library(dplyr)
+
+df_selected <-
+  dplyr::select(df_E2_ground,profession, 
+                years_programming,
+                qualification_score,
+                age,
+                profession,
+                gender
+  );
+
+bn.gs <- gs(df_selected)
