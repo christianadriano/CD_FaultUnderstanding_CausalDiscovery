@@ -66,7 +66,7 @@ run <- function(data_E2){
   
   "AGE"
   
-  data_E2$age <- as.factor(data_E2$age);
+  data_E2$age <- as.numeric(data_E2$age);
   
   
   "COUNTRY"
@@ -183,6 +183,7 @@ run <- function(data_E2){
 
   data_E2$explanation.size <- as.numeric(sapply(strsplit(as.character(data_E2$explanation)," "), length));
   
+  data_E2$isAnswerCorrect <- as.factor(data_E2$isAnswerCorrect)
   
   #Transform answer as factor again
   #data_E2$isAnswerCorrect_bol <- as.integer(as.logical(data_E2$isAnswerCorrect))
