@@ -35,22 +35,19 @@ source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding/
 #summary(df_E2_ground)
 
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//create_indexes_E2.R")
-source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//util//Multiplot.R")
+#source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//util//Multiplot.R")
 df_E2_ground<- run(df_E2_ground)
 
 library(dplyr)
 df_selected <-
   dplyr::select(df_E2_ground,
                 years_programming,
-                qualification_score,
+                z1,#IRT qualification score
                 age,
                 profession,
                 isAnswerCorrect
   );
 
-
-
-#Not considering gender.
 
 
 node.names <- colnames(df_selected)
@@ -59,9 +56,9 @@ blacklist_1 <- data.frame(from = node.names[-grep("age", node.names)],
                           to   = c("age"))
 blacklist_2 <- data.frame(from = node.names[-grep("isAnswerCorrect", node.names)], 
                           to   = c("isAnswerCorrect"))
-#Avoid qualification_score and isAnswerCorrect to be parents
-blacklist_3 <- data.frame(from = c("qualification_score"),
-                          to   = node.names[-grep("qualification_score", node.names)])
+#Avoid z1 and isAnswerCorrect to be parents
+blacklist_3 <- data.frame(from = c("z1"),
+                          to   = node.names[-grep("z1", node.names)])
 blacklist_4 <- data.frame(from = c("isAnswerCorrect"),
                           to   = node.names[-grep("isAnswerCorrect", node.names)])
 
@@ -71,7 +68,7 @@ blacklist_all <- blacklist_all[!(blacklist_all$from %in% c("profession") ),]
 blacklist_all <- blacklist_all[!(blacklist_all$to %in% c("profession") ),]
 
 
-#Hill-Climbing algorithm
+#Run structure discovery for each profession
 professions = c("Other", "Undergraduate_Student","Graduate_Student","Hobbyist",
                 "Professional_Developer")
 for (i in 1:length(professions)) {
@@ -80,14 +77,19 @@ for (i in 1:length(professions)) {
   df_prof <- 
     dplyr::select(df_prof,
                   years_programming,
-                  qualification_score,
+                  z1,
                   age,
                   isAnswerCorrect
     );
-  bn <-pc.stable(df_prof,blacklist = blacklist_all)
+  bn <-gs(df_prof,blacklist = blacklist_all)
   plot(bn,main=choice)
   #graphviz.plot(bn,main=choice,shape="ellipse",layout = "circo");
 }
+
+#TODO
+#Graphs resulting from IRT are very different from qualification_score
+#compare how professions are distinct in terms of z1 and qualification_score
+#Compare the strength of graph connections using z1 and qualification_score
 
 #https://arxiv.org/pdf/0908.3817.pdf
 
