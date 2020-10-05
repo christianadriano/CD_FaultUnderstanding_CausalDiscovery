@@ -24,7 +24,6 @@ plot(bn.gs)
 profession [exogenous];
 years_programming [exogenous];
 age [exogenous]
-gender [exogenous]
 qualification_score [outcome];
 file_name [exogenous] work as block, because programmers were tested for each file_name
 need to consider unique worker-id, i.e., programmer took a single qualification test, even
@@ -46,40 +45,35 @@ df_selected <-
                 qualification_score,
                 age,
                 profession,
-                gender,
                 isAnswerCorrect
   );
 
-#
-bn.gs <- gs(df_selected[df_selected$profession=="Other",])
-plot(bn.gs)
 
-#Constraint
-bn.pc <- pc.stable(df_selected)
-plot(bn.pc)
+
+#Not considering gender.
+
 
 node.names <- colnames(df_selected)
-#Avoid that gender and age have parent nodes
-blacklist_1 <- data.frame(from = node.names[-grep("gender", node.names)], 
-                          to   = c("gender"))
-blacklist_2 <- data.frame(from = node.names[-grep("age", node.names)], 
+#Avoid that age have parent nodes
+blacklist_1 <- data.frame(from = node.names[-grep("age", node.names)], 
                           to   = c("age"))
-blacklist_3 <- data.frame(from = node.names[-grep("isAnswerCorrect", node.names)], 
+blacklist_2 <- data.frame(from = node.names[-grep("isAnswerCorrect", node.names)], 
                           to   = c("isAnswerCorrect"))
 #Avoid qualification_score and isAnswerCorrect to be parents
-blacklist_4 <- data.frame(from = c("qualification_score"),
+blacklist_3 <- data.frame(from = c("qualification_score"),
                           to   = node.names[-grep("qualification_score", node.names)])
-blacklist_5 <- data.frame(from = c("isAnswerCorrect"),
+blacklist_4 <- data.frame(from = c("isAnswerCorrect"),
                           to   = node.names[-grep("isAnswerCorrect", node.names)])
 
-blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_3,blacklist_4,blacklist_5) 
+blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_3,blacklist_4) 
 #Remove profession from blacklist
 blacklist_all <- blacklist_all[!(blacklist_all$from %in% c("profession") ),]
 blacklist_all <- blacklist_all[!(blacklist_all$to %in% c("profession") ),]
 
 
 #Hill-Climbing algorithm
-professions = c("Other", "Undergraduate_Student","Graduate_Student","Hobbyist","Professional_Developer")
+professions = c("Other", "Undergraduate_Student","Graduate_Student","Hobbyist",
+                "Professional_Developer")
 for (i in 1:length(professions)) {
   choice = professions[i]
   df_prof <- df_selected[df_selected$profession==choice,]
@@ -88,10 +82,9 @@ for (i in 1:length(professions)) {
                   years_programming,
                   qualification_score,
                   age,
-                  gender,
                   isAnswerCorrect
     );
-  bn <-gs(df_prof,blacklist = blacklist_all)
+  bn <-pc.stable(df_prof,blacklist = blacklist_all)
   plot(bn,main=choice)
   #graphviz.plot(bn,main=choice,shape="ellipse",layout = "circo");
 }
