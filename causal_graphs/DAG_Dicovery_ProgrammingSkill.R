@@ -44,9 +44,8 @@ df_selected <-
                 years_programming,
                 z1,#IRT qualification score
                 age,
-                profession,
-                isAnswerCorrect
-  );
+                profession
+                );
 
 
 
@@ -59,10 +58,13 @@ blacklist_2 <- data.frame(from = node.names[-grep("isAnswerCorrect", node.names)
 #Avoid z1 and isAnswerCorrect to be parents
 blacklist_3 <- data.frame(from = c("z1"),
                           to   = node.names[-grep("z1", node.names)])
-blacklist_4 <- data.frame(from = c("isAnswerCorrect"),
-                          to   = node.names[-grep("isAnswerCorrect", node.names)])
 
-blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_3,blacklist_4) 
+#Task Accuracy can only be measured with all tasks data. 
+#Here we are dealing only with programmer demographic data.
+#blacklist_4 <- data.frame(from = c("isAnswerCorrect"),
+#                          to   = node.names[-grep("isAnswerCorrect", node.names)])
+
+blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_3)#,blacklist_4) 
 #Remove profession from blacklist
 blacklist_all <- blacklist_all[!(blacklist_all$from %in% c("profession") ),]
 blacklist_all <- blacklist_all[!(blacklist_all$to %in% c("profession") ),]
@@ -86,7 +88,7 @@ for (i in 1:length(professions)) {
   #graphviz.plot(bn,main=choice,shape="ellipse",layout = "circo");
 }
 
-
+#Score-based algorithm - Hill Climbing
 for (i in 1:length(professions)) {
   choice = professions[i]
   df_prof <- df_selected[df_selected$profession==choice,]
@@ -94,10 +96,9 @@ for (i in 1:length(professions)) {
     dplyr::select(df_prof,
                   years_programming,
                   z1,
-                  age,
-                  isAnswerCorrect
+                  age
     );
-  bn <-hc(df_prof,blacklist = blacklist_all)
+  bn <-tabu(df_prof,blacklist = blacklist_all)
   plot(bn,main=choice)
   #graphviz.plot(bn,main=choice,shape="ellipse",layout = "circo");
 }
