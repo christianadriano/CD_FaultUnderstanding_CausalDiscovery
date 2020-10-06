@@ -81,7 +81,7 @@ for (i in 1:length(professions)) {
                   age,
                   isAnswerCorrect
     );
-  bn <-gs(df_prof,blacklist = blacklist_all)
+  bn <-pc.stable(df_prof,blacklist = blacklist_all)
   plot(bn,main=choice)
   #graphviz.plot(bn,main=choice,shape="ellipse",layout = "circo");
 }
