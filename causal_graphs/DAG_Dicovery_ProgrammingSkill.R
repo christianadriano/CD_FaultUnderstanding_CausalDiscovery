@@ -86,6 +86,22 @@ for (i in 1:length(professions)) {
   #graphviz.plot(bn,main=choice,shape="ellipse",layout = "circo");
 }
 
+
+for (i in 1:length(professions)) {
+  choice = professions[i]
+  df_prof <- df_selected[df_selected$profession==choice,]
+  df_prof <- 
+    dplyr::select(df_prof,
+                  years_programming,
+                  z1,
+                  age,
+                  isAnswerCorrect
+    );
+  bn <-hc(df_prof,blacklist = blacklist_all)
+  plot(bn,main=choice)
+  #graphviz.plot(bn,main=choice,shape="ellipse",layout = "circo");
+}
+
 #TODO
 #Graphs resulting from IRT are very different from qualification_score
 #compare how professions are distinct in terms of z1 and qualification_score
