@@ -50,12 +50,13 @@ df_truth$ID <- as.factor(df_truth$ID) #convert to factor, so I can join with mic
 df_tasks$microtask_id <- as.factor(df_tasks$microtask_id)
 df_tasks$worker_id <- as.factor(df_tasks$worker_id)
 df_E2_ground <- left_join(df_tasks,df_truth,by=c("microtask_id"="ID"))
+dim(df_E2_ground)
 
 "Left-join worker_id, worker_id"
 df_irt$worker_id <- as.factor(df_irt$worker_id) #convert to factor, so I can join with microtask_id column
 df_E2_ground$worker_id <- as.factor(df_E2_ground$worker_id) #convert to factor, so I can join with microtask_id column
-df_E2_ground <- inner_join(df_E2_ground,df_irt,by=c("worker_id"="worker_id"))
-#dim(df_E2_ground) [1] 1462   54 Should have 2580 rows!
+df_E2_ground <- left_join(df_E2_ground,df_irt,by=c("worker_id"="worker_id"))
+dim(df_E2_ground) #[1] 1462   54 Should have 2580 rows!
 
 "
 Apply Ground Truth to E2 data
