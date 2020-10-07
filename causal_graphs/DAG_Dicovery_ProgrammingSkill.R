@@ -73,6 +73,8 @@ blacklist_all <- blacklist_all[!(blacklist_all$to %in% c("profession") ),]
 #Run structure discovery for each profession
 professions = c("Other", "Undergraduate_Student","Graduate_Student","Hobbyist",
                 "Professional_Developer")
+
+#Constraint-Based Algorithm
 for (i in 1:length(professions)) {
   choice = professions[i]
   df_prof <- df_selected[df_selected$profession==choice,]
