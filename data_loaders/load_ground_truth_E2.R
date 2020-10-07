@@ -35,7 +35,7 @@ df_tasks <- read.csv(str_c(path, "merged_tasks_complexity_E2.csv"))
 
 #Score factors computed through IRT Model fitting
 df_irt <- read.csv("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data//irt//E2_QualificationTest_IRT.csv")
-df_irt <-  dplyr::select(df_irt, worker_id,z1)
+df_irt <-  dplyr::select(df_irt, worker_id,file_name,z1) #need file_name, because a few workers have more than one score.
 
 #Ground truth for tasks
 df_truth <- read.csv(str_c(path, "ground_truth_E2.csv"))
@@ -48,14 +48,13 @@ df_truth <-  dplyr::select(df_truth, ID,LineID,isBugCovering,type,faulty_lines,a
 "Left-join microtask_id,ID"
 df_truth$ID <- as.factor(df_truth$ID) #convert to factor, so I can join with microtask_id column
 df_tasks$microtask_id <- as.factor(df_tasks$microtask_id)
-df_tasks$worker_id <- as.factor(df_tasks$worker_id)
 df_E2_ground <- left_join(df_tasks,df_truth,by=c("microtask_id"="ID"))
-dim(df_E2_ground)
+#dim(df_E2_ground)
 
 "Left-join worker_id, worker_id"
 df_irt$worker_id <- as.factor(df_irt$worker_id) #convert to factor, so I can join with microtask_id column
 df_E2_ground$worker_id <- as.factor(df_E2_ground$worker_id) #convert to factor, so I can join with microtask_id column
-df_E2_ground <- left_join(df_E2_ground,df_irt,by=c("worker_id"="worker_id"))
+df_E2_ground <- left_join(df_E2_ground,df_irt,by=c("worker_id"="worker_id","file_name"="file_name"))
 dim(df_E2_ground) #[1] 1462   54 Should have 2580 rows!
 
 "
