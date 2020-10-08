@@ -55,8 +55,8 @@ df_E2_ground <- left_join(df_tasks,df_truth,by=c("microtask_id"="ID"))
 df_irt$worker_id <- as.factor(df_irt$worker_id) #convert to factor, so I can join with microtask_id column
 df_E2_ground$worker_id <- as.factor(df_E2_ground$worker_id) #convert to factor, so I can join with microtask_id column
 #only joins with people who qualified (qualification_score>=3), because only these are present in the task execution logs
-df_E2_final <- right_join(df_E2_ground,df_irt,by=c("worker_id"="worker_id"))#,"file_name"="file_name"))
-dim(df_E2_final) #[1] 1462   54 Should have 2580 rows!
+df_E2_final <- left_join(x=df_E2_ground,y=df_irt,keep=TRUE, by=c("worker_id"="worker_id"))#,"file_name"="file_name"))
+dim(df_E2_final) 
 
 "
 Apply Ground Truth to E2 data
