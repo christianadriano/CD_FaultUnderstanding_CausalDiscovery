@@ -42,7 +42,8 @@ library(dplyr)
 df_selected <-
   dplyr::select(df_E2_ground,
                 years_programming,
-                z1,#IRT qualification score
+                #z1,
+                qualification_score,
                 age,
                 profession
                 );
@@ -60,8 +61,11 @@ blacklist_2 <- data.frame(from = node.names[-grep("profession", node.names)],
                           to   = c("profession"))
 #NO CHILDS
 #Avoid z1 to be parent
-blacklist_3 <- data.frame(from = c("z1"),
-                          to   = node.names[-grep("z1", node.names)])
+#blacklist_3 <- data.frame(from = c("z1"),
+#                          to   = node.names[-grep("z1", node.names)])
+
+blacklist_3 <- data.frame(from = c("qualification_score"),
+                          to   = node.names[-grep("qualification_score", node.names)])
 
 #Task Accuracy can only be measured with all tasks data. 
 #Here we are dealing only with programmer demographic data.
@@ -93,9 +97,9 @@ for (i in 1:length(professions)) {
   df_prof <- 
     dplyr::select(df_prof,
                   years_programming,
-                  z1,
+                  qualification_score,
                   age,
-                  profession
+                  #profession
                   #isAnswerCorrect
     );
   bn <-pc.stable(df_prof,blacklist = blacklist_all)
