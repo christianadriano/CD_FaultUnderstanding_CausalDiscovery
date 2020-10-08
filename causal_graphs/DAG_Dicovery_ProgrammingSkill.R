@@ -51,11 +51,15 @@ df_selected <-
 
 node.names <- colnames(df_selected)
 #Avoid that age have parent nodes
-blacklist_1 <- data.frame(from = node.names[-grep("age", node.names)], 
-                          to   = c("age"))
-blacklist_2 <- data.frame(from = node.names[-grep("isAnswerCorrect", node.names)], 
-                          to   = c("isAnswerCorrect"))
-#Avoid z1 and isAnswerCorrect to be parents
+
+#NO PARENTS
+#blacklist_1 <- data.frame(from = node.names[-grep("age", node.names)], 
+#                          to   = c("age"))
+#Avoid that profession has parent nodes
+blacklist_2 <- data.frame(from = node.names[-grep("profession", node.names)], 
+                          to   = c("profession"))
+#NO CHILDS
+#Avoid z1 to be parent
 blacklist_3 <- data.frame(from = c("z1"),
                           to   = node.names[-grep("z1", node.names)])
 
@@ -64,7 +68,15 @@ blacklist_3 <- data.frame(from = c("z1"),
 #blacklist_4 <- data.frame(from = c("isAnswerCorrect"),
 #                          to   = node.names[-grep("isAnswerCorrect", node.names)])
 
-blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_3)#,blacklist_4) 
+blacklist_all <- rbind(blacklist_2,blacklist_3)#,blacklist_4) 
+
+
+bn <-tabu(df_selected,blacklist = blacklist_all)
+plot(bn,main="All Professions")
+
+#-----------------------------------------
+#BY PROFESSION
+
 #Remove profession from blacklist
 blacklist_all <- blacklist_all[!(blacklist_all$from %in% c("profession") ),]
 blacklist_all <- blacklist_all[!(blacklist_all$to %in% c("profession") ),]
@@ -83,12 +95,15 @@ for (i in 1:length(professions)) {
                   years_programming,
                   z1,
                   age,
-                  isAnswerCorrect
+                  profession
+                  #isAnswerCorrect
     );
   bn <-pc.stable(df_prof,blacklist = blacklist_all)
   plot(bn,main=choice)
   #graphviz.plot(bn,main=choice,shape="ellipse",layout = "circo");
 }
+
+
 
 #Score-based algorithm - Hill Climbing
 for (i in 1:length(professions)) {
