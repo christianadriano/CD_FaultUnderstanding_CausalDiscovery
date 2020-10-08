@@ -35,7 +35,7 @@ df_tasks <- read.csv(str_c(path, "merged_tasks_complexity_E2.csv"))
 
 #Score factors computed through IRT Model fitting
 df_irt <- read.csv("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data//irt//E2_QualificationTest_IRT.csv")
-df_irt <-  dplyr::select(df_irt, worker_id,file_name,z1) #need file_name, because a few workers have more than one score.
+df_irt <-  dplyr::select(df_irt, worker_id,z1) #file_name,z1) #need file_name, because a few workers have more than one score.
 
 #Ground truth for tasks
 df_truth <- read.csv(str_c(path, "ground_truth_E2.csv"))
@@ -54,8 +54,9 @@ df_E2_ground <- left_join(df_tasks,df_truth,by=c("microtask_id"="ID"))
 "Left-join worker_id, worker_id"
 df_irt$worker_id <- as.factor(df_irt$worker_id) #convert to factor, so I can join with microtask_id column
 df_E2_ground$worker_id <- as.factor(df_E2_ground$worker_id) #convert to factor, so I can join with microtask_id column
-df_E2_ground <- left_join(df_E2_ground,df_irt,by=c("worker_id"="worker_id","file_name"="file_name"))
-dim(df_E2_ground) #[1] 1462   54 Should have 2580 rows!
+#only joins with people who qualified (qualification_score>=3), because only these are present in the task execution logs
+df_E2_final <- right_join(df_E2_ground,df_irt,by=c("worker_id"="worker_id"))#,"file_name"="file_name"))
+dim(df_E2_final) #[1] 1462   54 Should have 2580 rows!
 
 "
 Apply Ground Truth to E2 data
