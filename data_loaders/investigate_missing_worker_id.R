@@ -23,4 +23,7 @@ dim(df_all_in_task)
 df_in_both <- inner_join(x=df_tasks,y=df_irt,keep=TRUE, by=c("worker_id"="worker_id"))
 dim(df_in_both)
 
-
+only_in_task <-  df_in_both$worker_id %in% df_all_in_task$worker_id.x
+length(only_in_task)
+summary(df_all_in_task$z1)
+View(df_all_in_task)
