@@ -9,7 +9,7 @@ library(mirt)
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//load_consent_create_indexes_E2.R")
 
 "Remove participants for whom we did not take the qualification test" 
-df_E2 <- df_E2[complete.cases(df_E2[,"qualification_score"]),]
+df_E2 <- df_consent[complete.cases(df_consent[,"qualification_score"]),]
 #Original size: 3657   30 , new size 1438 30
 
 "Replace false for 0(zero) and true for one(1)"
@@ -21,7 +21,7 @@ df_E2$test5_ <-  ifelse(df_E2$test5=="true",1,0)
 
 df <- df_E2 %>% dplyr::select(test1_,test2_,test3_,test4_,test5_)
 
-#write.csv(df,"C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//E2_QualificationTestResults.csv")
+write.csv(df,"C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//E2_QualificationTestResults.csv")
 
 
 IRT_model <- ltm(df ~ z1, IRT.param=TRUE)
