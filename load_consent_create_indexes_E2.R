@@ -13,8 +13,8 @@ library(tidyr)
 #There is a BUG in this file consolidated_Final_Experiment_2.arff 
 #this worker_id 3AI7C4g38-9_3 should not have tasks associated!
 
-#path <- "C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data//"
-path <- "C://Users//Christian//Documents//GitHub//DW_Microtasks//output//"
+path <- "C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data//"
+#path <- "C://Users//Christian//Documents//GitHub//DW_Microtasks//output//"
 dataset_E2 <- readARFF(paste0(path, "consent_consolidated_Experiment_2.arff"))
 df_consent <- data.frame(dataset_E2)
 
@@ -166,7 +166,7 @@ df_consent$country_id<- factor(df_consent$country_labels,
 )
 
 #DURATION in Minutes
-df_consent$testDuration_minutes <- df_consent$testDuration/(1000*60)
+df_consent$testDuration_minutes <- df_consent$test_duration/(1000*60)
 
 #df_consent$duration_minutes <- df_consent$duration/(1000*60)
 
@@ -206,3 +206,4 @@ df_consent$testDuration_minutes <- df_consent$testDuration/(1000*60)
 #                           labels=c(0,1)
 # )
 
+print("Results in df_consent")
