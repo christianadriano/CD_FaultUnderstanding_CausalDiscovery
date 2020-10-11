@@ -21,7 +21,7 @@ df_E2 <- df_consent[complete.cases(df_consent[,"qualification_score"]),]
 
 df <- df_E2 %>% dplyr::select(test1,test2,test3,test4,test5)
 
-write.csv(df,"C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//E2_QualificationTestResults.csv")
+write.csv(df,"C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data//irt//E2_QualificationTestResults.csv")
 
 
 IRT_model <- ltm(df ~ z1, IRT.param=TRUE)
@@ -120,7 +120,7 @@ df_new <- left_join(df_E2,df_score.dat,by=c("test1"="test1","test2"="test2","tes
 
 
 #Store in the original file the new difficulty scores (z1) of the partipants
-write.csv(df_new,"C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//E2_QualificationTest_IRT.csv")
+write.csv(df_new,"C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data//irt//E2_QualificationTest_IRT.csv")
 
 #Visualizing the results
 plot(df_new$years_programming, df_new$z1)
