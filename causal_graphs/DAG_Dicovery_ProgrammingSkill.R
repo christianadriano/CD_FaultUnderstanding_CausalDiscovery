@@ -116,7 +116,7 @@ for (i in 1:length(professions)) {
   df_prof <- 
     dplyr::select(df_prof,
                   years_programming,
-                  z1,
+                  qualification_score,
                   age
     );
   bn <-tabu(df_prof,blacklist = blacklist_all)
