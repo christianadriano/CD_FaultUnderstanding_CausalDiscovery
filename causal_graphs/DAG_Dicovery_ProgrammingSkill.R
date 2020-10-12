@@ -30,13 +30,18 @@ need to consider unique worker-id, i.e., programmer took a single qualification 
 if they have taken multiple tasks.
 " 
 #install.packages("tidyverse")
+
+#Load only Consent data. No data from tasks, only from demographics and qualification test
+source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_consent_create_indexes_E2.R")
+
+
 "Load data with treatment field (isBugCovering) and ground truth (answer correct)"
-source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_ground_truth_E2.R")
+#source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_ground_truth_E2.R")
 #summary(df_E2_ground)
 
-source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//create_indexes_E2.R")
+#source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//create_indexes_E2.R")
 #source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//util//Multiplot.R")
-df_E2_ground<- run(df_E2_ground)
+#df_E2_ground<- run(df_consent)
 
 library(dplyr)
 df_selected <-
