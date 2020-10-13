@@ -12,12 +12,11 @@ very larger framework, which is not installing smoothly"
 #Example with BNLEARN (will move it to the bottom later)
 #install.packages("bnlearn")
 #
-library(bnlearn)
-data(learning.test)
-str(learning.test)
-bn.gs <- gs(learning.test)
-bn.gs
-plot(bn.gs)
+# data(learning.test)
+# str(learning.test)
+# bn.gs <- gs(learning.test)
+# bn.gs
+# plot(bn.gs)
 #-----------------------------------            
 "APPLY TO THE PROGRAMMING SKILL FACTORS 
 
@@ -31,24 +30,25 @@ if they have taken multiple tasks.
 " 
 #install.packages("tidyverse")
 
-#Load only Consent data. No data from tasks, only from demographics and qualification test
-source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_consent_create_indexes_E2.R")
-
-
 "Load data with treatment field (isBugCovering) and ground truth (answer correct)"
 #source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_ground_truth_E2.R")
 #summary(df_E2_ground)
-
 #source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//create_indexes_E2.R")
 #source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//util//Multiplot.R")
-#df_E2_ground<- run(df_consent)
+#----------------------------------------------------------
 
+library(bnlearn)
 library(dplyr)
+
+#Load only Consent data. No data from tasks, only from demographics and qualification test
+source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_consent_create_indexes_E2.R")
+df_E2_ground<- df_consent
+
 df_selected <-
   dplyr::select(df_E2_ground,
                 years_programming,
-                #z1,
-                qualification_score,
+                z1,
+                #qualification_score,
                 age,
                 profession
                 );
@@ -128,6 +128,45 @@ for (i in 1:length(professions)) {
   plot(bn,main=choice)
   #graphviz.plot(bn,main=choice,shape="ellipse",layout = "circo");
 }
+
+#-------------------------------------
+#USing now IRT z1 score instead of qualification_score
+
+#Constraint-Based Algorithm
+for (i in 1:length(professions)) {
+  choice = professions[i]
+  df_prof <- df_selected[df_selected$profession==choice,]
+  df_prof <- 
+    dplyr::select(df_prof,
+                  years_programming,
+                  qualification_score,
+                  age,
+                  #profession
+                  #isAnswerCorrect
+    );
+  bn <-pc.stable(df_prof,blacklist = blacklist_all)
+  plot(bn,main=choice)
+  #graphviz.plot(bn,main=choice,shape="ellipse",layout = "circo");
+}
+
+
+
+#Score-based algorithm - Hill Climbing
+for (i in 1:length(professions)) {
+  choice = professions[i]
+  df_prof <- df_selected[df_selected$profession==choice,]
+  df_prof <- 
+    dplyr::select(df_prof,
+                  years_programming,
+                  qualification_score,
+                  age
+    );
+  bn <-tabu(df_prof,blacklist = blacklist_all)
+  plot(bn,main=choice)
+  #graphviz.plot(bn,main=choice,shape="ellipse",layout = "circo");
+}
+
+
 
 #TODO
 #Graphs resulting from IRT are very different from qualification_score
