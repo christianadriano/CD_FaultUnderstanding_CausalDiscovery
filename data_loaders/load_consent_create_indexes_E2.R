@@ -27,6 +27,16 @@ df_consent <- data.frame(dataset_E2)
 #data is loaded on df2_ground
 #df_consent <- df2_ground
 
+#Score factors computed through IRT Model fitting
+df_irt <- read.csv("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data//irt//E2_QualificationTest_IRT.csv")
+df_irt <-  dplyr::select(df_irt, worker_id,z1) #file_name,z1) #need file_name, because a few workers have more than one score.
+df_irt$worker_id <- as.factor(df_irt$worker_id) #convert to factor, so I can join with microtask_id column
+df_consent$worker_id <- as.factor(df_consent$worker_id) #convert to factor, so I can join with microtask_id column
+#only joins with people who qualified (qualification_score>=3), because only these are present in the task execution logs
+df_consent <- left_join(x=df_consent,y=df_irt,keep=TRUE, by=c("worker_id"="worker_id"))#,"file_name"="file_name"))
+dim(df_consent) 
+
+
 "PROFESSION"
 #Convert profession from factor to character 
 df_consent$profession <- as.character(df_consent$experience)
