@@ -17,6 +17,7 @@ path <- "C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding
 #path <- "C://Users//Christian//Documents//GitHub//DW_Microtasks//output//"
 dataset_E2 <- readARFF(paste0(path, "consent_consolidated_Experiment_2.arff"))
 df_consent <- data.frame(dataset_E2)
+dim(df_consent)
 
 #file_path <-
 #  "C://Users//Christian//Documents//GitHub//ML_FaultUnderstanding//data//consolidated_Final_Experiment_2.arff"
