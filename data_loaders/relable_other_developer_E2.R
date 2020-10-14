@@ -3,12 +3,26 @@ Relabel Others who are software developers
 
 Keywords: IT, developer, programmer, computer, Tech, Technician, software, computer, QA, DBA, Data, 
 
+Looking at the density plots, we can see that there are three groups of professions with 
+respect to the qualification_score. 
+
+Group-1 Other and Undergrads
+Group-2 Graudatue and Hobbyists
+Group-3 Professional and Programmers
+
+So, I would expect that there would be 3 different causal models for these.
+
+TODO: Check if these groups are statistically significant distinct while not
+statistically significant distinct within group.
+
 "
 
 library(farff)
 library(readr)
 library(ggplot2)
 library(dplyr)
+install.packages("hrbrthemes")
+library(hrbrthemes)
 library(tidyr)
 
 path <- "C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data//"
@@ -70,4 +84,34 @@ t.test(
 #   mean of x mean of y 
 # 2.694444  2.980815
 
-df_consent[(grep(pattern,tolower(df_consent$experience))),"experience"] <- "Professional_Developer"
+p <- df_consent %>%
+  ggplot( aes(x=qualification_score, fill=experience)) +
+  geom_density( color="#e9ecef", alpha=0.6, position = 'identity') +
+  theme_ipsum() +
+  labs(fill="")
+p
+
+
+# Multiple small plots
+install.packages("viridis")
+library(viridis)
+library(forcats)
+p <- df_consent %>%
+  mutate(text = fct_reorder(experience, qualification_score)) %>%
+  ggplot( aes(x=qualification_score, color=experience, fill=experience)) +
+  geom_density(alpha=0.6, binwidth = 1) +
+  scale_fill_viridis(discrete=TRUE) +
+  scale_color_viridis(discrete=TRUE) +
+  theme_ipsum() +
+  theme(
+    legend.position="none",
+    panel.spacing = unit(0.1, "lines"),
+    strip.text.x = element_text(size = 10)
+  ) +
+  xlab("") +
+  ylab("Assigned Probability (%)") +
+  facet_wrap(~text)
+
+p
+
+
