@@ -116,24 +116,46 @@ p
 #install.packages("viridis")
 library(viridis)
 library(forcats)
-p <- df_consent %>%
-  mutate(text = fct_reorder(profession, qualification_score)) %>%
-  ggplot( aes(x=qualification_score, color=profession, fill=profession)) +
-  geom_density(alpha=0.6, binwidth = 1) +
-  scale_fill_viridis(discrete=TRUE) +
-  scale_color_viridis(discrete=TRUE) +
-  theme_ipsum() +
+library(gridExtra)
+
+
+df_consent %>%
+  mutate(text = fct_reorder(profession,qualification_score, .desc = TRUE)) %>%
+  ggplot( aes(x=qualification_score)) +
+  geom_density(alpha=0.6, binwidth = 1,color="darkgrey", fill="lightblue") +
+  #scale_fill_viridis(discrete=TRUE, option="E")+
+  #scale_color_viridis(discrete=TRUE, option = "E")+
+  theme_ipsum_pub()+
   theme(
     legend.position="none",
     panel.spacing = unit(0.1, "lines"),
-    strip.text.x = element_text(size = 10)
+    strip.text.x = element_text(size = 10),
+    panel.grid=element_blank(),
+    plot.title = element_text(size=12)
   ) +
-  xlab("") +
+  xlab("Qualification Score") +
   ylab("Assigned Probability (%)") +
-  facet_wrap(~text)
+  facet_wrap(~text,nrow=3,ncol=2)+
+  ggtitle("Qualification Score Across Professions") -> gg
+gg
 
-p
+gg1
 
+library("gridExtra")
+grid.arrange(gg,                             # First row with one plot spaning over 2 columns
+             arrangeGrob(bxp, dp, ncol = 3), # Second row with 2 plots in 2 different columns
+             ncol=3, nrow = 2)
+
+grid.arrange(gg,ncol=3,nrow=2)
+
+gridExtra::grid.arrange(
+  gg + scale_fill_viridis(discrete=TRUE,option = "A") + labs(x="Other", y=NULL),
+  gg + scale_fill_viridis(discrete=TRUE,option = "B") + labs(x="Undergraduate_Student", y=NULL),
+  gg + scale_fill_viridis(discrete=TRUE,option = "C") + labs(x="Graduate_Student", y=NULL),
+  gg + scale_fill_viridis(discrete=TRUE,option = "D") + labs(x="Programmer", y=NULL),
+  gg + scale_fill_viridis(discrete=TRUE,option = "E") + labs(x="Professional", y=NULL),
+  ncol=3, nrow=2
+)
 #--------------------------------
 #ANOVA OMNIBUS TEST
 
@@ -162,9 +184,15 @@ years of experience. Students, Programmers, and Hobbyists-Others. We saw thought
 Graduate students are also closer to Others, but not to Hobbyists."
 
 "
-Although the omnibus test on qualification_scores showed that only 
-the differences in qualifcation Professional group
+The test for differences in qualification_score is more complex because qualifcation score
+is dependent variable, i.e., is possible affected by age, years of experience and profession.
+These covariates might interact with each other and confound the effect qualification score.
+Hence, we need to hypothesize different linear models
+lm_1: qualification_score = profession + age + years_programming
+lm_2: qualification_score = profession + age + years_programming + age*years_programming
+
+The best instruments for this are to do Causal Discovery methods and Multi-Level Models.
+Which we will look at next (see file )
 
 "
-
 
