@@ -12,8 +12,11 @@ Group-3 Professional and Programmers
 
 So, I would expect that there would be 3 different causal models for these.
 
-TODO: Check if these groups are statistically significant distinct while not
+TODO: 
+- Check if these groups are statistically significant distinct while not
 statistically significant distinct within group.
+- Describe the results on OneNote
+- Summarize on a slide
 
 "
 
@@ -21,46 +24,60 @@ library(farff)
 library(readr)
 library(ggplot2)
 library(dplyr)
-install.packages("hrbrthemes")
+#install.packages("hrbrthemes")
 library(hrbrthemes)
 library(tidyr)
 
 path <- "C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data//"
-#path <- "C://Users//Christian//Documents//GitHub//DW_Microtasks//output//"
 dataset_E2 <- readARFF(paste0(path, "consent_consolidated_Experiment_2.arff"))
 df_E2 <- data.frame(dataset_E2)
 df_consent <- data.frame(dataset_E2)
 dim(df_consent) #3658
 
+df_consent <- as_tibble(df_consent)
+df_consent <- rename(df_consent,profession=experience)
+df_consent$profession <- as.factor(df_consent$profession)
+
 #remove rows without profession information
-df_consent <- df_consent[!is.na(df_consent$experience),] #left with 2463
+df_consent <- df_consent[!is.na(df_consent$profession),] #left with 2463
+dim(df_consent)
 
 #change to professional so we do no mix up with other developers in the Others category
-df_consent[df_consent$experience=="Professional_Developer","experience"] <- "Professional"
-
+df_consent[df_consent$profession=="Professional_Developer","profession"] <- "Professional"
 
 #remove rows without test data
 dim(df_consent[is.na(df_consent$test1),]) #675 are NA
 df_consent <- df_consent[!is.na(df_consent$test1),]
 dim(df_consent) #1788 are not NA.
 
-df_others <- df_consent[grep("other",tolower(df_consent$experience)),]
+df_others <- df_consent[grep("other",tolower(df_consent$profession)),]
 dim(df_others) #161 entries with Other profession who also has test information
 
+"However, we noticed that many people who opted for Other profession are actually programmers.
+For some reason, these programmers did not identify themselves as 'Professsional Developer'
+This is not good because it distorts the demographics of Others group, which was created
+to represent anyone that did not fit in any of the other profession groups. For this reason
+we will relable people who are programmers in the Other group as 'Programmer' and the rest as
+simply 'Other'. 
+
+We will later on confirm if this group of Programmer is more similar to 'Professional Developer' 
+group than with the other groups. For that we will look at their qualification score distribution,
+years of experience and age.
+" 
 pattern <- "it|developer|programmer|computer|tech|technician|software|computer|qa|dba|data"
 
 #create three groups. All other, other developer, other not_developer,
-df_consent[(grep(pattern,tolower(df_consent$experience))),"experience"] <- "Programmer"
-df_consent[(grep("other",tolower(df_consent$experience))),"experience"] <- "Other"
+df_consent[(grep(pattern,tolower(df_consent$profession))),"profession"] <- "Programmer"
+df_consent[(grep("other",tolower(df_consent$profession))),"profession"] <- "Other"
 
 
 #Mean qualification score of Other programmers
-hist(df_consent[df_consent$experience=="Programmer","qualification_score"])
-hist(df_consent[df_consent$experience=="Other","qualification_score"])
+hist(df_consent[df_consent$profession=="Programmer","qualification_score"])
+hist(df_consent[df_consent$profession=="Other","qualification_score"])
 
 t.test(
-      df_consent[df_consent$experience=="Programmer","qualification_score"],
-      df_consent[df_consent$experience=="Other","qualification_score"],
+      df_consent[df_consent$profession=="Programmer","qualification_score"],
+      df_consent[df_consent$profession=="Other","qualification_score"],
       alternative = c("two.sided")
 )
 # t = 6.5172, df = 219.06, p-value = 4.856e-10
@@ -72,8 +89,8 @@ t.test(
 # 2.960000  1.921875 
 
 t.test(
-  df_consent[df_consent$experience=="Programmer","qualification_score"],
-  df_consent[df_consent$experience=="Professional","qualification_score"],
+  df_consent[df_consent$profession=="Programmer","qualification_score"],
+  df_consent[df_consent$profession=="Professional","qualification_score"],
   alternative = c("two.sided")
 )
 # t = -0.91952, df = 40.459, p-value = 0.3633
@@ -85,7 +102,7 @@ t.test(
 # 2.694444  2.980815
 
 p <- df_consent %>%
-  ggplot( aes(x=qualification_score, fill=experience)) +
+  ggplot( aes(x=qualification_score, fill=profession)) +
   geom_density( color="#e9ecef", alpha=0.6, position = 'identity') +
   theme_ipsum() +
   labs(fill="")
@@ -97,8 +114,8 @@ install.packages("viridis")
 library(viridis)
 library(forcats)
 p <- df_consent %>%
-  mutate(text = fct_reorder(experience, qualification_score)) %>%
-  ggplot( aes(x=qualification_score, color=experience, fill=experience)) +
+  mutate(text = fct_reorder(profession, qualification_score)) %>%
+  ggplot( aes(x=qualification_score, color=profession, fill=profession)) +
   geom_density(alpha=0.6, binwidth = 1) +
   scale_fill_viridis(discrete=TRUE) +
   scale_color_viridis(discrete=TRUE) +
@@ -114,4 +131,14 @@ p <- df_consent %>%
 
 p
 
+#--------------------------------
+#ANOVA OMNIBUS TEST
+
+#Are Profession Groups distinct in terms of qualification score, age, years of experience?
+
+model <- anova(lm(qualification_score ~ profession,data=df_consent))
+
+summary(model)
+
+anova(lm(qualification_score ~ age,data=df_consent))
 
