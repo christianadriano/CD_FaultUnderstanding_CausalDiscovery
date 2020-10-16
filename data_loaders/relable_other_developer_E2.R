@@ -205,31 +205,48 @@ df_consent %>%
   ggtitle("Qualification Score Across Professions") -> gg
 gg
 
-#YEARS PROGRAMMING
 
+
+#YEARS PROGRAMMING
+df_consent %>%
+  ggplot( aes(y=years_programming, x=reorder(profession,1/age))) +
+  geom_boxplot()+
+  stat_summary(fun=mean, geom="point", shape=4, size=3)+
+  theme_ipsum_pub()+
+  theme(
+    legend.position="none",
+    panel.spacing = unit(0.1, "lines"),
+    strip.text.x = element_text(size = 10),
+    panel.grid=element_blank(),
+    plot.title = element_text(size=12),
+    axis.text.x = element_text(angle = 25, hjust = 1, size=10)
+  ) +
+  #facet_wrap(~text)+
+  ylab("Years of Programming") +
+  xlab("Profession") +
+  ylim(-5,40)+
+  ggtitle("Years of Programming across Professions") -> gg1
+gg1
 
 
 
 #AGE
 df_consent %>%
-  mutate(text = fct_reorder(profession,age, .desc = TRUE)) %>%
-  ggplot( aes(y=age, x=reorder(profession,age))) +
+  ggplot( aes(y=age, x=reorder(profession,1/age))) +
   geom_boxplot()+
-  stat_summary(fun=mean, geom="point", shape=23, size=4)+
-  #geom_density(alpha=0.6, binwidth = 1,color="darkgrey", fill="lightblue") +
-  #scale_fill_viridis(discrete=TRUE, option="E")+
-  #scale_color_viridis(discrete=TRUE, option = "E")+
+  stat_summary(fun=mean, geom="point", shape=4, size=3)+
   theme_ipsum_pub()+
   theme(
     legend.position="none",
     panel.spacing = unit(0.1, "lines"),
-    strip.text.x = element_text(size = 8),
+    strip.text.x = element_text(size = 10),
     panel.grid=element_blank(),
     plot.title = element_text(size=12),
-    axis.text.x = element_text(angle = 45, hjust = 1, size=8,color="darkred")
+    axis.text.x = element_text(angle = 25, hjust = 1, size=10)
   ) +
   #facet_wrap(~text)+
   ylab("Age") +
-  xlab("Profesion") +
-  ggtitle("Age Across Professions") -> gg
+  xlab("Profession") +
+  ylim(10,75)+
+  ggtitle("Age across Professions") -> gg
 gg
