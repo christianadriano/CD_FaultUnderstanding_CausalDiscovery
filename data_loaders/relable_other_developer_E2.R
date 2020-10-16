@@ -30,6 +30,23 @@ Because the qualification_score is a dependent variable, we will use
 causal discovery and inference methods to evaluate the distinctions
 across professsions.
 
+Looking at the distribution years of programming,
+as we can see that the following groups are similar visually (boxplots 1 and 2).
+
+Doing the t-test for each pair, we confirmed only that one group is 
+statistically significant distinct: 
+- the Graduate and Undergraduate groups (t = 2.7757, df = 617.83, p-value = 0.005674)
+
+Whereas, for the other two groups we could not reject the null-hypothesis
+- the Other and Hobbyist groups (t = 1.3904, df = 187.44, p-value = 0.166)
+- the Programmer and Professional groups (t = -1.0093, df = 36.961, p-value = 0.3194)
+
+However With regard to age the pairs within each group are shown to be
+statistically significant distinct (p-value<0.05).
+Hence, we are not completely sure that we can treat these groups are uniform with respect 
+to covariates that might have influence on the qualification score and on the accuracy of
+task outcomes..
+
 Implications: So, I would expect that there would be different causal 
 models for these three groups.
 
@@ -250,3 +267,26 @@ df_consent %>%
   ylim(10,75)+
   ggtitle("Age across Professions") -> gg
 gg
+
+
+#-----------------------------------
+#T-Tests to compare within groups
+
+#Hobbyist and Others
+t.test(df_consent[df_consent$profession=="Hobbyist","age"],df_consent[df_consent$profession=="Other","age"])
+#t = -2.4409, df = 164.14, p-value = 0.01571 SIGNIFICANT
+t.test(df_consent[df_consent$profession=="Hobbyist","years_programming"],df_consent[df_consent$profession=="Other","years_programming"])
+#t = 1.3904, df = 187.44, p-value = 0.166 NOT SIGNIFICANT
+
+#Professional and Programmer
+t.test(df_consent[df_consent$profession=="Professional","age"],df_consent[df_consent$profession=="Programmer","age"])
+#t = -2.8632, df = 36.568, p-value = 0.006903 SIGNIFICANT
+t.test(df_consent[df_consent$profession=="Professional","years_programming"],df_consent[df_consent$profession=="Programmer","years_programming"])
+#t = -1.0093, df = 36.961, p-value = 0.3194 NOT SIGNIFICANT
+
+#Graduate and Undergraduate Student
+t.test(df_consent[df_consent$profession=="Graduate_Student","age"],df_consent[df_consent$profession=="Undergraduate_Student","age"])
+#t = 5.1057, df = 666, p-value = 4.306e-07 SIGNIFICANT
+t.test(df_consent[df_consent$profession=="Graduate_Student","years_programming"],df_consent[df_consent$profession=="Undergraduate_Student","years_programming"])
+#t = 2.7757, df = 617.83, p-value = 0.005674 SIGNIFICANT
+
