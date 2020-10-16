@@ -54,7 +54,7 @@ df_consent <- rename(df_consent,profession=experience)
 
 #remove rows without profession information
 df_consent <- df_consent[!is.na(df_consent$profession),] #left with 2463
-dim(df_consent)
+dim(df_consent) #2463
 
 #change to professional so we do no mix up with other developers in the Others category
 df_consent[df_consent$profession=="Professional_Developer","profession"] <-"Professional"
@@ -129,12 +129,26 @@ p
 #--------------------------------
 #ANOVA OMNIBUS TEST
 
-#Are Profession Groups distinct in terms of age and years of experience?
+#Are Profession Groups distinct in terms of age and years of programming?
+
+#AGE
+#Remove outliers (age has an outlier of 100 years old)
+df_consent[df_consent$profession=="Undergraduate_Student" &
+                 df_consent$age==100,]$age <- median(as.numeric(df_consent[
+                   df_consent$profession=="Undergraduate_Student",]$age))
+df_consent[df_consent$profession=="Professional" &
+                 df_consent$age==16,]$age <- median(df_consent[
+                   df_consent$profession=="Professional",]$age)
+df_consent[df_consent$profession=="Graduate_Student" &
+                 df_consent$age==2,]$age <- median(df_consent[
+                   df_consent$profession=="Graduate_Student",]$age)
+
 
 two.way <- aov(age ~ profession,data=df_consent)
 summary(two.way)
 TukeyHSD(two.way)
-"The only pair that did not rejected the null-hypothesis was Professional-Hobbyist"
+"The only pair that did not rejected the null-hypothesis 
+was Professional-Hobbyist, p-value=0.9980065"
 
 two.way <- aov(years_programming ~ profession,data=df_consent)
 summary(two.way)
@@ -161,7 +175,7 @@ The best instruments for this are to do Causal Discovery methods and Multi-Level
 Which we will look at next (see file )
 
 "
-
+#---------------------------------------------
 
 # Multiple small plots
 #install.packages("viridis")
@@ -211,7 +225,8 @@ df_consent %>%
     panel.spacing = unit(0.1, "lines"),
     strip.text.x = element_text(size = 8),
     panel.grid=element_blank(),
-    plot.title = element_text(size=12)
+    plot.title = element_text(size=12),
+    axis.text.x = element_text(angle = 45, hjust = 1, size=8,color="darkred")
   ) +
   #facet_wrap(~text)+
   ylab("Age") +
