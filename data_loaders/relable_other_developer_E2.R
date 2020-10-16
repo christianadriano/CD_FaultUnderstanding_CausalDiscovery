@@ -1,22 +1,25 @@
 "
-Relabel Others who are software developers
+Relabel Others who are software developers and Run Omnibus ANOVA tests to check which groups
+are distinct in terms of the covariates of the causal model: qualification_score, 
+years of experience and age.
 
-Keywords: IT, developer, programmer, computer, Tech, Technician, software, computer, QA, DBA, Data, 
-
+Summary of results:
 Looking at the density plots, we can see that there are three groups of professions with 
 respect to the qualification_score. 
+- Group-1 Others and Undergrads
+- Group-2 Graduates and Hobbyists
+- Group-3 Professionals and Programmers
 
-Group-1 Other and Undergrads
-Group-2 Graudatue and Hobbyists
-Group-3 Professional and Programmers
-
-So, I would expect that there would be 3 different causal models for these.
+However, the omnibus test showed that 
 
 TODO: 
 - Check if these groups are statistically significant distinct while not
 statistically significant distinct within group.
 - Describe the results on OneNote
 - Summarize on a slide
+
+Implications: So, I would expect that there would be 3 different causal models for these.
+
 
 "
 
@@ -36,14 +39,14 @@ dim(df_consent) #3658
 
 df_consent <- as_tibble(df_consent)
 df_consent <- rename(df_consent,profession=experience)
-df_consent$profession <- as.factor(df_consent$profession)
 
 #remove rows without profession information
 df_consent <- df_consent[!is.na(df_consent$profession),] #left with 2463
 dim(df_consent)
 
 #change to professional so we do no mix up with other developers in the Others category
-df_consent[df_consent$profession=="Professional_Developer","profession"] <- "Professional"
+df_consent[df_consent$profession=="Professional_Developer","profession"] <-"Professional"
+#df_consent$profession <- as.factor(df_consent$profession)
 
 #remove rows without test data
 dim(df_consent[is.na(df_consent$test1),]) #675 are NA
@@ -72,8 +75,8 @@ df_consent[(grep("other",tolower(df_consent$profession))),"profession"] <- "Othe
 
 
 #Mean qualification score of Other programmers
-hist(df_consent[df_consent$profession=="Programmer","qualification_score"])
-hist(df_consent[df_consent$profession=="Other","qualification_score"])
+hist(df_consent[df_consent$profession=="Programmer",]$qualification_score)
+hist(df_consent[df_consent$profession=="Other",]$qualification_score)
 
 t.test(
       df_consent[df_consent$profession=="Programmer","qualification_score"],
@@ -110,7 +113,7 @@ p
 
 
 # Multiple small plots
-install.packages("viridis")
+#install.packages("viridis")
 library(viridis)
 library(forcats)
 p <- df_consent %>%
@@ -136,9 +139,32 @@ p
 
 #Are Profession Groups distinct in terms of qualification score, age, years of experience?
 
-model <- anova(lm(qualification_score ~ profession,data=df_consent))
+two.way <- aov(qualification_score ~ profession,data=df_consent)
+summary(two.way)
+TukeyHSD(two.way)
 
-summary(model)
+two.way <- aov(age ~ profession,data=df_consent)
+summary(two.way)
+TukeyHSD(two.way)
+"The only pair that did not rejected the null-hypothesis was Professional-Hobbyist"
 
-anova(lm(qualification_score ~ age,data=df_consent))
+two.way <- aov(years_programming ~ profession,data=df_consent)
+summary(two.way)
+TukeyHSD(two.way)
+#The only pairs that did not rejected the null-hypothesis were:
+# Other-Graduate_Student p-value=0.6470031
+# Undergraduate_Student-Graduate_Student p-value=0.7382731
+# Other-Hobbyist, p-value=0.5550062
+# Undergraduate_Student-Other, p-value=0.0846358
+# Programmer-Professional, p-value=0.2886983
+"This suggests that these pairs are probably more similar in terms of 
+years of experience. Students, Programmers, and Hobbyists-Others. We saw thought that
+Graduate students are also closer to Others, but not to Hobbyists."
+
+"
+Although the omnibus test on qualification_scores showed that only 
+the differences in qualifcation Professional group
+
+"
+
 
