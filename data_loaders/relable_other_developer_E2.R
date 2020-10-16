@@ -10,16 +10,28 @@ respect to the qualification_score.
 - Group-2 Graduates and Hobbyists
 - Group-3 Professionals and Programmers
 
-However, the omnibus test showed that 
+However, the omnibus test for age and years of programming showed that a few pairs
+did not show statitically significan differences
 
-TODO: 
-- Check if these groups are statistically significant distinct while not
-statistically significant distinct within group.
-- Describe the results on OneNote
-- Summarize on a slide
+Age: only  Professional-Hobbyist, p-value=0.9982279
 
-Implications: So, I would expect that there would be 3 different causal models for these.
+Years Programming: 
+ Other-Graduate_Student p-value=0.6470031
+ Undergraduate_Student-Graduate_Student p-value=0.7382731
+ Other-Hobbyist, p-value=0.5550062
+ Undergraduate_Student-Other, p-value=0.0846358
+ Programmer-Professional, p-value=0.2886983
+ 
+ This suggests that these pairs are probably more similar in terms of 
+years of experience. Students, Programmers, and Hobbyists-Others. We saw thought that
+Graduate students are also closer to Others, but not to Hobbyists.
 
+Because the qualification_score is a dependent variable, we will use
+causal discovery and inference methods to evaluate the distinctions
+across professsions.
+
+Implications: So, I would expect that there would be different causal 
+models for these three groups.
 
 "
 
@@ -112,58 +124,12 @@ p <- df_consent %>%
 p
 
 
-# Multiple small plots
-#install.packages("viridis")
-library(viridis)
-library(forcats)
-library(gridExtra)
 
 
-df_consent %>%
-  mutate(text = fct_reorder(profession,qualification_score, .desc = TRUE)) %>%
-  ggplot( aes(x=qualification_score)) +
-  geom_density(alpha=0.6, binwidth = 1,color="darkgrey", fill="lightblue") +
-  #scale_fill_viridis(discrete=TRUE, option="E")+
-  #scale_color_viridis(discrete=TRUE, option = "E")+
-  theme_ipsum_pub()+
-  theme(
-    legend.position="none",
-    panel.spacing = unit(0.1, "lines"),
-    strip.text.x = element_text(size = 10),
-    panel.grid=element_blank(),
-    plot.title = element_text(size=12)
-  ) +
-  xlab("Qualification Score") +
-  ylab("Assigned Probability (%)") +
-  facet_wrap(~text,nrow=3,ncol=2)+
-  ggtitle("Qualification Score Across Professions") -> gg
-gg
-
-gg1
-
-library("gridExtra")
-grid.arrange(gg,                             # First row with one plot spaning over 2 columns
-             arrangeGrob(bxp, dp, ncol = 3), # Second row with 2 plots in 2 different columns
-             ncol=3, nrow = 2)
-
-grid.arrange(gg,ncol=3,nrow=2)
-
-gridExtra::grid.arrange(
-  gg + scale_fill_viridis(discrete=TRUE,option = "A") + labs(x="Other", y=NULL),
-  gg + scale_fill_viridis(discrete=TRUE,option = "B") + labs(x="Undergraduate_Student", y=NULL),
-  gg + scale_fill_viridis(discrete=TRUE,option = "C") + labs(x="Graduate_Student", y=NULL),
-  gg + scale_fill_viridis(discrete=TRUE,option = "D") + labs(x="Programmer", y=NULL),
-  gg + scale_fill_viridis(discrete=TRUE,option = "E") + labs(x="Professional", y=NULL),
-  ncol=3, nrow=2
-)
 #--------------------------------
 #ANOVA OMNIBUS TEST
 
-#Are Profession Groups distinct in terms of qualification score, age, years of experience?
-
-two.way <- aov(qualification_score ~ profession,data=df_consent)
-summary(two.way)
-TukeyHSD(two.way)
+#Are Profession Groups distinct in terms of age and years of experience?
 
 two.way <- aov(age ~ profession,data=df_consent)
 summary(two.way)
@@ -196,3 +162,59 @@ Which we will look at next (see file )
 
 "
 
+
+# Multiple small plots
+#install.packages("viridis")
+library(viridis)
+library(forcats)
+library(gridExtra)
+
+#QUALIFICATION SCORE
+
+df_consent %>%
+  mutate(text = fct_reorder(profession,qualification_score, .desc = TRUE)) %>%
+  ggplot( aes(x=qualification_score)) +
+  geom_density(alpha=0.6, binwidth = 1,color="darkgrey", fill="lightblue") +
+  #scale_fill_viridis(discrete=TRUE, option="E")+
+  #scale_color_viridis(discrete=TRUE, option = "E")+
+  theme_ipsum_pub()+
+  theme(
+    legend.position="none",
+    panel.spacing = unit(0.1, "lines"),
+    strip.text.x = element_text(size = 10),
+    panel.grid=element_blank(),
+    plot.title = element_text(size=12)
+  ) +
+  xlab("Qualification Score") +
+  ylab("Assigned Probability (%)") +
+  facet_wrap(~text,nrow=3,ncol=2)+
+  ggtitle("Qualification Score Across Professions") -> gg
+gg
+
+#YEARS PROGRAMMING
+
+
+
+
+#AGE
+df_consent %>%
+  mutate(text = fct_reorder(profession,age, .desc = TRUE)) %>%
+  ggplot( aes(y=age, x=reorder(profession,age))) +
+  geom_boxplot()+
+  stat_summary(fun=mean, geom="point", shape=23, size=4)+
+  #geom_density(alpha=0.6, binwidth = 1,color="darkgrey", fill="lightblue") +
+  #scale_fill_viridis(discrete=TRUE, option="E")+
+  #scale_color_viridis(discrete=TRUE, option = "E")+
+  theme_ipsum_pub()+
+  theme(
+    legend.position="none",
+    panel.spacing = unit(0.1, "lines"),
+    strip.text.x = element_text(size = 8),
+    panel.grid=element_blank(),
+    plot.title = element_text(size=12)
+  ) +
+  #facet_wrap(~text)+
+  ylab("Age") +
+  xlab("Profesion") +
+  ggtitle("Age Across Professions") -> gg
+gg
