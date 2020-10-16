@@ -16,11 +16,11 @@ Method M1 produced was prefered for dataset D1 because .....
 
 "
 
-#install.packages("robustbase")
-#library(robustbase)
-install.packages("outliers")
+#install.packages("outliers")
 library(outliers)
 library(farff)
+library(tidyr)
+
 
 path <- "C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data//"
 dataset_E2 <- readARFF(paste0(path, "consent_consolidated_Experiment_2.arff"))
@@ -28,28 +28,46 @@ df_E2 <- data.frame(dataset_E2)
 df_consent <- data.frame(dataset_E2)
 dim(df_consent) #3658
 
+#rename column from experience to profession
+df_consent <- as_tibble(df_consent)
+df_consent <- rename(df_consent,profession=experience)
+
 #Processing Age, so remove rows where Age==NA
-df_consent$experience <- as.factor(df_consent$experience)
+df_consent$profession <- as.factor(df_consent$profession)
 df_consent_age <- df_consent[!is.na(df_consent$age),]
 dim(df_consent_age)  #2463
 
 #GRUBBS TEST - https://www.statsandr.com/blog/outliers-detection-in-r/
-outliers::grubbs.test(df_consent_age[df_consent_age$experience=="Undergraduate_Student",]$age)
+outliers::grubbs.test(df_consent_age[df_consent_age$profession=="Undergraduate_Student",]$age,opposite = TRUE)
 #100 is an outlier
+#18 is an outler
 
 #substitute the outlier for the median value
-df_consent_age[df_consent$experience=="Undergraduate_Student" &
+df_consent_age[df_consent_age$profession=="Undergraduate_Student" &
              df_consent_age$age==100,]$age <- median(df_consent_age[
-                                                  df_consent_age$experience=="Undergraduate_Student","age"])
+                                                  df_consent_age$profession=="Undergraduate_Student","age"])
 
 
-outliers::grubbs.test(df_consent[df_consent$experience=="Professional_Developer",]$age)
+outliers::grubbs.test(df_consent_age[df_consent_age$profession=="Professional_Developer",]$age, opposite = TRUE)
 #57 is an outlier
+#16 is an outlier
 
-outliers::grubbs.test(df_consent[df_consent$experience=="Graduate_Student",]$age)
+#substitute the outlier for the median value
+df_consent_age[df_consent_age$profession=="Professional_Developer" &
+                 df_consent_age$age==16,]$age <- median(df_consent_age[
+                   df_consent_age$profession=="Professional_Developer",]$age)
+
+
+outliers::grubbs.test(df_consent_age[df_consent_age$profession=="Graduate_Student",]$age, opposite = TRUE)
 #57 is an outlier
+#2 is an outlier
+df_consent_age[df_consent_age$profession=="Graduate_Student" &
+                 df_consent_age$age==2,]$age <- median(df_consent_age[
+                   df_consent_age$profession=="Graduate_Student",]$age)
 
-outliers::grubbs.test(df_consent[df_consent$experience=="Hobbyist",]$age)
+
+outliers::grubbs.test(df_consent[df_consent$profession=="Hobbyist",]$age, opposite=TRUE)
 #66 is an outlier
+#18 is an outler
 
 
