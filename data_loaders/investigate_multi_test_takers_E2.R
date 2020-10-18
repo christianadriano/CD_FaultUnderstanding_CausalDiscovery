@@ -1,5 +1,5 @@
 "
-Analyze workers who took the test multiple times
+Analyze workers who took the test multiple times = 76
 "  
 library(farff)
 library(readr)
