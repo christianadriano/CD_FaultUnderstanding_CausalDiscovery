@@ -15,44 +15,43 @@ dataset_E2 <- readARFF(paste0(path, "consent_consolidated_Experiment_2.arff"))
 df_consent <- data.frame(dataset_E2)
 dim(df_consent) 
 
+#------------------------
+"Missing Data"
+#remove rows without profession information
+df_consent <- df_consent[!is.na(df_consent$profession),] #left with 2463
+dim(df_consent) #2463
+
 #Filter-out rows without test data
 dim(df_consent[is.na(df_consent$test1),]) #1870 are NA
 df_consent <- df_consent[!is.na(df_consent$test1),]
 dim(df_consent) #1788 are not NA.
 
-df_consent <- as_tibble(df_consent)
-df_consent <- rename(df_consent,profession=experience)
-
-#remove rows without profession information
-df_consent <- df_consent[!is.na(df_consent$profession),] #left with 2463
-dim(df_consent) #2463
-
-#Score factors computed through IRT Model fitting
-df_irt <- read.csv("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data//irt//E2_QualificationTest_IRT.csv")
-df_irt <-  dplyr::select(df_irt, worker_id,z1) #file_name,z1) #need file_name, because a few workers have more than one score.
-df_irt$worker_id <- as.factor(df_irt$worker_id) #convert to factor, so I can join with microtask_id column
-df_consent$worker_id <- as.factor(df_consent$worker_id) #convert to factor, so I can join with microtask_id column
-#only joins with people who qualified (qualification_score>=3), because only these are present in the task execution logs
-df_consent <- left_join(x=df_consent,y=df_irt,keep=TRUE, by=c("worker_id"="worker_id"))#,"file_name"="file_name"))
-dim(df_consent) 
-
-
+#------------------------
 "PROFESSION"
+#rename column from experience to profession
+df_consent <- rename(as_tibble(df_consent),profession=experience) 
+
+#relable Others who are programmers
+pattern <- "it|developer|programmer|computer|tech|technician|software|computer|qa|dba|data"
+df_consent[(grep(pattern,tolower(df_consent$profession))),"profession"] <- "Programmer"
+df_consent[(grep("other",tolower(df_consent$profession))),"profession"] <- "Other"
+
 #Convert profession from factor to character 
-df_consent$profession <- as.character(df_consent$experience)
+#df_consent$profession <- as.character(df_consent$experience)
 #Replaces 'Other...something' for only 'Other'
-df_consent[grep("Other",df_consent$profession),"profession"] <- "Other"
-#Transform profession as factor again
+#df_consent[grep("Other",df_consent$profession),"profession"] <- "Other"
+#Transform profession as factor
 df_consent$profession <- factor(df_consent$profession, 
-                           levels = c("Professional_Developer","Hobbyist",
+                           levels = c("Professional","Programmer", "Hobbyist",
                                       "Graduate_Student","Undergraduate_Student",
                                       "Other")
 )
 df_consent$profession_id <- factor(df_consent$profession,
                               levels=levels(df_consent$profession),
-                              labels=c(1:5)
+                              labels=c(1:6)
 )
 
+#------------------------
 "QUALIFICATION_SCORE"
 
 #Transform profession as factor again
@@ -66,6 +65,17 @@ df_consent$qualification_score_id <- factor(df_consent$qualification_score_label
                               labels=c(5:0)
 )
 
+#Merge Score factors computed through IRT Model fitting
+df_irt <- read.csv("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data//irt//E2_QualificationTest_IRT.csv")
+df_irt <-  dplyr::select(df_irt, worker_id,z1) #file_name,z1) #need file_name, because a few workers have more than one score.
+df_irt$worker_id <- as.factor(df_irt$worker_id) #convert to factor, so I can join with microtask_id column
+df_consent$worker_id <- as.factor(df_consent$worker_id) #convert to factor, so I can join with microtask_id column
+#only joins with people who qualified (qualification_score>=3), because only these are present in the task execution logs
+df_consent <- left_join(x=df_consent,y=df_irt,keep=TRUE, by=c("worker_id"="worker_id"))#,"file_name"="file_name"))
+dim(df_consent) 
+
+
+#------------------------
 "FILE_NAME"
 
 df_consent <- df_consent[df_consent$file_name!="null",]
@@ -79,6 +89,7 @@ df_consent$file_name_id <- factor(df_consent$file_name,
                              labels=c(1:8)
 )
 
+#------------------------
 "GENDER"
 
 df_consent$gender<- factor(df_consent$gender, 
@@ -90,6 +101,7 @@ df_consent$gender_id<- factor(df_consent$gender,
                          labels = c(1:4)
 )
 
+#------------------------
 "COUNTRY"
 
 
@@ -175,45 +187,9 @@ df_consent$country_id<- factor(df_consent$country_labels,
                           labels = c(1:3)
 )
 
+#------------------------
 #DURATION in Minutes
 df_consent$testDuration_minutes <- df_consent$test_duration/(1000*60)
 
-#df_consent$duration_minutes <- df_consent$duration/(1000*60)
-
-
-#Transform isBugCovering as factor again
-#df_consent$isBugCovering <- factor(df_consent$isBugCovering, 
-#                           levels = c("TRUE","FALSE")
-#                          )
-#df_consent$isBugCovering_id <- factor(df_consent$isBugCovering,
-#                                 levels=levels(df_consent$isBugCovering),
-#                                 labels=c(1,0)
-#                         )
-
-
-#Transform answer as factor again
-#df_consent$answer <- factor(df_consent$answer, 
-#                       levels = c("YES_THERE_IS_AN_ISSUE",
-#                                  "NO_THERE_IS_NOT_AN_ISSUE",
-#                                  "I_DO_NOT_KNOW")
-#                       )
-#df_consent$answer_id <- factor(df_consent$answer,
-#                          levels=levels(df_consent$answer),
-#                          labels=c(1,0,2)
-#                    )
-
-#df_consent$explanation.size <- sapply(strsplit(df_consent$explanation, " "), length);
-
-
-#Transform answer as factor again
-#df_consent$isAnswerCorrect_bol <- as.integer(as.logical(df_consent$isAnswerCorrect))
-
-# df_consent$isAnswerCorrect <- factor(df_consent$isAnswerCorrect, 
-#                        levels = c("FALSE","TRUE")
-# )
-# df_consent$isAnswerCorrect_id <- factor(df_consent$isAnswerCorrect,
-#                           levels=levels(df_consent$isAnswerCorrect),
-#                           labels=c(0,1)
-# )
 
 print("Results in df_consent")
