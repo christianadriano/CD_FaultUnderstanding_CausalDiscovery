@@ -1,6 +1,10 @@
 "
-Load CONSENT data from E2 and create indexes for: profession, 
-qualification_score, file_name, country
+Load CONSENT data from E2 and create indexes for: profession, qualification_score, file_name, country, etc.
+
+Data sources:
+consent_consolidated_Experiment_2.arff (produced by project DW_Microtasks)
+E2_QualificationTest_IRT.csv (produced by scripts in CausalModel_FaultUnderstanding\item_response_model)
+
 
 "
 library(farff)
@@ -9,14 +13,16 @@ library(ggplot2)
 library(dplyr)
 library(tidyr)
 
-path <- "C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data//"
-#path <- "C://Users//Christian//Documents//GitHub//DW_Microtasks//output//"
-dataset_E2 <- readARFF(paste0(path, "consent_consolidated_Experiment_2.arff"))
+#--------------------------
+"LOAD FILES"
+
+path <- "C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//"
+dataset_E2 <- readARFF(paste0(path,"//data//","consent_consolidated_Experiment_2.arff"))
 df_consent <- data.frame(dataset_E2)
 dim(df_consent) 
 
 #------------------------
-"Missing Data"
+"MISSING DATA"
 #remove rows without profession information
 df_consent <- df_consent[!is.na(df_consent$profession),] #left with 2463
 dim(df_consent) #2463
@@ -65,11 +71,12 @@ df_consent$qualification_score_id <- factor(df_consent$qualification_score_label
                               labels=c(5:0)
 )
 
+#ITEM RESPONSE MODEL SCORES
 #Merge Score factors computed through IRT Model fitting
-df_irt <- read.csv("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data//irt//E2_QualificationTest_IRT.csv")
+df_irt <- read.csv(paste0(path,"//data//irt//","E2_QualificationTest_IRT.csv"))
 df_irt <-  dplyr::select(df_irt, worker_id,z1) #file_name,z1) #need file_name, because a few workers have more than one score.
-df_irt$worker_id <- as.factor(df_irt$worker_id) #convert to factor, so I can join with microtask_id column
-df_consent$worker_id <- as.factor(df_consent$worker_id) #convert to factor, so I can join with microtask_id column
+df_irt$worker_id <- as.factor(df_irt$worker_id) #convert to factor, so I can join with worker_id column
+df_consent$worker_id <- as.factor(df_consent$worker_id) #convert to factor, so I can join with worker_id column
 #only joins with people who qualified (qualification_score>=3), because only these are present in the task execution logs
 df_consent <- left_join(x=df_consent,y=df_irt,keep=TRUE, by=c("worker_id"="worker_id"))#,"file_name"="file_name"))
 dim(df_consent) 
