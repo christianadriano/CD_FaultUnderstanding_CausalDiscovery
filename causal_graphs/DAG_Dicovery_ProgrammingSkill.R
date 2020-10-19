@@ -61,23 +61,26 @@ node.names <- colnames(df_selected)
 #NO PARENTS
 #blacklist_1 <- data.frame(from = node.names[-grep("age", node.names)], 
 #                          to   = c("age"))
+#Prevent Years of Programming to be parent of Age.
+blacklist_1 <- data.frame(from = c("years_programming"), 
+                          to   = c("age"))
 #Avoid that profession has parent nodes
 blacklist_2 <- data.frame(from = node.names[-grep("profession", node.names)], 
                           to   = c("profession"))
 #NO CHILDS
 #Avoid z1 to be parent
-#blacklist_3 <- data.frame(from = c("z1"),
-#                          to   = node.names[-grep("z1", node.names)])
+blacklist_3 <- data.frame(from = c("z1"),
+                          to   = node.names[-grep("z1", node.names)])
 
-blacklist_3 <- data.frame(from = c("qualification_score"),
-                          to   = node.names[-grep("qualification_score", node.names)])
+#blacklist_3 <- data.frame(from = c("qualification_score"),
+#                          to   = node.names[-grep("qualification_score", node.names)])
 
 #Task Accuracy can only be measured with all tasks data. 
 #Here we are dealing only with programmer demographic data.
 #blacklist_4 <- data.frame(from = c("isAnswerCorrect"),
 #                          to   = node.names[-grep("isAnswerCorrect", node.names)])
 
-blacklist_all <- rbind(blacklist_2,blacklist_3)#,blacklist_4) 
+blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_3)#,blacklist_4) 
 
 
 bn <-tabu(df_selected,blacklist = blacklist_all)
@@ -93,7 +96,7 @@ blacklist_all <- blacklist_all[!(blacklist_all$to %in% c("profession") ),]
 
 #Run structure discovery for each profession
 professions = c("Other", "Undergraduate_Student","Graduate_Student","Hobbyist",
-                "Professional_Developer")
+                "Programmer","Professional")
 
 #Constraint-Based Algorithm
 for (i in 1:length(professions)) {
@@ -121,7 +124,7 @@ for (i in 1:length(professions)) {
   df_prof <- 
     dplyr::select(df_prof,
                   years_programming,
-                  qualification_score,
+                  z1,
                   age
     );
   bn <-tabu(df_prof,blacklist = blacklist_all)
