@@ -85,7 +85,7 @@ dim(df_consent)
 #------------------------
 "FILE_NAME"
 
-df_consent <- df_consent[df_consent$file_name!="null",]
+#df_consent <- df_consent[df_consent$file_name!="null",]
 
 df_consent$file_name<- factor(df_consent$file_name, 
                          levels = c("HIT01_8","HIT02_24","HIT03_6","HIT04_7",
