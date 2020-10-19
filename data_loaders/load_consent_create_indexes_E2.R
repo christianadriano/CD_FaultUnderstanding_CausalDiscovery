@@ -3,7 +3,7 @@ Load CONSENT data from E2 and create indexes for: profession, qualification_scor
 
 Data sources:
 consent_consolidated_Experiment_2.arff (produced by project DW_Microtasks)
-E2_QualificationTest_IRT.csv (produced by scripts in CausalModel_FaultUnderstanding\item_response_model)
+E2_QualificationTest_IRT.csv (produced by scripts in CausalModel_FaultUnderstanding item_response_model)
 
 
 "
