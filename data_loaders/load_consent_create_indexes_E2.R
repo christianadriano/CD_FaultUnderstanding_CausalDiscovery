@@ -24,7 +24,7 @@ dim(df_consent)
 #------------------------
 "MISSING DATA"
 #remove rows without profession information
-df_consent <- df_consent[!is.na(df_consent$profession),] #left with 2463
+df_consent <- df_consent[!is.na(df_consent$experience),] #left with 2463
 dim(df_consent) #2463
 
 #Filter-out rows without test data
