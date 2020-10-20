@@ -37,10 +37,14 @@ dim(df_consent) #1788 are not NA.
 #rename column from experience to profession
 df_consent <- rename(as_tibble(df_consent),profession=experience) 
 
+#relable professional_developer as professional
+df_consent[df_consent$profession=="Professional_Developer",]$profession <- "Professional"
+
 #relable Others who are programmers
-pattern <- "it|developer|programmer|computer|tech|technician|software|computer|qa|dba|data"
+pattern <- "it|developer|programmer|computer|tech|technician|software|computer|qa|dba|data|physicist|systems|analyst|engineer"
 df_consent[(grep(pattern,tolower(df_consent$profession))),"profession"] <- "Programmer"
 df_consent[(grep("other",tolower(df_consent$profession))),"profession"] <- "Other"
+
 
 #Convert profession from factor to character 
 #df_consent$profession <- as.character(df_consent$experience)
@@ -200,3 +204,4 @@ df_consent$testDuration_minutes <- df_consent$test_duration/(1000*60)
 
 
 print("Results in df_consent")
+
