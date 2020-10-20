@@ -23,19 +23,11 @@ very larger framework, which is not installing smoothly"
 profession [exogenous];
 years_programming [exogenous];
 age [exogenous]
+testDuration [endogenous];
 qualification_score [outcome];
-file_name [exogenous] work as block, because programmers were tested for each file_name
-need to consider unique worker-id, i.e., programmer took a single qualification test, even
-if they have taken multiple tasks.
-" 
-#install.packages("tidyverse")
+z1 [outcome];
 
-"Load data with treatment field (isBugCovering) and ground truth (answer correct)"
-#source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_ground_truth_E2.R")
-#summary(df_E2_ground)
-#source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//create_indexes_E2.R")
-#source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//util//Multiplot.R")
-#----------------------------------------------------------
+" 
 
 library(bnlearn)
 library(dplyr)
