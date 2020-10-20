@@ -124,6 +124,15 @@ df_selected <-
 
 node.names <- colnames(df_selected)
 
+#years_programming is not parent of age.
+blacklist_1 <- data.frame(from = c("years_programming"), 
+                          to   = c("age"))
+#profession has parent nodes
+blacklist_2 <- data.frame(from = node.names[-grep("profession", node.names)], 
+                          to   = c("profession"))
+#testDuration is not parent of age, years_programming, profession
+blacklist_3 <- data.frame(from = c("testDuration_minutes"),
+                          to   = c("profession","years_programming","age"))
 #z1 cannot be parent of anyone
 blacklist_4 <- data.frame(from = c("qualification_score"),
                           to   = node.names[-grep("qualification_score", node.names)])
@@ -137,6 +146,9 @@ bn <-tabu(df_selected,blacklist = blacklist_all)
 plot(bn,main="All Professions")
 
 
+#Remove profession from blacklist
+blacklist_all <- blacklist_all[!(blacklist_all$from %in% c("profession") ),]
+blacklist_all <- blacklist_all[!(blacklist_all$to %in% c("profession") ),]
 
 #Constraint-Based Algorithm
 for (i in 1:length(professions)) {
@@ -145,16 +157,20 @@ for (i in 1:length(professions)) {
   df_prof <- 
     dplyr::select(df_prof,
                   years_programming,
-                  qualification_score,
                   age,
-                  testDuration_minutes
+                  testDuration_minutes,
+                  qualification_score
     );
   bn <-pc.stable(df_prof,blacklist = blacklist_all)
   plot(bn,main=choice)
   #graphviz.plot(bn,main=choice,shape="ellipse",layout = "circo");
 }
 
-
+"Analysis of results of the PC algorithm
+Test duration has not effect on z1 for other and Programmer
+Only in undegrad that test duration is affected by years_programming
+Hence, qualification_Score and z1 produced the same graphs with the PC algorithm
+"
 
 #Score-based algorithm - Hill Climbing
 for (i in 1:length(professions)) {
@@ -163,18 +179,27 @@ for (i in 1:length(professions)) {
   df_prof <- 
     dplyr::select(df_prof,
                   years_programming,
-                  qualification_score,
                   age,
-                  testDuration_minutes
+                  testDuration_minutes,
+                  qualification_score
     );
   bn <-tabu(df_prof,blacklist = blacklist_all)
   plot(bn,main=choice)
   #graphviz.plot(bn,main=choice,shape="ellipse",layout = "circo");
 }
 
+"Analysis of results of the Tabu algorithm
+Test duration has not effect on z1 for other and Programmer
+Test duration has no parents for Graduate and Professional
+Only in Hobbyists that test duration is a mediator for effect on z1
+Test duration has years_programming as parent in Hobbyist, Undergrad, 
+Programmer, and Other.
+
+Hence, qualification_score and z1 produced the same graph with the tabu algorithm
+"
+
 
 #TODO
-#Graphs resulting from IRT are very different from qualification_score
 #compare how professions are distinct in terms of z1 and qualification_score
 #Compare the strength of graph connections using z1 and qualification_score
 
