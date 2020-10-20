@@ -97,7 +97,7 @@ for (i in 1:length(professions)) {
   df_prof <- 
     dplyr::select(df_prof,
                   years_programming,
-                  qualification_score,
+                  z1,
                   age,
                   #profession
                   #isAnswerCorrect
@@ -160,7 +160,6 @@ for (i in 1:length(professions)) {
   plot(bn,main=choice)
   #graphviz.plot(bn,main=choice,shape="ellipse",layout = "circo");
 }
-
 
 
 #TODO
