@@ -83,8 +83,10 @@ for(i in c(1:length(profession_list))){
 
 #Replace all values that are above 30 min to the median of each professional group
 
+df_consent$profession <- as.factor(df_consent$profession)
+
 for(prof in profession_list){
-  upperwisker <- df_quantiles[df_quantiles$profession==prof,]$upper_wisker
+  upperwisker <- as.numeric(df_quantiles[df_quantiles$profession==prof,]$upper_wisker)
   median_value <- as.numeric(df_quantiles[df_quantiles$profession==prof,]$median)
   df_consent[df_consent$profession==prof &
              df_consent$testDuration_minutes>upperwisker,]$testDuration_minutes <- median_value
