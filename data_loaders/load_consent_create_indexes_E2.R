@@ -202,6 +202,57 @@ df_consent$country_id<- factor(df_consent$country_labels,
 #DURATION in Minutes
 df_consent$testDuration_minutes <- df_consent$test_duration/(1000*60)
 
+"
+Replace outliers in testDuration for median values.
+This is done for each profession.
+
+A reasonable time for the qualification test in E2 is 25 min, which gives 5 min per question,
+which is the average time people took to answer the code inspection tasks. Because,The boxplot shows points that are above 30 min, which is more than 6 min per question
+
+We consider as outliers all data points that are above wiskers in the boxplots. 
+These datapoints have values > 3rd quartile + 1.5*interquartile range. 
+The interquartile range is the difference between the 2nd and 3rd quartiles
+"
+
+profession_list <- as.character(unique(df_consent$profession))
+
+computeMedians <- function(prof){
+  median(df_consent[df_consent$profession==prof,]$testDuration_minutes)
+}
+medians_list <- lapply(profession_list, computeMedians)
+
+df_quantiles <- data.frame(matrix(data=c(profession_list,rep(0,24)),ncol=5,nrow = 6, byrow = FALSE)) #initialize with all zeros
+colnames(df_quantiles) <- c("profession","median","q2","q3","upper_wisker")
+
+#Quantiles
+computeQuantiles <- function(prof){
+  quantile(df_consent[df_consent$profession==prof,]$testDuration_minutes)
+}
+quantile_list <- lapply(profession_list,computeQuantiles)
+
+for(i in c(1:length(profession_list))){
+  values <- unlist(quantile_list[i])
+  prof <- profession_list[i]
+  df_quantiles[df_quantiles$profession==prof,]$q2 <- values[[2]]
+  df_quantiles[df_quantiles$profession==prof,]$median <- values[[3]]
+  df_quantiles[df_quantiles$profession==prof,]$q3 <- values[[4]]
+  inter_quartile <- values[[4]] - values[[2]]
+  df_quantiles[df_quantiles$profession==prof,]$upper_wisker <- values[[4]] + 1.5 * inter_quartile
+} 
+
+
+#Replace all values that are above 30 min to the median of each professional group
+
+df_consent$profession <- as.factor(df_consent$profession)
+
+for(prof in profession_list){
+  upperwisker <- as.numeric(df_quantiles[df_quantiles$profession==prof,]$upper_wisker)
+  median_value <- as.numeric(df_quantiles[df_quantiles$profession==prof,]$median)
+  df_consent[df_consent$profession==prof &
+               df_consent$testDuration_minutes>upperwisker,]$testDuration_minutes <- median_value
+}
+
+#---------------------
 
 print("Results in df_consent")
 
