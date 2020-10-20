@@ -73,16 +73,18 @@ for (i in 1:length(professions)) {
   df_prof <- 
     dplyr::select(df_prof,
                   years_programming,
-                  z1,
                   age,
-                  testDuration_minutes
+                  testDuration_minutes,
+                  z1
     );
   bn <-pc.stable(df_prof,blacklist = blacklist_all)
   plot(bn,main=choice)
   #graphviz.plot(bn,main=choice,shape="ellipse",layout = "circo");
 }
 
-
+"Analysis of results of the PC algorithm
+test duration seem relevant only for professional, undergrad, grad, hobbyist
+only in undegrad that test duration is affected by years_programming"
 
 #Score-based algorithm - Hill Climbing
 for (i in 1:length(professions)) {
@@ -91,14 +93,22 @@ for (i in 1:length(professions)) {
   df_prof <- 
     dplyr::select(df_prof,
                   years_programming,
-                  z1,
                   age,
-                  testDuration_minutes
+                  testDuration_minutes,
+                  z1
     );
   bn <-tabu(df_prof,blacklist = blacklist_all)
   plot(bn,main=choice)
   #graphviz.plot(bn,main=choice,shape="ellipse",layout = "circo");
 }
+
+"Analysis of results of the Tabu algorithm
+Test duration has not effect on z1 for other and Programmer
+Test duration has no parents for Graduate and Professional
+Only in Hobbyists that test duration is a mediator for effect on z1
+Test duration has years_programming as parent in Hobbyist, Undergrad, 
+Programmer, and Other.
+"
 
 #-------------------------------------
 #USing now the qualification_score
