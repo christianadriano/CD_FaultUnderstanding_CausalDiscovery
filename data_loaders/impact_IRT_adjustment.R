@@ -31,8 +31,34 @@ df_consent$decreased_score <- df_consent$qualification_score_scaled>df_consent$z
 
 df_test <- df_consent[df_consent$decreased_score==TRUE,]
 
-table(df_test$profession)
+df_descrease <- data.frame(table(df_test$profession))
 # Professional            Programmer              Hobbyist      Graduate_Student 
 # 138                    19                   152                    82 
 # Undergraduate_Student                 Other 
-# 152                    37 
+# 152     37 
+
+colnames(df_descrease) <- c("profession","decreased")
+
+df_original <- data.frame(table(df_consent$profession))
+# 417                    49                   484                   283 
+# Undergraduate_Student                 Other 
+# 443                   112 
+colnames(df_original) <- c("profession","original")
+
+joined <- left_join(df_original,df_descrease,by="profession")
+joined$proportion <- (joined$original-joined$decreased)/joined$original
+
+ggplot(data=joined, aes(x=reorder(profession,proportion), y=proportion))+
+  geom_bar()+
+  theme_ipsum_pub()+
+  theme(
+    legend.position="none",
+    panel.spacing = unit(0.1, "lines"),
+    strip.text.x = element_text(size = 10),
+    panel.grid=element_blank(),
+    plot.title = element_text(size=12),
+    axis.text.x = element_text(angle = 25, hjust = 1, size=10)
+  ) +
+  xlab("Profession") +
+  ylab("Proportion that reduced their score after adjustment by IRT model") +
+  ggtitle("Reduction in score after adjustment") 
