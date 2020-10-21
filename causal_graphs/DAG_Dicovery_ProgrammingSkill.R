@@ -162,10 +162,4 @@ for (i in 1:length(professions)) {
 }
 
 
-#TODO
-#Graphs resulting from IRT are very different from qualification_score
-#compare how professions are distinct in terms of z1 and qualification_score
-#Compare the strength of graph connections using z1 and qualification_score
-
-#https://arxiv.org/pdf/0908.3817.pdf
 
