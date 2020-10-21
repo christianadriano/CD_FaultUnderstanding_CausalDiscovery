@@ -49,8 +49,8 @@ joined <- left_join(df_original,df_descrease,by="profession")
 joined$proportion <- (joined$original-joined$decreased)/joined$original
 
 ggplot(data=joined, aes(x=reorder(profession,proportion), y=proportion))+
-  geom_bar()+
-  theme_ipsum_pub()+
+  geom_bar(stat="identity")+
+#  theme_ipsum_pub()+
   theme(
     legend.position="none",
     panel.spacing = unit(0.1, "lines"),
@@ -60,5 +60,31 @@ ggplot(data=joined, aes(x=reorder(profession,proportion), y=proportion))+
     axis.text.x = element_text(angle = 25, hjust = 1, size=10)
   ) +
   xlab("Profession") +
-  ylab("Proportion that reduced their score after adjustment by IRT model") +
-  ggtitle("Reduction in score after adjustment") 
+  ylab("Reduction in score") +
+  ggtitle("Proportion that reduced their score after adjustment by IRT model") 
+
+#Difference in reduction (taking the smallest score proportion as baseline)
+smallest_score_proportion <- min(joined$proportion)
+joined$differences <- round((joined$proportion-smallest_score_proportion) *100,2)
+
+ggplot(data=joined, aes(x=reorder(profession,differences), y=differences))+
+  geom_bar(stat="identity", fill="darkgrey")+
+  geom_text(aes(label=reorder(differences,profession)), vjust=1.6, color="white", size=3.5)+
+  theme_minimal()+
+  theme(
+    legend.position="none",
+    panel.spacing = unit(0.1, "lines"),
+    strip.text.x = element_text(size = 10),
+    plot.title = element_text(size=12),
+    axis.text.x = element_text(angle = 25, hjust = 1, size=10)
+  ) +
+  xlab("Profession") +
+  ylab("Difference relative to Programmers % points") +
+  ggtitle("Difference relative to Programmers, which have the argest number of subjects affected")
+
+"
+Programmers and Undergraduates were the most affected in numbers. 
+The less affected were the Graduate students and Hobbyists, which is surprising.
+Still need to compute the magnitude to the decrease.
+
+"
