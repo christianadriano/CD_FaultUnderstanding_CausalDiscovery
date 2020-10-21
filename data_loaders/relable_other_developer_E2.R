@@ -1,21 +1,38 @@
 "
-Relabel Others who are software developers and Run Omnibus ANOVA tests to check which groups
+This is an investigation. Parts of its code was incorporated in the following scripts:
+- load_consent_create_index and 
+- compare_professions_qualification_score_E2
+- compare_professions_age_E2
+- compare_professions_years_programming_E2
+- investigate_testDuration_E2
+
+Motivation: some participants chose Other profession, but wrote that they are actually programmers.
+
+Because this has the potential to distort the Other profession category, we decided to investigate if
+these programmers are more similar to the Professional category and more dissimilar to the remaining
+subjects in the Other category. We compare subjects with respect to years of programming experience, 
+age, and qualification score, and adjusted qualification score (z1 from IRT model).
+
+Relabelled Others who are software developers and Run Omnibus ANOVA tests to check which groups
 are distinct in terms of the covariates of the causal model: qualification_score, 
 years of experience and age.
 
-Summary of results:
+Summary of results.
+1. Qualification score.
 Looking at the density plots, we can see that there are three groups of professions with 
-respect to the qualification_score. 
+respect to the qualification_score:
 - Group-1 Others and Undergrads
 - Group-2 Graduates and Hobbyists
 - Group-3 Professionals and Programmers
 
-However, the omnibus test for age and years of programming showed that a few pairs
-did not show statitically significan differences
+However, with respect to age and years of programming, we could not detect the same groupings when 
+doing the omnibus test for age and years of programming, i.e., more pairs  showed that a few pairs
+did not show statitically significant differences
 
-Age: only  Professional-Hobbyist, p-value=0.9982279
+2. Age
+only Professional-Hobbyist, p-value=0.9982279
 
-Years Programming: 
+3. Years Programming
  Other-Graduate_Student p-value=0.6470031
  Undergraduate_Student-Graduate_Student p-value=0.7382731
  Other-Hobbyist, p-value=0.5550062
@@ -225,7 +242,7 @@ gg
 
 #YEARS PROGRAMMING
 df_consent %>%
-  ggplot( aes(y=years_programming, x=reorder(profession,1/age))) +
+  ggplot( aes(y=years_programming, x=reorder(profession,1/years_programming))) +
   geom_boxplot()+
   stat_summary(fun=mean, geom="point", shape=4, size=3)+
   theme_ipsum_pub()+
