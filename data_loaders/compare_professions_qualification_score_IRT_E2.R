@@ -35,13 +35,13 @@ df_consent %>%
   mutate(text = fct_reorder(profession,qualification_score, .desc = TRUE)) %>%
   ggplot( aes(x=qualification_score)) +
   geom_density(alpha=0.6, color="darkgrey", fill="lightblue") +
-  theme_ipsum_pub()+
+  theme_minimal()+
   theme(
     legend.position="none",
     panel.spacing = unit(0.1, "lines"),
-    strip.text.x = element_text(size = 10),
-    panel.grid=element_blank(),
-    plot.title = element_text(size=12)
+    strip.text.x = element_text(size = 12),
+    plot.title = element_text(size=14),
+    axis.text.x = element_text(angle = 20, hjust = 1, size=12)
   ) +
   xlab("Qualification Score") +
   ylab("Assigned Probability (%)") +
@@ -52,15 +52,15 @@ df_consent %>%
 df_consent %>%
   ggplot( aes(y=qualification_score, x=reorder(profession,1/qualification_score))) +
   geom_boxplot()+
+  geom_smooth(method = "lm", se=FALSE, fullrange = TRUE, color="steelblue",  linetype="dashed", aes(group=1))+
   stat_summary(fun=mean, geom="point", shape=4, size=3)+
-  theme_ipsum_pub()+
+  theme_minimal()+
   theme(
     legend.position="none",
     panel.spacing = unit(0.1, "lines"),
-    strip.text.x = element_text(size = 10),
-    panel.grid=element_blank(),
-    plot.title = element_text(size=12),
-    axis.text.x = element_text(angle = 25, hjust = 1, size=10)
+    strip.text.x = element_text(size = 12),
+    plot.title = element_text(size=14),
+    axis.text.x = element_text(angle = 20, hjust = 1, size=12)
   ) +
   xlab("Profession") +
   ylab("Qualification score") +
@@ -72,13 +72,13 @@ df_consent %>%
   mutate(text = fct_reorder(profession,z1, .desc = TRUE)) %>%
   ggplot( aes(x=z1)) +
   geom_density(alpha=0.6, color="darkgrey", fill="lightblue") +
-  theme_ipsum_pub()+
+  theme_minimal()+
   theme(
     legend.position="none",
     panel.spacing = unit(0.1, "lines"),
-    strip.text.x = element_text(size = 10),
-    panel.grid=element_blank(),
-    plot.title = element_text(size=12)
+    strip.text.x = element_text(size = 12),
+    plot.title = element_text(size=14),
+    axis.text.x = element_text(angle = 20, hjust = 1, size=12)
   ) +
   xlab("Adjusted Score (z1 IRT)") +
   ylab("Assigned Probability (%)") +
@@ -89,15 +89,15 @@ df_consent %>%
 df_consent %>%
   ggplot( aes(y=z1, x=reorder(profession,1-z1))) +
   geom_boxplot()+
+  geom_smooth(method = "lm", se=FALSE, fullrange = TRUE, color="steelblue",  linetype="dashed", aes(group=1))+
   stat_summary(fun=mean, geom="point", shape=4, size=3)+
-  theme_ipsum_pub()+
+  theme_minimal()+
   theme(
     legend.position="none",
     panel.spacing = unit(0.1, "lines"),
-    strip.text.x = element_text(size = 10),
-    panel.grid=element_blank(),
-    plot.title = element_text(size=12),
-    axis.text.x = element_text(angle = 25, hjust = 1, size=10)
+    strip.text.x = element_text(size = 12),
+    plot.title = element_text(size=14),
+    axis.text.x = element_text(angle = 20, hjust = 1, size=12)
   ) +
   xlab("Profession") +
   ylab("Adjusted Score (z1)") +
