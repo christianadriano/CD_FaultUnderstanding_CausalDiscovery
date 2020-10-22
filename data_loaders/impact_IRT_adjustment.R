@@ -44,7 +44,7 @@ df_original <- data.frame(table(df_consent$profession))
 colnames(df_original) <- c("profession","original")
 
 joined <- left_join(df_original,df_descreased,by="profession")
-joined$proportion <- round((joined$original-joined$decreased)/joined$original, 2)
+joined$proportion <- round(((joined$original-joined$decreased)/joined$original)*100, 0)
 
 ggplot(data=joined, aes(x=reorder(profession,proportion), y=proportion))+
   geom_bar(stat="identity", fill="steelblue")+
@@ -53,13 +53,13 @@ ggplot(data=joined, aes(x=reorder(profession,proportion), y=proportion))+
   theme(
     legend.position="none",
     panel.spacing = unit(0.1, "lines"),
-    strip.text.x = element_text(size = 10),
-    plot.title = element_text(size=12),
-    axis.text.x = element_text(angle = 25, hjust = 1, size=10)
+    strip.text.x = element_text(size = 12),
+    plot.title = element_text(size=14),
+    axis.text.x = element_text(angle = 20, hjust = 1, size=12)
   ) +
   xlab("Profession") +
-  ylab("Proportion of subjects") +
-  ggtitle("Proportion of subjects whose score decreased after adjustment by IRT model") 
+  ylab("Proportion % of subjects") +
+  ggtitle("Proportion of subjects whose scores decreased after adjustment by the IRT model") 
 
 #Difference in reduction (taking the smallest score proportion as baseline)
 smallest_score_proportion <- min(joined$proportion)
@@ -72,17 +72,19 @@ ggplot(data=joined, aes(x=reorder(profession,differences), y=differences))+
   theme(
     legend.position="none",
     panel.spacing = unit(0.1, "lines"),
-    strip.text.x = element_text(size = 10),
-    plot.title = element_text(size=12),
-    axis.text.x = element_text(angle = 25, hjust = 1, size=10)
+    strip.text.x = element_text(size = 12),
+    plot.title = element_text(size=14),
+    axis.text.x = element_text(angle = 20, hjust = 1, size=12)
   ) +
   xlab("Profession") +
   ylab("Difference relative to Programmers % points") +
-  ggtitle("Difference relative to Programmers, which have the argest number of subjects affected")
+  ggtitle("Difference relative to Programmers, who were the less affected")
 
 "
-Programmers and Undergraduates were the most affected in numbers. 
-The less affected were the Graduate students and Hobbyists, which is surprising.
+Programmers and Undergraduates were the less affected in numbers. 
+The most affected were the Graduate students and Hobbyists, which is a bit surprising, 
+because we would expect that the most affected would be the less skilled subjects, 
+e.g., Other and Undergraduate students.
 "
 
 #------------------------------------------------------------------------
@@ -98,14 +100,13 @@ df_consent %>%
   geom_boxplot()+
   geom_smooth(method = "lm", se=FALSE, fullrange = TRUE, color="steelblue",  linetype="dashed", aes(group=1))+
   stat_summary(fun=mean, geom="point", shape=4, size=3)+
-  theme_ipsum_pub()+
+  theme_minimal()+
   theme(
     legend.position="none",
     panel.spacing = unit(0.1, "lines"),
-    strip.text.x = element_text(size = 10),
-    panel.grid=element_blank(),
-    plot.title = element_text(size=12),
-    axis.text.x = element_text(angle = 25, hjust = 1, size=10)
+    strip.text.x = element_text(size = 12),
+    plot.title = element_text(size=14),
+    axis.text.x = element_text(angle = 20, hjust = 1, size=12)
   ) +
   #facet_wrap(~text)+
   ylab("Magnitude of score adjustment") +
@@ -115,10 +116,9 @@ df_consent %>%
 "
 We have two suprising items here.
 1- The adjustment was positive for all, except Programmers
-2- We can see that although Programmer and Professional were the among the one with 
-highest number of people affected by adjustement (Previous barchart), 
-the average magnitude of their adjustment were the two top lowest.
-"
+2- We can see that Programmers and Professional were the among the ones with 
+lowest number of people affected by adjustement (Fig.2) and the ones with the
+lowest average magnitude of their adjustment"
 
 mean(df_consent[df_consent$profession=="Professional",]$magnitude_adjustment)
 mean(df_consent[df_consent$profession=="Programmer",]$magnitude_adjustment)
