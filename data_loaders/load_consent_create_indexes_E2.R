@@ -112,6 +112,47 @@ df_consent$gender_id<- factor(df_consent$gender,
                          labels = c(1:4)
 )
 
+#----------------------------------
+"AGE and YEARS OF PROGRAMMING"
+#Deal with wrong input (age == 100 year)
+median_age_undergrad <- median(df_consent[df_consent$profession=="Undergraduate_Student",]$age)
+df_consent[df_consent$age==100,]$age <- median_age_undergrad
+
+#Deal with age==yoe (wrong inputation by participants)
+worker_id_list <- df_consent[df_consent$age<=df_consent$years_programming,]$worker_id
+View(df_consent[df_consent$worker_id %in% worker_id_list,c("worker_id","profession","age","years_programming")])
+# worker_id                         profession            age years_programming
+# 817EE-1e2C78-7:129eE4a-1E-24-3_3	Hobbyist	            32	32
+# 544cg-9e1A107_3	                  Undergraduate_Student	21	21
+# 828cC0C9E-5-7-4_3	                Graduate_Student	    2	  2
+# 1598AG0g-8e-9-32_3	              Professional	        25	25
+# 110Gi-9C-7a4-12_3	                Graduate_Student	    18	18
+
+#Solution will be to use median age and median years of programming for all.
+median_age_graduate <- median(df_consent[df_consent$profession=="Graduate_Student",]$age)
+median_age_hobbyist <- median(df_consent[df_consent$profession=="Hobbyist",]$age)
+median_age_professional <- median(df_consent[df_consent$profession=="Professional",]$age)
+
+median_yoe_undergrad <- median(df_consent[df_consent$profession=="Undergraduate_Student",]$years_programming)
+median_yoe_graduate <- median(df_consent[df_consent$profession=="Graduate_Student",]$years_programming)
+median_yoe_hobbyist <- median(df_consent[df_consent$profession=="Graduate_Student",]$years_programming)
+median_yoe_professional <- median(df_consent[df_consent$profession=="Professional",]$years_programming)
+
+df_consent[df_consent$worker_id=="817EE-1e2C78-7:129eE4a-1E-24-3_3","age"] <- median_age_hobbyist
+df_consent[df_consent$worker_id=="817EE-1e2C78-7:129eE4a-1E-24-3_3","years_programming"] <- median_yoe_hobbyist
+
+df_consent[df_consent$worker_id=="544cg-9e1A107_3","age"] <- median_age_undergrad
+df_consent[df_consent$worker_id=="544cg-9e1A107_3","years_programming"] <- median_yoe_undergrad
+
+df_consent[df_consent$worker_id=="828cC0C9E-5-7-4_3","age"] <- median_age_graduate
+df_consent[df_consent$worker_id=="828cC0C9E-5-7-4_3","years_programming"] <- median_yoe_graduate
+
+df_consent[df_consent$worker_id=="1598AG0g-8e-9-32_3","age"] <- median_age_professional
+df_consent[df_consent$worker_id=="1598AG0g-8e-9-32_3","years_programming"] <- median_yoe_professional
+
+df_consent[df_consent$worker_id=="110Gi-9C-7a4-12_3","age"] <- median_age_graduate
+df_consent[df_consent$worker_id=="110Gi-9C-7a4-12_3","years_programming"] <- median_yoe_graduate
+
 #------------------------
 "COUNTRY"
 
