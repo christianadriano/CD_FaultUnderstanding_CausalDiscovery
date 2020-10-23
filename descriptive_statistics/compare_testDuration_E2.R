@@ -26,21 +26,19 @@ df_consent <-
 df_consent %>%
   ggplot( aes(y=testDuration_minutes, x=reorder(profession,1/testDuration_minutes))) +
   geom_boxplot()+
+  geom_smooth(method = "lm", se=FALSE, fullrange = TRUE, color="steelblue",  linetype="dashed", aes(group=1))+
   stat_summary(fun=mean, geom="point", shape=4, size=3)+
-  theme_ipsum_pub()+
+  theme_minimal()+
   theme(
     legend.position="none",
     panel.spacing = unit(0.1, "lines"),
-    strip.text.x = element_text(size = 10),
-    panel.grid=element_blank(),
-    plot.title = element_text(size=12),
-    axis.text.x = element_text(angle = 25, hjust = 1, size=10)
+    strip.text.x = element_text(size = 12),
+    plot.title = element_text(size=14),
+    axis.text.x = element_text(angle = 20, hjust = 1, size=12)
   ) +
   ylab("Test Duration (minutes)") +
   xlab("Profession") +
-  ylim(10,35)+
-  ggtitle("Test Duration across Professions") -> gg
-gg
+  ggtitle("Test Duration across Professions")
 
 "
 Replace outliers in testDuration for median values.
@@ -81,15 +79,16 @@ for(i in c(1:length(profession_list))){
 } 
   
 
-#Replace all values that are above 30 min to the median of each professional group
+"Replace all values that are above the upper whisker for the median time of 
+each professional group"
 
 df_consent$profession <- as.factor(df_consent$profession)
 
 for(prof in profession_list){
-  upperwisker <- as.numeric(df_quantiles[df_quantiles$profession==prof,]$upper_wisker)
+  upperwhisker <- as.numeric(df_quantiles[df_quantiles$profession==prof,]$upper_wisker)
   median_value <- as.numeric(df_quantiles[df_quantiles$profession==prof,]$median)
   df_consent[df_consent$profession==prof &
-             df_consent$testDuration_minutes>upperwisker,]$testDuration_minutes <- median_value
+             df_consent$testDuration_minutes>upperwhisker,]$testDuration_minutes <- median_value
 }
 
 
@@ -100,16 +99,27 @@ df_consent %>%
   geom_density(alpha=0.6, color="darkgrey", fill="lightblue") +
   #scale_fill_viridis(discrete=TRUE, option="E")+
   #scale_color_viridis(discrete=TRUE, option = "E")+
-  theme_ipsum_pub()+
+  theme_minimal()+
   theme(
     legend.position="none",
     panel.spacing = unit(0.1, "lines"),
-    strip.text.x = element_text(size = 10),
-    panel.grid=element_blank(),
-    plot.title = element_text(size=12)
+    strip.text.x = element_text(size = 12),
+    plot.title = element_text(size=14),
+    axis.text.x = element_text(angle = 20, hjust = 1, size=12)
   ) +
   xlab("Test Duration (minutes)") +
   ylab("Assigned Probability (%)") +
   facet_wrap(~text,nrow=3,ncol=2)+
-  ggtitle("Test Duration Across Professions") -> gg
-gg
+  ggtitle("Test Duration Across Professions (without outliers)") 
+
+"
+Except for "Other", all groups present bimodal distributions. 
+This might imply that regardless of the profession, we have two groups of  
+subjects with respect to the time that they invested in doing the qualification test. 
+The more pronounced bimodal figure is among the professionals. 
+More time to answer question might reflect thoroughness or cluelessness. 
+To evaluate that we need to measure the relation between test duration and the 
+qualification score. However, simply computing a correlation or a univariate linear
+regression might not work because of the  confounding of Profession or even the other
+covariates Age and Years of Programming.
+"
