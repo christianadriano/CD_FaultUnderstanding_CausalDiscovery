@@ -97,8 +97,6 @@ df_consent %>%
   mutate(text = fct_reorder(profession,testDuration_minutes, .desc = TRUE)) %>%
   ggplot( aes(x=testDuration_minutes)) +
   geom_density(alpha=0.6, color="darkgrey", fill="lightblue") +
-  #scale_fill_viridis(discrete=TRUE, option="E")+
-  #scale_color_viridis(discrete=TRUE, option = "E")+
   theme_minimal()+
   theme(
     legend.position="none",
