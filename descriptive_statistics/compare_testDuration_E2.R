@@ -111,7 +111,7 @@ df_consent %>%
   ggtitle("Test Duration Across Professions (without outliers)") 
 
 "
-Except for "Other", all groups present bimodal distributions. 
+Except for Other, all groups present bimodal distributions. 
 This might imply that regardless of the profession, we have two groups of  
 subjects with respect to the time that they invested in doing the qualification test. 
 The more pronounced bimodal figure is among the professionals. 
@@ -121,3 +121,21 @@ qualification score. However, simply computing a correlation or a univariate lin
 regression might not work because of the  confounding of Profession or even the other
 covariates Age and Years of Programming.
 "
+
+
+
+
+df_consent %>%
+  ggplot( aes(x=testDuration_minutes)) +
+  geom_density(alpha=0.6, color="darkgrey", fill="lightblue") +
+  theme_minimal()+
+  theme(
+    legend.position="none",
+    panel.spacing = unit(0.1, "lines"),
+    strip.text.x = element_text(size = 12),
+    plot.title = element_text(size=14),
+    axis.text.x = element_text(angle = 20, hjust = 1, size=12)
+  ) +
+  xlab("Test Duration (minutes)") +
+  ylab("Assigned Probability (%)") +
+  ggtitle("Test Duration (without outliers)") 
