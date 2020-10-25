@@ -139,3 +139,19 @@ df_consent %>%
   xlab("Test Duration (minutes)") +
   ylab("Assigned Probability (%)") +
   ggtitle("Test Duration (without outliers)") 
+
+df_consent %>%
+  ggplot( aes(x=testDuration_minutes)) +
+  geom_histogram(binwidth = 0.5, alpha=0.6, color="darkgrey", fill="lightblue") +
+  theme_minimal()+
+  theme(
+    legend.position="none",
+    panel.spacing = unit(0.1, "lines"),
+    strip.text.x = element_text(size = 12),
+    plot.title = element_text(size=14),
+    axis.text.x = element_text(angle = 20, hjust = 1, size=12)
+  ) +
+  xlab("Test Duration (minutes)") +
+  ylab("Assigned Probability (%)") +
+  ggtitle("Test Duration (without outliers)") 
+
