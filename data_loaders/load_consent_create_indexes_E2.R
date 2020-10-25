@@ -120,7 +120,7 @@ df_consent[df_consent$age==100,]$age <- median_age_undergrad
 
 #Deal with age==yoe (wrong inputation by participants)
 worker_id_list <- df_consent[df_consent$age<=df_consent$years_programming,]$worker_id
-View(df_consent[df_consent$worker_id %in% worker_id_list,c("worker_id","profession","age","years_programming")])
+#View(df_consent[df_consent$worker_id %in% worker_id_list,c("worker_id","profession","age","years_programming")])
 # worker_id                         profession            age years_programming
 # 817EE-1e2C78-7:129eE4a-1E-24-3_3	Hobbyist	            32	32
 # 544cg-9e1A107_3	                  Undergraduate_Student	21	21
