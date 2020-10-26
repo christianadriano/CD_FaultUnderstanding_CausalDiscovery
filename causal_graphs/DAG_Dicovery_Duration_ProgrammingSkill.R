@@ -16,16 +16,19 @@ library(dplyr)
 
 #Load only Consent data. No data from tasks, only from demographics and qualification test
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_consent_create_indexes_E2.R")
-df_E2_ground<- df_consent
+
+#Evaluate how fast and slow can explain z1 score
+df_consent_fast <- df_consent[df_consent$is_fast,]
+df_consent_slow <- df_consent[!df_consent$is_fast,]
 
 df_selected <-
-  dplyr::select(df_E2_ground,
+  dplyr::select(df_consent_fast,
                 years_programming,
                 z1,
                 testDuration_minutes,
                 #qualification_score,
                 age,
-                profession
+                profession,
                 );
 
 node.names <- colnames(df_selected)
