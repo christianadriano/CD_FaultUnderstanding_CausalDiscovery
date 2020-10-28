@@ -75,8 +75,9 @@ df_consent$qualification_score_id <- factor(df_consent$qualification_score_label
                               labels=c(5:0)
 )
 
-#ITEM RESPONSE MODEL SCORES
-#Merge Score factors computed through IRT Model fitting
+#--------------------------
+"ITEM RESPONSE MODEL SCORES
+Merge Score factors computed through IRT Model fitting"
 df_irt <- read.csv(paste0(path,"//data//irt//","E2_QualificationTest_IRT.csv"))
 df_irt <-  dplyr::select(df_irt, worker_id,file_name,z1) #need file_name, because a few workers have more than one score.
 df_irt$worker_id <- as.factor(df_irt$worker_id) #convert to factor, so I can join with worker_id column
@@ -280,6 +281,12 @@ for(i in c(1:length(profession_list))){
   inter_quartile <- values[[4]] - values[[2]]
   df_quantiles[df_quantiles$profession==prof,]$upper_wisker <- values[[4]] + 1.5 * inter_quartile
 } 
+
+"FAST TEST ANSWER MEMBERSHIP
+Merge the membership column that tells whether a worker is part of the fast or slow test takers.
+This column was produced by building a Gaussian Mixture model.
+"
+
 
 
 #Replace all values that are above 30 min to the median of each professional group
