@@ -286,11 +286,20 @@ for(i in c(1:length(profession_list))){
 Merge the membership column that tells whether a worker is part of the fast or slow test takers.
 This column was produced by building a Gaussian Mixture model.
 "
-
+df_fastMembership <- read.csv(paste0(path,"data//mixture_model//","consent_with_testDuration_fastMembership.csv"))
+df_fastMembership <- 
+  dplyr::select(df_fastMembership,
+                worker_id,
+                file_name,
+                profession,
+                testDuration_fastMembership,
+                is_fast
+  );
+df_consnt <- left_join(df_consent,df_fastMembership,by=c("worker_id","file_name","profession"),
+                     copy= FALSE)
 
 
 #Replace all values that are above 30 min to the median of each professional group
-
 df_consent$profession <- as.factor(df_consent$profession)
 
 for(prof in profession_list){
