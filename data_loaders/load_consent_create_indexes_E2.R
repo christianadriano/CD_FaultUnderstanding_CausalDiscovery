@@ -295,7 +295,7 @@ df_fastMembership <-
                 testDuration_fastMembership,
                 is_fast
   );
-df_consnt <- left_join(df_consent,df_fastMembership,by=c("worker_id","file_name","profession"),
+df_consent <- left_join(df_consent,df_fastMembership,by=c("worker_id","file_name","profession"),
                      copy= FALSE)
 
 
