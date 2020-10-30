@@ -282,6 +282,15 @@ for(i in c(1:length(profession_list))){
   df_quantiles[df_quantiles$profession==prof,]$upper_wisker <- values[[4]] + 1.5 * inter_quartile
 } 
 
+#Replace all values that are above 30 min to the median of each professional group
+df_consent$profession <- as.factor(df_consent$profession)
+
+for(prof in profession_list){
+  upperwisker <- as.numeric(df_quantiles[df_quantiles$profession==prof,]$upper_wisker)
+  median_value <- as.numeric(df_quantiles[df_quantiles$profession==prof,]$median)
+  df_consent[df_consent$profession==prof &
+               df_consent$testDuration_minutes>upperwisker,]$testDuration_minutes <- median_value
+}
 "FAST TEST ANSWER MEMBERSHIP
 Merge the membership column that tells whether a worker is part of the fast or slow test takers.
 This column was produced by building a Gaussian Mixture model.
@@ -296,19 +305,13 @@ df_fastMembership <-
                 is_fast
   );
 df_consent <- left_join(df_consent,df_fastMembership,by=c("worker_id","file_name","profession"),
-                     copy= FALSE)
+                        copy= FALSE)
+df_consent$is_fast <- as.factor(df_consent$is_fast)
 
 
-#Replace all values that are above 30 min to the median of each professional group
-df_consent$profession <- as.factor(df_consent$profession)
 
-for(prof in profession_list){
-  upperwisker <- as.numeric(df_quantiles[df_quantiles$profession==prof,]$upper_wisker)
-  median_value <- as.numeric(df_quantiles[df_quantiles$profession==prof,]$median)
-  df_consent[df_consent$profession==prof &
-               df_consent$testDuration_minutes>upperwisker,]$testDuration_minutes <- median_value
-}
-
+#---------------------
+#END
 #---------------------
 
 print("Results in df_consent")
