@@ -22,13 +22,13 @@ df_consent_fast <- df_consent[df_consent$is_fast,]
 df_consent_slow <- df_consent[!df_consent$is_fast,]
 
 df_selected <-
-  dplyr::select(df_consent_fast,
-                years_programming,
-                z1,
-                testDuration_minutes,
-                #qualification_score,
+  dplyr::select(df_consent,
+                profession, #categorical
                 age,
-                profession,
+                years_programming,
+                testDuration_minutes,
+                is_fast, #binary
+                z1 #outcome
                 );
 
 node.names <- colnames(df_selected)
@@ -36,23 +36,31 @@ node.names <- colnames(df_selected)
 #years_programming is not parent of age.
 blacklist_1 <- data.frame(from = c("years_programming"), 
                           to   = c("age"))
+
+#Prevent is_fast to be parents of age and years_programming and profession
+blacklist_2 <- data.frame(from = c("is_fast"), 
+                            to   = c("years_programming","age","profession"))
+
 #profession has parent nodes
-blacklist_2 <- data.frame(from = node.names[-grep("profession", node.names)], 
+blacklist_3 <- data.frame(from = node.names[-grep("profession", node.names)], 
                           to   = c("profession"))
 #testDuration is not parent of age, years_programming, profession
-blacklist_3 <- data.frame(from = c("testDuration_minutes"),
-                          to   = c("profession","years_programming","age"))
+blacklist_4 <- data.frame(from = c("testDuration_minutes"),
+                          to   = c("profession","years_programming","age","is_fast"))
 #z1 cannot be parent of anyone
-blacklist_4 <- data.frame(from = c("z1"),
+blacklist_5 <- data.frame(from = c("z1"),
                           to   = node.names[-grep("z1", node.names)])
 
 #Task Accuracy can only be measured with all tasks data. 
 #Here we are dealing only with programmer demographic data.
 
-blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_3,blacklist_4) 
+blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_3,blacklist_4,blacklist_5) 
 
 #------------------------------------------
 #Including Profession
+df_selected$profession <- as.factor(df_selected$profession)
+
+df_selected$is_fast <- as.factor(df_selected$is_fast)
 
 bn <-tabu(df_selected,blacklist = blacklist_all)
 plot(bn,main="All Professions")
