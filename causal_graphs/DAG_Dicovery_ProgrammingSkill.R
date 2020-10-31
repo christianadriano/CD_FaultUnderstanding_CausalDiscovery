@@ -34,17 +34,14 @@ library(dplyr)
 
 #Load only Consent data. No data from tasks, only from demographics and qualification test
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_consent_create_indexes_E2.R")
-df_E2_ground<- df_consent
 
 df_selected <-
-  dplyr::select(df_E2_ground,
+  dplyr::select(df_consent,
                 years_programming,
                 z1,
-                #qualification_score,
                 age,
                 profession
                 );
-
 
 
 node.names <- colnames(df_selected)
@@ -56,16 +53,14 @@ node.names <- colnames(df_selected)
 #Prevent Years of Programming to be parent of Age.
 blacklist_1 <- data.frame(from = c("years_programming"), 
                           to   = c("age"))
-#Avoid that profession has parent nodes
+
+#Avoid that profession has parent node
 blacklist_2 <- data.frame(from = node.names[-grep("profession", node.names)], 
                           to   = c("profession"))
 #NO CHILDS
 #Avoid z1 to be parent
 blacklist_3 <- data.frame(from = c("z1"),
                           to   = node.names[-grep("z1", node.names)])
-
-#blacklist_3 <- data.frame(from = c("qualification_score"),
-#                          to   = node.names[-grep("qualification_score", node.names)])
 
 #Task Accuracy can only be measured with all tasks data. 
 #Here we are dealing only with programmer demographic data.
@@ -77,6 +72,10 @@ blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_3)#,blacklist_4)
 
 bn <-tabu(df_selected,blacklist = blacklist_all)
 plot(bn,main="All Professions")
+
+"Profession is a confounder for Age and Years_Programming, but Profession has no direct
+effect on qualification_score. Same for z1 score. Profession has an effect on the
+membership of is_fast, and the is_fast has a direct effect on z1 score."
 
 #-----------------------------------------
 #BY PROFESSION
@@ -124,8 +123,51 @@ for (i in 1:length(professions)) {
   #graphviz.plot(bn,main=choice,shape="ellipse",layout = "circo");
 }
 
-#-------------------------------------
-#USing now IRT z1 score instead of qualification_score
+
+#---------------------------------------------------------------
+#---------------------------------------------------------------
+#Using now qualification_score instead of IRT z1 score 
+
+df_selected <-
+  dplyr::select(df_consent,
+                years_programming,
+                #z1,
+                qualification_score,
+                age,
+                profession
+  );
+
+
+
+node.names <- colnames(df_selected)
+
+#Avoid that age have parent nodes
+#blacklist_1 <- data.frame(from = node.names[-grep("age", node.names)], 
+#                          to   = c("age"))
+#Prevent Years of Programming to be parent of Age.
+blacklist_1 <- data.frame(from = c("years_programming"), 
+                          to   = c("age"))
+#Avoid that profession has parent nodes
+blacklist_2 <- data.frame(from = node.names[-grep("profession", node.names)], 
+                          to   = c("profession"))
+#NO CHILDS
+#Avoid qualification_score to be parent
+
+blacklist_3 <- data.frame(from = c("qualification_score"),
+                          to   = node.names[-grep("qualification_score", node.names)])
+
+#Task Accuracy can only be measured with all tasks data. 
+#Here we are dealing only with programmer demographic data.
+#blacklist_4 <- data.frame(from = c("isAnswerCorrect"),
+#                          to   = node.names[-grep("isAnswerCorrect", node.names)])
+
+blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_3)#,blacklist_4) 
+
+
+bn <-tabu(df_selected,blacklist = blacklist_all)
+plot(bn,main="All Professions")
+
+
 
 #Constraint-Based Algorithm
 for (i in 1:length(professions)) {
