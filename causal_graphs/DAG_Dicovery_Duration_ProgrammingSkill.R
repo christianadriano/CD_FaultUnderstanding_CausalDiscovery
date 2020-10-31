@@ -31,6 +31,9 @@ df_selected <-
                 z1 #outcome
                 );
 
+df_selected$profession <- as.factor(df_selected$profession)
+df_selected$is_fast <- as.factor(df_selected$is_fast)
+
 node.names <- colnames(df_selected)
 
 #years_programming is not parent of age.
@@ -58,9 +61,6 @@ blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_3,blacklist_4,blacklist
 
 #------------------------------------------
 #Including Profession
-df_selected$profession <- as.factor(df_selected$profession)
-
-df_selected$is_fast <- as.factor(df_selected$is_fast)
 
 bn <-tabu(df_selected,blacklist = blacklist_all)
 plot(bn,main="All Professions")
@@ -71,6 +71,8 @@ plot(bn,main="All Professions")
 #Remove profession from blacklist
 blacklist_all <- blacklist_all[!(blacklist_all$from %in% c("profession") ),]
 blacklist_all <- blacklist_all[!(blacklist_all$to %in% c("profession") ),]
+blacklist_all <- blacklist_all[!(blacklist_all$from %in% c("is_fast") ),]
+blacklist_all <- blacklist_all[!(blacklist_all$to %in% c("is_fast") ),]
 
 
 #Run structure discovery for each profession
