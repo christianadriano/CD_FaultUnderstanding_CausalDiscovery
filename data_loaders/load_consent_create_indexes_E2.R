@@ -242,12 +242,13 @@ df_consent$country_id<- factor(df_consent$country_labels,
 
 #------------------------
 #DURATION in Minutes
-df_consent$testDuration <- df_consent$test_duration/(1000*60)
+df_consent <- rename(df_consent,test_duration = testDuration)
+df_consent$test_duration <- df_consent$test_duration/(1000*60)
 
 
 
 "
-Replace outliers in testDuration for median values.
+Replace outliers in test_duration for median values.
 This is done for each profession.
 
 A reasonable time for the qualification test in E2 is 25 min, which gives 5 min per question,
@@ -261,7 +262,7 @@ The interquartile range is the difference between the 2nd and 3rd quartiles
 profession_list <- as.character(unique(df_consent$profession))
 
 computeMedians <- function(prof){
-  median(df_consent[df_consent$profession==prof,]$testDuration)
+  median(df_consent[df_consent$profession==prof,]$test_duration)
 }
 medians_list <- lapply(profession_list, computeMedians)
 
@@ -270,7 +271,7 @@ colnames(df_quantiles) <- c("profession","median","q2","q3","upper_wisker")
 
 #Quantiles
 computeQuantiles <- function(prof){
-  quantile(df_consent[df_consent$profession==prof,]$testDuration)
+  quantile(df_consent[df_consent$profession==prof,]$test_duration)
 }
 quantile_list <- lapply(profession_list,computeQuantiles)
 
@@ -291,7 +292,7 @@ for(prof in profession_list){
   upperwisker <- as.numeric(df_quantiles[df_quantiles$profession==prof,]$upper_wisker)
   median_value <- as.numeric(df_quantiles[df_quantiles$profession==prof,]$median)
   df_consent[df_consent$profession==prof &
-               df_consent$testDuration>upperwisker,]$testDuration <- median_value
+               df_consent$test_duration>upperwisker,]$test_duration <- median_value
 }
 "FAST TEST ANSWER MEMBERSHIP
 Merge the membership column that tells whether a worker is part of the fast or slow test takers.
