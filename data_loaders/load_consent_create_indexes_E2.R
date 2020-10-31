@@ -85,7 +85,7 @@ df_consent$worker_id <- as.factor(df_consent$worker_id) #convert to factor, so I
 #only joins with people who qualified (qualification_score>=3), because only these are present in the task execution logs
 df_consent <- left_join(x=df_consent,y=df_irt,keep=FALSE, by=c("worker_id"="worker_id","file_name"="file_name"))#,"file_name"="file_name"))
 dim(df_consent) 
-
+df_consent <- rename(df_consent,adjusted_score=z1)
 
 #------------------------
 "FILE_NAME"
@@ -242,7 +242,9 @@ df_consent$country_id<- factor(df_consent$country_labels,
 
 #------------------------
 #DURATION in Minutes
-df_consent$testDuration_minutes <- df_consent$test_duration/(1000*60)
+df_consent$testDuration <- df_consent$test_duration/(1000*60)
+
+
 
 "
 Replace outliers in testDuration for median values.
@@ -259,7 +261,7 @@ The interquartile range is the difference between the 2nd and 3rd quartiles
 profession_list <- as.character(unique(df_consent$profession))
 
 computeMedians <- function(prof){
-  median(df_consent[df_consent$profession==prof,]$testDuration_minutes)
+  median(df_consent[df_consent$profession==prof,]$testDuration)
 }
 medians_list <- lapply(profession_list, computeMedians)
 
@@ -268,7 +270,7 @@ colnames(df_quantiles) <- c("profession","median","q2","q3","upper_wisker")
 
 #Quantiles
 computeQuantiles <- function(prof){
-  quantile(df_consent[df_consent$profession==prof,]$testDuration_minutes)
+  quantile(df_consent[df_consent$profession==prof,]$testDuration)
 }
 quantile_list <- lapply(profession_list,computeQuantiles)
 
@@ -289,7 +291,7 @@ for(prof in profession_list){
   upperwisker <- as.numeric(df_quantiles[df_quantiles$profession==prof,]$upper_wisker)
   median_value <- as.numeric(df_quantiles[df_quantiles$profession==prof,]$median)
   df_consent[df_consent$profession==prof &
-               df_consent$testDuration_minutes>upperwisker,]$testDuration_minutes <- median_value
+               df_consent$testDuration>upperwisker,]$testDuration <- median_value
 }
 "FAST TEST ANSWER MEMBERSHIP
 Merge the membership column that tells whether a worker is part of the fast or slow test takers.
