@@ -7,7 +7,7 @@ years_programming [exogenous];
 age [exogenous]
 testDuration [endogenous];
 qualification_score [outcome];
-z1 [outcome];
+adjusted_score [outcome];
 
 " 
 
@@ -17,7 +17,7 @@ library(dplyr)
 #Load only Consent data. No data from tasks, only from demographics and qualification test
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_consent_create_indexes_E2.R")
 
-#Evaluate how fast and slow can explain z1 score
+#Evaluate how fast and slow can explain adjusted_score score
 df_consent_fast <- df_consent[df_consent$is_fast,]
 df_consent_slow <- df_consent[!df_consent$is_fast,]
 
@@ -28,7 +28,7 @@ df_selected <-
                 years_programming,
                 testDuration_minutes,
                 is_fast, #binary
-                z1 #outcome
+                adjusted_score #outcome
                 );
 
 df_selected$profession <- as.factor(df_selected$profession)
@@ -50,9 +50,9 @@ blacklist_3 <- data.frame(from = node.names[-grep("profession", node.names)],
 #testDuration is not parent of age, years_programming, profession
 blacklist_4 <- data.frame(from = c("testDuration_minutes"),
                           to   = c("profession","years_programming","age","is_fast"))
-#z1 cannot be parent of anyone
-blacklist_5 <- data.frame(from = c("z1"),
-                          to   = node.names[-grep("z1", node.names)])
+#adjusted_score cannot be parent of anyone
+blacklist_5 <- data.frame(from = c("adjusted_score"),
+                          to   = node.names[-grep("adjusted_score", node.names)])
 
 #Task Accuracy can only be measured with all tasks data. 
 #Here we are dealing only with programmer demographic data.
@@ -88,7 +88,7 @@ for (i in 1:length(professions)) {
                   years_programming,
                   age,
                   testDuration_minutes,
-                  z1
+                  adjusted_score
     );
   bn <-pc.stable(df_prof,blacklist = blacklist_all)
   plot(bn,main=choice)
@@ -108,7 +108,7 @@ for (i in 1:length(professions)) {
                   years_programming,
                   age,
                   testDuration_minutes,
-                  z1
+                  adjusted_score
     );
   bn <-tabu(df_prof,blacklist = blacklist_all)
   plot(bn,main=choice)
@@ -116,9 +116,9 @@ for (i in 1:length(professions)) {
 }
 
 "Analysis of results of the Tabu algorithm
-Test duration has not effect on z1 for other and Programmer
+Test duration has not effect on adjusted_score for other and Programmer
 Test duration has no parents for Graduate and Professional
-Only in Hobbyists that test duration is a mediator for effect on z1
+Only in Hobbyists that test duration is a mediator for effect on adjusted_score
 Test duration has years_programming as parent in Hobbyist, Undergrad, 
 Programmer, and Other.
 "
@@ -146,7 +146,7 @@ blacklist_2 <- data.frame(from = node.names[-grep("profession", node.names)],
 #testDuration is not parent of age, years_programming, profession
 blacklist_3 <- data.frame(from = c("testDuration_minutes"),
                           to   = c("profession","years_programming","age"))
-#z1 cannot be parent of anyone
+#adjusted_score cannot be parent of anyone
 blacklist_4 <- data.frame(from = c("qualification_score"),
                           to   = node.names[-grep("qualification_score", node.names)])
 
@@ -180,9 +180,9 @@ for (i in 1:length(professions)) {
 }
 
 "Analysis of results of the PC algorithm
-Test duration has not effect on z1 for other and Programmer
+Test duration has not effect on adjusted_score for other and Programmer
 Only in undegrad that test duration is affected by years_programming
-Hence, qualification_Score and z1 produced the same graphs with the PC algorithm
+Hence, qualification_Score and adjusted_score produced the same graphs with the PC algorithm
 "
 
 #Score-based algorithm - Hill Climbing
@@ -202,19 +202,19 @@ for (i in 1:length(professions)) {
 }
 
 "Analysis of results of the Tabu algorithm
-Test duration has not effect on z1 for other and Programmer
+Test duration has not effect on adjusted_score for other and Programmer
 Test duration has no parents for Graduate and Professional
-Only in Hobbyists that test duration is a mediator for effect on z1
+Only in Hobbyists that test duration is a mediator for effect on adjusted_score
 Test duration has years_programming as parent in Hobbyist, Undergrad, 
 Programmer, and Other.
 
-Hence, qualification_score and z1 produced the same graph with the tabu algorithm
+Hence, qualification_score and adjusted_score produced the same graph with the tabu algorithm
 "
 
 
 #TODO
-#compare how professions are distinct in terms of z1 and qualification_score
-#Compare the strength of graph connections using z1 and qualification_score
+#compare how professions are distinct in terms of adjusted_score and qualification_score
+#Compare the strength of graph connections using adjusted_score and qualification_score
 
 #https://arxiv.org/pdf/0908.3817.pdf
 
