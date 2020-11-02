@@ -26,7 +26,7 @@ df_selected <-
                 profession, #categorical
                 age,
                 years_programming,
-                testDuration,
+                test_duration,
                 is_fast, #binary
                 adjusted_score #outcome
                 );
