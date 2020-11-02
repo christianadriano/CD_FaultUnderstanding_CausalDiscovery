@@ -24,7 +24,7 @@ dim(df_consent)
 #------------------------
 "MISSING DATA"
 #remove rows without profession information
-df_consent <- df_consent[!is.na(df_consent$experience),] #left with 2463
+df_consent <- df_consent[!is.na(df_consent$profession),] #left with 2463
 dim(df_consent) #2463
 
 #Filter-out rows without test data
@@ -34,9 +34,6 @@ dim(df_consent) #1788 are not NA.
 
 #------------------------
 "PROFESSION"
-#rename column from experience to profession
-df_consent <- rename(as_tibble(df_consent),profession=experience) 
-
 #relable professional_developer as professional
 df_consent[df_consent$profession=="Professional_Developer",]$profession <- "Professional"
 
@@ -241,11 +238,9 @@ df_consent$country_id<- factor(df_consent$country_labels,
 )
 
 #------------------------
-#DURATION in Minutes
-df_consent <- rename(df_consent,test_duration = testDuration)
+#DURATION of TEST
+#Convert to minutes
 df_consent$test_duration <- df_consent$test_duration/(1000*60)
-
-
 
 "
 Replace outliers in test_duration for median values.
@@ -311,6 +306,7 @@ df_consent <- left_join(df_consent,df_fastMembership,by=c("worker_id","file_name
                         copy= FALSE)
 
 
+df_consent$is_fast <- df_consent$testDuration_fastMembership>=0.5
 
 #---------------------
 #END
