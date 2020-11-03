@@ -5,7 +5,7 @@ Causal discovery for the programming skill and test Duration related factors
 profession [exogenous];
 years_programming [exogenous];
 age [exogenous]
-testDuration [endogenous];
+test_duration [endogenous];
 qualification_score [outcome];
 adjusted_score [outcome];
 
@@ -47,8 +47,8 @@ blacklist_2 <- data.frame(from = c("is_fast"),
 #profession has parent nodes
 blacklist_3 <- data.frame(from = node.names[-grep("profession", node.names)], 
                           to   = c("profession"))
-#testDuration is not parent of age, years_programming, profession
-blacklist_4 <- data.frame(from = c("testDuration"),
+#test_duration is not parent of age, years_programming, profession
+blacklist_4 <- data.frame(from = c("test_duration"),
                           to   = c("profession","years_programming","age","is_fast"))
 #adjusted_score cannot be parent of anyone
 blacklist_5 <- data.frame(from = c("adjusted_score"),
@@ -87,7 +87,7 @@ for (i in 1:length(professions)) {
     dplyr::select(df_prof,
                   years_programming,
                   age,
-                  testDuration,
+                  test_duration,
                   adjusted_score
     );
   bn <-pc.stable(df_prof,blacklist = blacklist_all)
@@ -107,7 +107,7 @@ for (i in 1:length(professions)) {
     dplyr::select(df_prof,
                   years_programming,
                   age,
-                  testDuration,
+                  test_duration,
                   adjusted_score
     );
   bn <-tabu(df_prof,blacklist = blacklist_all)
@@ -129,7 +129,7 @@ Programmer, and Other.
 df_selected <-
   dplyr::select(df_E2_ground,
                 years_programming,
-                testDuration,
+                test_duration,
                 qualification_score,
                 age,
                 profession
@@ -143,8 +143,8 @@ blacklist_1 <- data.frame(from = c("years_programming"),
 #profession has parent nodes
 blacklist_2 <- data.frame(from = node.names[-grep("profession", node.names)], 
                           to   = c("profession"))
-#testDuration is not parent of age, years_programming, profession
-blacklist_3 <- data.frame(from = c("testDuration"),
+#test_duration is not parent of age, years_programming, profession
+blacklist_3 <- data.frame(from = c("test_duration"),
                           to   = c("profession","years_programming","age"))
 #adjusted_score cannot be parent of anyone
 blacklist_4 <- data.frame(from = c("qualification_score"),
@@ -171,7 +171,7 @@ for (i in 1:length(professions)) {
     dplyr::select(df_prof,
                   years_programming,
                   age,
-                  testDuration,
+                  test_duration,
                   qualification_score
     );
   bn <-pc.stable(df_prof,blacklist = blacklist_all)
@@ -193,7 +193,7 @@ for (i in 1:length(professions)) {
     dplyr::select(df_prof,
                   years_programming,
                   age,
-                  testDuration,
+                  test_duration,
                   qualification_score
     );
   bn <-tabu(df_prof,blacklist = blacklist_all)
