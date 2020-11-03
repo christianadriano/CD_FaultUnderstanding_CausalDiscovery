@@ -2,11 +2,12 @@
 "
 Causal discovery for the programming skill related factors
 
-"  
-"There are two packages in R for Bayesian Network Learning (or causal graph learning):
+There are two packages in R for Bayesian Network Learning (or causal graph learning):
 bnlearn and pcalg. I decided to use bnlearn, because its installation was easier than
 pcalg. The pcalg requires the BiocManager (install.packages(BiocManager)), which is
-very larger framework, which is not installing smoothly"
+very larger framework, which is not installing smoothly
+
+"
 
 #-----------------------------------
 #Example with BNLEARN (will move it to the bottom later)
@@ -25,7 +26,7 @@ years_programming [exogenous];
 age [exogenous]
 testDuration [endogenous];
 qualification_score [outcome];
-z1 [outcome];
+adjusted_score [outcome];
 
 " 
 
@@ -38,7 +39,7 @@ source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding/
 df_selected <-
   dplyr::select(df_consent,
                 years_programming,
-                z1,
+                adjusted_score,
                 age,
                 profession
                 );
@@ -58,9 +59,9 @@ blacklist_1 <- data.frame(from = c("years_programming"),
 blacklist_2 <- data.frame(from = node.names[-grep("profession", node.names)], 
                           to   = c("profession"))
 #NO CHILDS
-#Avoid z1 to be parent
-blacklist_3 <- data.frame(from = c("z1"),
-                          to   = node.names[-grep("z1", node.names)])
+#Avoid adjusted_score to be parent
+blacklist_3 <- data.frame(from = c("adjusted_score"),
+                          to   = node.names[-grep("adjusted_score", node.names)])
 
 #Task Accuracy can only be measured with all tasks data. 
 #Here we are dealing only with programmer demographic data.
@@ -74,8 +75,8 @@ bn <-tabu(df_selected,blacklist = blacklist_all)
 plot(bn,main="All Professions")
 
 "Profession is a confounder for Age and Years_Programming, but Profession has no direct
-effect on qualification_score. Same for z1 score. Profession has an effect on the
-membership of is_fast, and the is_fast has a direct effect on z1 score."
+effect on qualification_score. Same for adjusted_score score. Profession has an effect on the
+membership of is_fast, and the is_fast has a direct effect on adjusted_score score."
 
 #-----------------------------------------
 #BY PROFESSION
@@ -96,7 +97,7 @@ for (i in 1:length(professions)) {
   df_prof <- 
     dplyr::select(df_prof,
                   years_programming,
-                  z1,
+                  adjusted_score,
                   age,
                   #profession
                   #isAnswerCorrect
@@ -115,7 +116,7 @@ for (i in 1:length(professions)) {
   df_prof <- 
     dplyr::select(df_prof,
                   years_programming,
-                  z1,
+                  adjusted_score,
                   age
     );
   bn <-tabu(df_prof,blacklist = blacklist_all)
@@ -126,12 +127,12 @@ for (i in 1:length(professions)) {
 
 #---------------------------------------------------------------
 #---------------------------------------------------------------
-#Using now qualification_score instead of IRT z1 score 
+#Using now qualification_score instead of IRT adjusted_score score 
 
 df_selected <-
   dplyr::select(df_consent,
                 years_programming,
-                #z1,
+                #adjusted_score,
                 qualification_score,
                 age,
                 profession
