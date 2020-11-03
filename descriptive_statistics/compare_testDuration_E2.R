@@ -16,15 +16,15 @@ source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding/
 df_consent <-
   dplyr::select(df_consent,
                 years_programming,
-                z1,
-                testDuration_minutes,
+                adjusted_score,
+                test_duration,
                 age,
                 profession
   );
 
 #Check for outliers
 df_consent %>%
-  ggplot( aes(y=testDuration_minutes, x=reorder(profession,1/testDuration_minutes))) +
+  ggplot( aes(y=test_duration, x=reorder(profession,1/test_duration))) +
   geom_boxplot()+
   geom_smooth(method = "lm", se=FALSE, fullrange = TRUE, color="steelblue",  linetype="dashed", aes(group=1))+
   stat_summary(fun=mean, geom="point", shape=4, size=3)+
@@ -52,21 +52,30 @@ These datapoints have values > 3rd quartile + 1.5*interquartile range.
 The interquartile range is the difference between the 2nd and 3rd quartiles
 "
 
+
 profession_list <- as.character(unique(df_consent$profession))
 
 computeMedians <- function(prof){
-  median(df_consent[df_consent$profession==prof,]$testDuration_minutes)
+  median(df_consent[df_consent$profession==prof,]$test_duration)
 }
 medians_list <- lapply(profession_list, computeMedians)
 
 df_quantiles <- data.frame(matrix(data=c(profession_list,rep(0,24)),ncol=5,nrow = 6, byrow = FALSE)) #initialize with all zeros
-colnames(df_quantiles) <- c("profession","median","q2","q3","upper_wisker")
+colnames(df_quantiles) <- c("profession","median","q2","q3","upper_whisker")
 
 #Quantiles
 computeQuantiles <- function(prof){
-  quantile(df_consent[df_consent$profession==prof,]$testDuration_minutes)
+  quantile(df_consent[df_consent$profession==prof,]$test_duration)
 }
 quantile_list <- lapply(profession_list,computeQuantiles)
+
+#Proportion below a value
+compute_proportion_below <- function(prof,value){
+  total <- dim(df_consent[df_consent$profession==prof,])[1]
+  below <- dim(df_consent[df_consent$profession==prof & 
+                          df_consent$test_duration<value,])[1]
+  return(below/total)
+}
 
 for(i in c(1:length(profession_list))){
   values <- unlist(quantile_list[i])
@@ -75,9 +84,24 @@ for(i in c(1:length(profession_list))){
   df_quantiles[df_quantiles$profession==prof,]$median <- values[[3]]
   df_quantiles[df_quantiles$profession==prof,]$q3 <- values[[4]]
   inter_quartile <- values[[4]] - values[[2]]
-  df_quantiles[df_quantiles$profession==prof,]$upper_wisker <- values[[4]] + 1.5 * inter_quartile
+  upper_whisker <- values[[4]] + 1.5 * inter_quartile
+  df_quantiles[df_quantiles$profession==prof,]$upper_whisker <- upper_whisker
+  df_quantiles[df_quantiles$profession==prof,]$proportion_below_upper_whisker
 } 
-  
+
+print(paste0(prof,":",
+             compute_proportion_below(prof,upper_whisker))
+)
+# Profession: Proportion Below Upper Whisker
+# "Hobbyist:0.958677685950413"
+# "Undergraduate_Student:0.936794582392777"
+# "Professional:0.959232613908873"
+# "Graduate_Student:0.96113074204947"
+# "Other:0.982142857142857"
+# "Programmer:0.897959183673469"
+
+"The test_duration outlier removal involved items that were above
+90% (Programmer) to 98% (Other) of data points"
 
 "Replace all values that are above the upper whisker for the median time of 
 each professional group"
@@ -85,17 +109,17 @@ each professional group"
 df_consent$profession <- as.factor(df_consent$profession)
 
 for(prof in profession_list){
-  upperwhisker <- as.numeric(df_quantiles[df_quantiles$profession==prof,]$upper_wisker)
+  upperwhisker <- as.numeric(df_quantiles[df_quantiles$profession==prof,]$upper_whisker)
   median_value <- as.numeric(df_quantiles[df_quantiles$profession==prof,]$median)
   df_consent[df_consent$profession==prof &
-             df_consent$testDuration_minutes>upperwhisker,]$testDuration_minutes <- median_value
+             df_consent$test_duration>upperwhisker,]$test_duration <- median_value
 }
 
 
 
 df_consent %>%
-  mutate(text = fct_reorder(profession,testDuration_minutes, .desc = TRUE)) %>%
-  ggplot( aes(x=testDuration_minutes)) +
+  mutate(text = fct_reorder(profession,test_duration, .desc = TRUE)) %>%
+  ggplot( aes(x=test_duration)) +
   geom_density(alpha=0.6, color="darkgrey", fill="lightblue") +
   theme_minimal()+
   theme(
@@ -126,7 +150,7 @@ covariates Age and Years of Programming.
 
 
 df_consent %>%
-  ggplot( aes(x=testDuration_minutes)) +
+  ggplot( aes(x=test_duration)) +
   geom_density(alpha=0.6, color="darkgrey", fill="lightblue") +
   theme_minimal()+
   theme(
@@ -141,7 +165,7 @@ df_consent %>%
   ggtitle("Test Duration (without outliers)") 
 
 df_consent %>%
-  ggplot( aes(x=testDuration_minutes)) +
+  ggplot( aes(x=test_duration)) +
   geom_histogram(binwidth = 0.5, alpha=0.6, color="darkgrey", fill="lightblue") +
   theme_minimal()+
   theme(
