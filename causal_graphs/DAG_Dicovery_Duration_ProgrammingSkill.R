@@ -22,17 +22,17 @@ df_consent_fast <- df_consent[df_consent$is_fast,]
 df_consent_slow <- df_consent[!df_consent$is_fast,]
 
 df_selected <-
-  dplyr::select(df_consent,
+  dplyr::select(df_consent_fast,
                 profession, #categorical
                 age,
                 years_programming,
                 test_duration,
-                is_fast, #binary
+                #is_fast, #binary
                 adjusted_score #outcome
                 );
 
 df_selected$profession <- as.factor(df_selected$profession)
-df_selected$is_fast <- as.factor(df_selected$is_fast)
+#df_selected$is_fast <- as.factor(df_selected$is_fast)
 
 node.names <- colnames(df_selected)
 
@@ -41,15 +41,15 @@ blacklist_1 <- data.frame(from = c("years_programming"),
                           to   = c("age"))
 
 #Prevent is_fast to be parents of age and years_programming and profession
-blacklist_2 <- data.frame(from = c("is_fast"), 
-                            to   = c("years_programming","age","profession"))
+#blacklist_2 <- data.frame(from = c("is_fast"), 
+#                            to   = c("years_programming","age","profession"))
 
 #profession has parent nodes
 blacklist_3 <- data.frame(from = node.names[-grep("profession", node.names)], 
                           to   = c("profession"))
 #test_duration is not parent of age, years_programming, profession
 blacklist_4 <- data.frame(from = c("test_duration"),
-                          to   = c("profession","years_programming","age","is_fast"))
+                          to   = c("profession","years_programming","age"))#,"is_fast"))
 #adjusted_score cannot be parent of anyone
 blacklist_5 <- data.frame(from = c("adjusted_score"),
                           to   = node.names[-grep("adjusted_score", node.names)])
@@ -57,7 +57,7 @@ blacklist_5 <- data.frame(from = c("adjusted_score"),
 #Task Accuracy can only be measured with all tasks data. 
 #Here we are dealing only with programmer demographic data.
 
-blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_3,blacklist_4,blacklist_5) 
+blacklist_all <- rbind(blacklist_1,blacklist_3,blacklist_4,blacklist_5) 
 
 #------------------------------------------
 #Including Profession
@@ -65,7 +65,7 @@ blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_3,blacklist_4,blacklist
 bn <-tabu(df_selected,blacklist = blacklist_all)
 plot(bn,main="All Professions, Score-Based Discovery")
 
-bn <- pc.stable(df_prof,blacklist = blacklist_all)
+bn <- pc.stable(df_selected,blacklist = blacklist_all)
 plot(bn,main="All Professions, Constraint-Based Discovery")
 
 #-----------------------------------------
