@@ -62,11 +62,11 @@ blacklist_all <- rbind(blacklist_1,blacklist_3,blacklist_4,blacklist_5)
 #------------------------------------------
 #Including Profession
 
-bn <-tabu(df_selected,blacklist = blacklist_all)
-plot(bn,main="All Professions, Score-Based Discovery")
-
 bn <- pc.stable(df_selected,blacklist = blacklist_all)
 plot(bn,main="All Professions, Constraint-Based Discovery")
+
+bn <-tabu(df_selected,blacklist = blacklist_all)
+plot(bn,main="All Professions, Score-Based Discovery")
 
 #-----------------------------------------
 #BY PROFESSION
