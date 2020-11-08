@@ -22,7 +22,7 @@ df_consent_fast <- df_consent[df_consent$is_fast,]
 df_consent_slow <- df_consent[!df_consent$is_fast,]
 
 df_selected <-
-  dplyr::select(df_consent_slow,
+  dplyr::select(df_consent_fast,
                 profession, #categorical
                 age,
                 years_programming,
