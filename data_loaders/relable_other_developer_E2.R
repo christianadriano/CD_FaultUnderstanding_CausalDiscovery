@@ -102,10 +102,10 @@ df_others <- df_consent[grep("other",tolower(df_consent$profession)),]
 dim(df_others) #161 entries with Other profession who also has test information
 
 "However, we noticed that many people who opted for Other profession are actually programmers.
-For some reason, these programmers did not identify themselves as 'Professsional Developer'
+For some reason, these programmers did not identify themselves as 'Professional Developer'
 This is not good because it distorts the demographics of Others group, which was created
 to represent anyone that did not fit in any of the other profession groups. For this reason
-we will relable people who are programmers in the Other group as 'Programmer' and the rest as
+we re-categorized people who are programmers in the Other group as 'Programmer' and the rest as
 simply 'Other'. 
 
 We will later on confirm if this group of Programmer is more similar to 'Professional Developer' 
