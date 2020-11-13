@@ -50,7 +50,8 @@ df_consent %>%
 
 #Boxplots
 df_consent %>%
-  ggplot( aes(y=qualification_score, x=reorder(profession,1/qualification_score))) +
+  mutate(text = fct_reorder(profession,qualification_score, .desc = TRUE)) %>%
+  ggplot( aes(y=qualification_score, x=text)) +
   geom_boxplot()+
   geom_smooth(method = "lm", se=FALSE, fullrange = TRUE, color="steelblue",  linetype="dashed", aes(group=1))+
   stat_summary(fun=mean, geom="point", shape=4, size=3)+
