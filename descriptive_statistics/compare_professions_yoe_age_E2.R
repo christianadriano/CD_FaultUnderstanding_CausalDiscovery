@@ -35,7 +35,8 @@ and the same of Hobbyists with relation to Graduates and Others to Undergrads"
 
 #Boxplots
 df_consent %>%
-  ggplot( aes(y=years_programming, x=reorder(profession,1/years_programming))) +
+  mutate(text = fct_reorder(profession,years_programming, .desc = TRUE)) %>%
+  ggplot( aes(y=years_programming, x=text)) +
   geom_boxplot()+
   geom_smooth(method = "lm", se=FALSE, fullrange = TRUE, color="steelblue",  linetype="dashed", aes(group=1))+
   stat_summary(fun=mean, geom="point", shape=4, size=3)+
@@ -56,7 +57,7 @@ contributes to a wider ranges (size of inter-quartiles, i.e., boxes).
 
 Concerning outliers, except for Programmers, all other professions have a similar 
 outliers counts. The only distinction is the outliers for Students are below 
-20 years of experience, whereas the "Other" go up to 35 years. This makes sense, 
+20 years of experience, whereas the 'Other' go up to 35 years. This makes sense, 
 because students are supposed to be among the youngest  study cohorts."
 
 #----------------------------------------------------------------
