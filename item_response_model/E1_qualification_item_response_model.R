@@ -8,10 +8,11 @@ library(ltm)
 library(psych)
 library(mirt)
 
-source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//load_consent_create_indexes_E1.R")
-
+source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_consent_create_indexes_E1.R")
+#dim(df_E1) #4776   21
 "Remove participants for whom we did not take the qualification test" 
 df <- df_E1[complete.cases(df_E1[,"qualification_score"]),] #left with 3699 rows
+#dim(df) 3699   21
 
 "Replace false for 0(zero) and true for 1(one)"
 df$test1_ <-  ifelse(df$test1=="true",1,0)
@@ -47,9 +48,9 @@ plot(IRT_model_2PL, type="ICC")
 
 plot(IRT_model_2PL, type="ICC", items=c(1,3))
 
-"Plot the information, which tells me which are in the
-x-axis gives me more information in terms of discrimination 
-power of the items (all items). This is important to show design the items
+"Plot tells which are the in the x-axis gives me more information
+in terms of discrimination power of the items (all items). 
+This is important to show design the items
 in a way that they focus more or less on certain parameter
 configurations, which in the case of the example is 
 ability. 
@@ -58,6 +59,7 @@ The plot shows the test information covers from 0 to 2 with peak on one
 standard deviation of the ability."
 
 plot(IRT_model_2PL, type="IIC", items=0)
+#--------
 
 factors <- factor.scores.ltm(IRT_model_2PL)
 factors
