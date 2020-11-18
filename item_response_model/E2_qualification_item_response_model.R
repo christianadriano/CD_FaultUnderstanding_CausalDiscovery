@@ -6,11 +6,11 @@ library(ltm)
 library(psych)
 library(mirt)
 
-source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//load_consent_create_indexes_E2.R")
+source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_consent_create_indexes_E2.R")
 
 "Remove participants for whom we did not take the qualification test" 
 df_E2 <- df_consent[complete.cases(df_consent[,"qualification_score"]),]
-#Original size: 3657   30 , new size 1438 30
+#Original size: 3657   31 , new size 1788 31
 
 "Replace false for 0(zero) and true for one(1)"
 # df_E2$test1_ <-  ifelse(df_E2$test1=="true",1,0)
