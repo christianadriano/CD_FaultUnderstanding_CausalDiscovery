@@ -5,6 +5,7 @@ library(dplyr)
 library(ltm)
 library(psych)
 library(mirt)
+library(ggplot2)
 
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_consent_create_indexes_E2.R")
 
@@ -43,19 +44,22 @@ were very discriminating.
 
 plot(IRT_model, type="ICC")
 
+"Except for Test-4, all other tests show good discriminative power"
+
 plot(IRT_model, type="ICC", items=c(1,3))
 
-"Plot the information, which tells me which are in the
+#--------
+"Plot the information, which tells me which area in the
 x-axis gives me more information in terms of discrimination 
 power of the items (all items). This is important to show design the items
 in a way that they focus more or less on certain parameter
 configurations, which in the case of the example is 
 ability. 
-
-The plot shows the test information covers from 0 to 2 with peak on one 
-standard deviation of the ability."
-
+"
 plot(IRT_model, type="IIC", items=0)
+"The plot shows the test information covers from -4 to +4 with peak at zero."
+#---------
+
 
 factors <- factor.scores.ltm(IRT_model)
 factors
@@ -100,8 +104,34 @@ factors
 all wrong (271), all correct (289), and only test_4 correct (159)
 "
 
-hist(factors$score.dat$z1 )
+#-----------
+#Plots
+hist(factors$score.dat$z1, breaks=10)
+
+df_score <- data.frame(factors$score.dat$z1) #NOT CORRECT STILL NEED TO FIX IT
+head(df_score)
+factors %>%
+  ggplot( aes(x=test_duration)) +
+  geom_histogram(binwidth=0.1, color="darkgrey", fill="lightblue") +
+  theme_minimal()+
+  theme(
+    legend.position="none",
+    panel.spacing = unit(0.1, "lines"),
+    strip.text.x = element_text(size = 12),
+    plot.title = element_text(size=14),
+    axis.text.x = element_text(angle = 20, hjust = 1, size=12)
+  ) +
+  xlab("Test Duration (minutes)") +
+  ylab("Assigned Probability (%)") +
+  facet_wrap(~text,nrow=3,ncol=2)+
+  ggtitle("Test Duration Across Professions (without outliers)") 
+
+
+
+
 hist(df_E2$qualification_score)
+
+
 
 #----------------------------------------------------------------
 "Merge this with the Session data from E2"
