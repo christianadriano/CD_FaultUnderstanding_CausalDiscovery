@@ -195,5 +195,8 @@ create_indexes <- function(data_E2){
   #                           levels=levels(data_E2$isAnswerCorrect),
   #                           labels=c(0,1)
   # )
+  
+  print("data loaded on data_E2")
+  
   return(data_E2);
 }
