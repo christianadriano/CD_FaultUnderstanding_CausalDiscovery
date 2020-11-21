@@ -27,9 +27,11 @@ library(dplyr) #for select and ddply
 
 
 "Load data with treatment field (isBugCovering) and ground truth (answer correct)"
-source("C://Users//Christian//Documents//GitHub//ML_FaultUnderstanding//analysis//descriptive//accuracy//load_apply_ground_truth.R")
+path <- "C:\\Users\\Christian\\Documents\\GitHub\\CausalModel_FaultUnderstanding\\data_loaders\\"
+source(paste0(path,"load_ground_truth_E2.R"))
+source(paste0(path,"create_indexes_E2.R"))
 
-df2_ground$
+df2_ground <- create_indexes(df_E2)
 
 df2_ground$explanation_size <- sapply(strsplit(df2_ground$explanation, " "), length);
 
