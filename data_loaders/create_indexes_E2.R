@@ -4,7 +4,7 @@ Create indexes and format fields
 
 "
 
-run <- function(data_E2){
+create_indexes <- function(data_E2){
   
   "PROFESSION"
   #Convert profession from factor to character 
