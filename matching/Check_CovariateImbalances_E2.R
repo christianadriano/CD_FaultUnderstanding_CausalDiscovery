@@ -6,8 +6,12 @@ variable named isBugCovering
 See the results discussion at the end. It seems that all looks good in terms of covariate balance for E2.
 
 TODO: 
-- add complexity of tasks as a covariate as well (need to add data from Hasltead metric)
-- check imbalance by worker profession
+- add complexity of tasks as a covariate as well (need to add data from Hasltead metric) DONE
+- add colunms for IRT and duration_membership to the create_index_E2.R
+- Check imbalances for:
+   - IRT
+   - by duration membership
+- Plant how to check imbalances by profession
 
 "
 
@@ -38,6 +42,7 @@ df2_ground$explanation_size <- sapply(strsplit(df2_ground$explanation, " "), len
 df2_ground <-
   select(df2_ground,
          'qualification_score',
+         '',
          'years_programming',
         
          'confidence',
@@ -69,5 +74,9 @@ print(raw_table, smd=TRUE)
 # duration (mean (SD))            370444.49 (745986.86) 504524.93 (962389.89)  0.156
 # explanation_size (mean (SD))        25.47 (27.03)         28.25 (27.42)      0.102
 
+"SMD<0.1 for the metrics of qualification_score, years_programming, and confidence, but close to 0.1
+for the remaining. So imbalance is not large."
+
 #Check imbalances by profession
+
 
