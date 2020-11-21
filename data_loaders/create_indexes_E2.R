@@ -155,7 +155,7 @@ create_indexes <- function(data_E2){
   )
   
   #DURATION in Minutes
-  data_E2$testDuration_minutes <- data_E2$testDuration/(1000*60)
+  data_E2$testDuration_minutes <- data_E2$test_duration/(1000*60)
   
   data_E2$duration_minutes <- data_E2$duration/(1000*60)
   
