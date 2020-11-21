@@ -31,7 +31,7 @@ path <- "C:\\Users\\Christian\\Documents\\GitHub\\CausalModel_FaultUnderstanding
 source(paste0(path,"load_ground_truth_E2.R"))
 source(paste0(path,"create_indexes_E2.R"))
 
-df2_ground <- create_indexes(df_E2)
+df2_ground <- create_indexes(df_E2_ground)
 
 df2_ground$explanation_size <- sapply(strsplit(df2_ground$explanation, " "), length);
 
