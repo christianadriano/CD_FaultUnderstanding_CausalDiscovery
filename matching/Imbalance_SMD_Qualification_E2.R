@@ -19,12 +19,12 @@ effect: adjusted_score"
 library(dplyr)
 
 df_selected <-
-  dplyr::select(df_consent,profession, 
+  dplyr::select(df_consent,
+                profession, 
                 years_programming,
                 age,
                 test_duration,
-                testDuration_fastMembership,
-                file_name
+                testDuration_fastMembership
                 );
 
 xvars <- c("years_programming",
@@ -41,7 +41,7 @@ library(MatchIt)
 #Without Matching
 
 # ALL FILE NAMES
-raw_table_all <- CreateTableOne(vars=xvars,strata="testDuration_fastMembership",data=df_consent,test=FALSE)
+raw_table_all <- CreateTableOne(vars=xvars,strata="testDuration_fastMembership",data=df_selected,test=FALSE)
 print(raw_table_all, smd=TRUE)
 
 #Data is imbalanced as the SMD is larger than 0.1
