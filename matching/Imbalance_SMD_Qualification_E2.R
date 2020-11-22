@@ -30,7 +30,6 @@ df_selected <-
 
 xvars <- c("years_programming",
            "age",
-           "test_duration",
            "profession"
           );
 
