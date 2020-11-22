@@ -21,9 +21,10 @@ library(dplyr)
 df_selected <-
   dplyr::select(df_consent,profession, 
                 years_programming,
-                adjusted_score,
                 age,
                 test_duration,
+                testDuration_fastMembership,
+                file_name
                 );
 
 xvars <- c("years_programming",
@@ -40,7 +41,7 @@ library(MatchIt)
 #Without Matching
 
 # ALL FILE NAMES
-raw_table_all <- CreateTableOne(vars=xvars,strata="adjusted_score",data=df_consent,test=FALSE)
+raw_table_all <- CreateTableOne(vars=xvars,strata="testDuration_fastMembership",data=df_consent,test=FALSE)
 print(raw_table_all, smd=TRUE)
 
 #Data is imbalanced as the SMD is larger than 0.1
