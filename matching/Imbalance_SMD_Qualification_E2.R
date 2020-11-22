@@ -60,7 +60,7 @@ print(raw_table_all, smd=TRUE)
 
 #HIT01_8
 df_file_name <- df_selected[df_selected$file_name=="HIT01_8",]
-raw_table <- CreateTableOne(vars=xvars,strata="adjusted_score",data=df_file_name,test=FALSE)
+raw_table <- CreateTableOne(vars=xvars,strata="testDuration_fastMembership",data=df_file_name,test=FALSE)
 print(raw_table, smd=TRUE)
 #                                 Stratified by isBugCovering
 #                                   TRUE           FALSE         SMD   
@@ -77,7 +77,7 @@ print(raw_table, smd=TRUE)
 
 
 df_file_name <- df_selected[df_selected$file_name=="HIT02_24",]
-raw_table <- CreateTableOne(vars=xvars,strata="adjusted_score",data=df_file_name,test=FALSE)
+raw_table <- CreateTableOne(vars=xvars,strata="testDuration_fastMembership",data=df_file_name,test=FALSE)
 print(raw_table, smd=TRUE)
 #                                 Stratified by isBugCovering
 #                                   TRUE           FALSE         SMD 
@@ -93,7 +93,7 @@ print(raw_table, smd=TRUE)
 # Other                            2 ( 9.1)      1 ( 3.8) 
 
 df_file_name <- df_selected[df_selected$file_name=="HIT03_6",]
-raw_table <- CreateTableOne(vars=xvars,strata="adjusted_score",data=df_file_name,test=FALSE)
+raw_table <- CreateTableOne(vars=xvars,strata="testDuration_fastMembership",data=df_file_name,test=FALSE)
 print(raw_table, smd=TRUE)
 #                                 Stratified by isBugCovering
 #                                   TRUE           FALSE         SMD 
@@ -109,7 +109,7 @@ print(raw_table, smd=TRUE)
 # Other                             2 ( 4.4)       7 ( 4.5)  
 
 df_file_name <- df_selected[df_selected$file_name=="HIT04_7",]
-raw_table <- CreateTableOne(vars=xvars,strata="adjusted_score",data=df_file_name,test=FALSE)
+raw_table <- CreateTableOne(vars=xvars,strata="testDuration_fastMembership",data=df_file_name,test=FALSE)
 print(raw_table, smd=TRUE)
 #                                 Stratified by isBugCovering
 #                                   TRUE           FALSE         SMD 
@@ -125,7 +125,7 @@ print(raw_table, smd=TRUE)
 # Other                             8 (11.0)       34 ( 7.7)  
 
 df_file_name <- df_selected[df_selected$file_name=="HIT05_35",]
-raw_table <- CreateTableOne(vars=xvars,strata="adjusted_score",data=df_file_name,test=FALSE)
+raw_table <- CreateTableOne(vars=xvars,strata="testDuration_fastMembership",data=df_file_name,test=FALSE)
 print(raw_table, smd=TRUE)
 #                                 Stratified by isBugCovering
 #                                   TRUE           FALSE         SMD 
@@ -139,8 +139,9 @@ print(raw_table, smd=TRUE)
 # Graduate_Student                  2 ( 7.1)      5 ( 8.9)        
 # Undergraduate_Student             2 ( 7.1)      4 ( 7.1)        
 # Other                             4 (14.3)      8 (14.3) 
+
 df_file_name <- df_selected[df_selected$file_name=="HIT06_51",]
-raw_table <- CreateTableOne(vars=xvars,strata="adjusted_score",data=df_file_name,test=FALSE)
+raw_table <- CreateTableOne(vars=xvars,strata="testDuration_fastMembership",data=df_file_name,test=FALSE)
 print(raw_table, smd=TRUE)
 #                                 Stratified by isBugCovering
 #                                   TRUE           FALSE         SMD 
@@ -155,7 +156,7 @@ print(raw_table, smd=TRUE)
 # Undergraduate_Student             3 ( 9.7)      24 (16.6)        
 # Other                             2 ( 6.5)      15 (10.3)  
 df_file_name <- df_selected[df_selected$file_name=="HIT07_33",]
-raw_table <- CreateTableOne(vars=xvars,strata="adjusted_score",data=df_file_name,test=FALSE)
+raw_table <- CreateTableOne(vars=xvars,strata="testDuration_fastMembership",data=df_file_name,test=FALSE)
 print(raw_table, smd=TRUE)
 #                                 Stratified by isBugCovering
 #                                   TRUE           FALSE         SMD 
@@ -171,7 +172,7 @@ print(raw_table, smd=TRUE)
 # Other                            3 (14.3)      6 (12.5)  
 
 df_file_name <- df_selected[df_selected$file_name=="HIT08_54",]
-raw_table <- CreateTableOne(vars=xvars,strata="adjusted_score",data=df_file_name,test=FALSE)
+raw_table <- CreateTableOne(vars=xvars,strata="testDuration_fastMembership",data=df_file_name,test=FALSE)
 print(raw_table, smd=TRUE)
 #                                 Stratified by isBugCovering
 #                                   TRUE           FALSE         SMD 
