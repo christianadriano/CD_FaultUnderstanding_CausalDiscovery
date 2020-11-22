@@ -24,13 +24,11 @@ df_selected <-
                 adjusted_score,
                 age,
                 test_duration,
-                testDuration_fastMembership
                 );
 
 xvars <- c("years_programming",
            "age",
            "test_duration",
-           "testDuration_fastMembership",
            "profession"
           );
 
