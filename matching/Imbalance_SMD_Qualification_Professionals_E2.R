@@ -53,7 +53,27 @@ print(raw_table_all, smd=TRUE)
 # Other                         11 ( 7.3)    101 ( 6.2)        
 # Professional                   0 ( 0.0)    417 (25.5)        
 # Programmer                    13 ( 8.7)     36 ( 2.2)        
-# Undergraduate_Student         59 (39.3)    384 (23.4)    
+# Undergraduate_Student         59 (39.3)    384 (23.4)   
+
+
+# Intervention: Years_Programming
+raw_table_all <- CreateTableOne(vars=c("test_duration","age"),strata="years_programming",data=df_selected,test=FALSE)
+print(raw_table_all, smd=TRUE)
+
+#Data is imbalanced as the SMD is larger than 0.1
+# Stratified by is_fast
+#                                 FALSE         TRUE          SMD   
+# n                               150          1638               
+# years_programming (mean (SD))  2.82 (3.19)   5.72 (6.84)   0.544
+# age (mean (SD))               27.61 (7.32)  30.46 (8.70)   0.354
+# test_duration (mean (SD))      1.31 (0.70)   5.47 (3.26)   1.763
+# profession (%)                                             0.898
+# Graduate_Student              23 (15.3)    260 (15.9)        
+# Hobbyist                      44 (29.3)    440 (26.9)        
+# Other                         11 ( 7.3)    101 ( 6.2)        
+# Professional                   0 ( 0.0)    417 (25.5)        
+# Programmer                    13 ( 8.7)     36 ( 2.2)        
+# Undergraduate_Student         59 (39.3)    384 (23.4)   
 
 #HIT01_8
 df_file_name <- df_selected[df_selected$file_name=="HIT01_8",]
