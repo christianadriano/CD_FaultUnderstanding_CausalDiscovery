@@ -15,9 +15,10 @@ effect: adjusted_score"
 
 library(dplyr)
 
+df_selected <- df_selected[df_selected$profession=="Professional",]
+
 df_selected <-
   dplyr::select(df_consent,
-                profession, 
                 years_programming,
                 age,
                 test_duration,
@@ -29,7 +30,6 @@ xvars <- c("years_programming",
            "age"
           );
 
-df_selected <- df_selected[df_selected$profession=="Professional",]
 
 library(tableone)
 library(Matching)
