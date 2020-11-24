@@ -6,6 +6,10 @@ Outcome: adjusted_score (Qualification IRT Score)
 
 "
 
+library(tableone)
+library(Matching)
+library(MatchIt)
+
 "Load data with treatment field (isBugCovering) and ground truth (answer correct)"
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_consent_create_indexes_E2.R")
 
@@ -31,11 +35,6 @@ xvars <- c("years_programming",
           );
 
 
-library(tableone)
-library(Matching)
-#Now load the lalonde data (which is in the MatchIt package):
-library(MatchIt)
-#Without Matching
 
 # ALL FILE NAMES
 raw_table_all <- CreateTableOne(vars=xvars,strata="is_fast",data=df_selected,test=FALSE)
