@@ -6,7 +6,7 @@ variable named isBugCovering
 See the results discussion at the end. It seems that all looks good in terms of covariate balance for E2.
 
 TODO: 
-- add complexity of tasks as a covariate as well (need to add data from Hasltead metric) DONE
+(DONE) add complexity of tasks as a covariate as well (need to add data from Hasltead metric) DONE
 - add colunms for IRT and duration_membership to the create_index_E2.R
 - Check imbalances for:
    - IRT
