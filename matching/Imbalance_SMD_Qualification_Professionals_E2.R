@@ -4,6 +4,8 @@ FOR PROFESSIONAL PROGRAMMERS
 Treatment: is_fast 
 Outcome: adjusted_score (Qualification IRT Score)
 
+Results: All covariates present imbalances (SMD>0.1)
+
 "
 
 library(tableone)
