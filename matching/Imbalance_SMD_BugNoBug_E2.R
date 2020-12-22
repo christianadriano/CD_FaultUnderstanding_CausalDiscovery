@@ -1,11 +1,25 @@
 "Check imbalances in Standardized Mean Differences - SMD
 
-
 Treatment: Bug or NoBug
 Analyze imbalance for each Task (HIT01 to HIT08)
 plotting results with Cobalt
 https://cran.rstudio.com/web/packages/cobalt/vignettes/cobalt_A4_love.plot.html
 
+The covariates that can imbalance the intervention are:
+   - years_programming
+  - qualification_score 
+  - profession 
+  - volume_Halstead 
+
+I evaluated imbalance for each Bug file_name, which is a separate experiment.
+
+Results:
+Data is imbalance across of bug files (HIT01_8 to HIT08_54)
+The imbalance is in the following exogenous variables:
+- years_programming (not for Bug 04, 05, 07)
+- qualification_score (only for Bug06, 07, 08)
+- volume_Halstead (for all except Bug01)
+- profession (for all)
 "
 
 "Load data with treatment field (isBugCovering) and ground truth (answer correct)"
@@ -22,13 +36,6 @@ effect (accuracy of the task)"
 
 #see DAG in file DAG_ExogenousIntervention.R
 
-"The covariates that can imbalance the intervention are:
-- qualification_score
-- profession
-- volume_Halstead
-
-We could evaluate balance by each file_name, which is a separate experiment.
-"
 
 library(dplyr)
 
@@ -59,7 +66,7 @@ library(MatchIt)
 raw_table_all <- CreateTableOne(vars=xvars,strata="isBugCovering",data=df_E2_ground,test=FALSE)
 print(raw_table_all, smd=TRUE)
 
-#Data is imbalanced as the SMD is larger than 0.1
+#Data is imbalanced if the SMD is larger than 0.1
 # Stratified by isBugCovering
 #                                    TRUE            FALSE           SMD   
 # n                                  278            1184                
