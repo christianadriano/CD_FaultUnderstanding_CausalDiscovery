@@ -30,7 +30,11 @@ df_E2$profession_id <- as.integer(df_E2$profession_id)
 
 #Score-Based Graph
 
+#Evaluation
 
+#what proportion of causal effects (coefficients) were signficant?
+#Accuracy of models
+#Risk of overfitting
 
 
 #-----------------------------
@@ -38,5 +42,14 @@ df_E2$profession_id <- as.integer(df_E2$profession_id)
 
 #-----------------------------
 #Age
+
+#-----------------------------
+#Summary of comparisons
+
+#Mean proportion of significant coefficients
+#Mean Accuracy of models
+#Mean Risk of overfitting
+
+
 
 
