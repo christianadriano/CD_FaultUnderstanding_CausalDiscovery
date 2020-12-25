@@ -15,9 +15,10 @@ https://cran.rstudio.com/web/packages/cobalt/vignettes/cobalt_A4_love.plot.html
 "Load data with treatment field (isBugCovering) and ground truth (answer correct)"
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_consent_create_indexes_E2.R")
 
-"Determine the covariates that need to taken into account w.r.t. imbalance:
-covariates: age, years_programming, , test_duration, testDuration_membership, profession
-effect: adjusted_score"
+"Determine the covariates that need to be taken into account w.r.t. imbalance
+
+Covariates: age, years_programming, , test_duration, testDuration_membership, profession
+Effect: adjusted_score"
 
 library(dplyr)
 
