@@ -111,11 +111,12 @@ median <- values[[3]]
 q3 <- values[[4]]
 inter_quartile <- values[[4]] - values[[2]]
 upper_wisker <- values[[4]] + 1.5 * inter_quartile
+lower_wisker <- values[[2]] -1.5 *inter_quartile #NOT USED
 
-#Replace all values that are above 30 min to the median of each professional group
+#Replace all values that are above 40 min to the median of each professional group
 upperwisker <- as.numeric(upper_wisker)
 median_value <- as.numeric(median)
-df_consent[df_consent$test_duration>upperwisker,]$test_duration <- median_value
+df_consent[df_consent$test_duration>40,]$test_duration <- median_value
 
 #---------------------
 
