@@ -247,7 +247,8 @@ Replace outliers in test_duration for median values.
 This is done for each profession.
 
 A reasonable time for the qualification test in E2 is 25 min, which gives 5 min per question,
-which is the average time people took to answer the code inspection tasks. Because,The boxplot shows points that are above 30 min, which is more than 6 min per question
+which is the average time people took to answer the code inspection tasks. 
+Because the boxplot shows points that are above 30 min, which is more than 5 min per question
 
 We consider as outliers all data points that are above wiskers in the boxplots. 
 These datapoints have values > 3rd quartile + 1.5*interquartile range. 
