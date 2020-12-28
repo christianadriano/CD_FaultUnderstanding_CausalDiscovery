@@ -308,9 +308,10 @@ df_consent <- left_join(df_consent,df_fastMembership,by=c("worker_id","file_name
 
 df_consent$is_fast <- df_consent$testDuration_fastMembership>=0.5
 
+
+print(paste0("Loaded ",dim(df_consent)[1], " rows."," Results are in df_consent"))
+
 #---------------------
 #END
 #---------------------
-
-print("Results in df_consent")
 
