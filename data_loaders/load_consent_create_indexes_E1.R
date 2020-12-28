@@ -124,5 +124,3 @@ print(paste0("Loaded ",dim(df_consent)[1], " rows."," Results are in df_consent"
 #---------------------
 #END
 #---------------------
-
-print("Results in df_consent")
