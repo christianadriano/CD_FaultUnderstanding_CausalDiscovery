@@ -1,8 +1,5 @@
-
-*.arff
-*.arff
-*.arff
 *.pdf
-data/consent_consolidated_Experiment_1.arff
 *.html
 .Rproj.user
+*.png
+
