@@ -91,6 +91,34 @@ df_consent$country_id<- factor(df_consent$country_labels,
 #Convert to minutes
 df_consent$test_duration <- df_consent$test_duration/(1000*60)
 
+
+"TEST DURATION OUTLIERS
+Replace outliers in test_duration for median values.
+
+A reasonable time for the qualification test in E1 is 20 min, which gives 5 min per question,
+which is the average time people took to answer the code inspection tasks. 
+Because the boxplot shows points that are above 20 min, which is more than 5 min per question
+
+We consider as outliers all data points that are above wiskers in the boxplots. 
+These datapoints have values > 3rd quartile + 1.5*interquartile range. 
+The interquartile range is the difference between the 2nd and 3rd quartiles
+"
+#Quantiles
+
+values <- quantile(df_consent$test_duration)
+q2 <- values[[2]]
+median <- values[[3]]
+q3 <- values[[4]]
+inter_quartile <- values[[4]] - values[[2]]
+upper_wisker <- values[[4]] + 1.5 * inter_quartile
+
+#Replace all values that are above 30 min to the median of each professional group
+upperwisker <- as.numeric(upper_wisker)
+median_value <- as.numeric(median)
+df_consent[df_consent$test_duration>upperwisker,]$test_duration <- median_value
+
+#---------------------
+
 print(paste0("Loaded ",dim(df_consent)[1], " rows."," Results are in df_consent"))
 
 #---------------------
