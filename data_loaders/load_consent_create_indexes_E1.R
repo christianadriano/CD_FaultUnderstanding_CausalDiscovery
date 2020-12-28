@@ -11,23 +11,20 @@ library(dplyr)
 path <- "C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data//"
 dataset_E1 <- readARFF(paste0(path,"consent_consolidated_Experiment_1.arff"))
 df_consent <- data.frame(dataset_E1)
-dim(df_consent)
+dim(df_consent) #4776   16
 
 
 #------------------------
 "MISSING DATA"
-#remove rows without profession information
-df_consent <- df_consent[!is.na(df_consent$profession),] #left with 2463
-dim(df_consent) #2463
 
 #Filter-out rows without test data
-dim(df_consent[is.na(df_consent$test1),]) #1870 are NA
+dim(df_consent[is.na(df_consent$test1),]) #1077 are NA
 df_consent <- df_consent[!is.na(df_consent$test1),]
-dim(df_consent) #1788 are not NA.
+dim(df_consent) #3699 are not NA.
 
 
 
-
+#-----------------------
 "QUALIFICATION_SCORE"
 
 
@@ -39,7 +36,7 @@ df_consent$qualification_score_id <- factor(df_consent$qualification_score_label
                                       levels=levels(df_consent$qualification_score_label),
                                       labels=c(4:0)
                                       )
-
+#-----------------------
 "GENDER"
 
 df_consent$gender<- factor(df_consent$gender, 
@@ -50,7 +47,7 @@ df_consent$gender_id<- factor(df_consent$gender,
                          levels=levels(df_consent$gender),
                          labels = c(1:3)
                         )
-
+#-----------------------
 "COUNTRY"
 
 df_consent$country <- unlist(lapply(df_consent$country, function(v) {
@@ -89,10 +86,12 @@ df_consent$country_id<- factor(df_consent$country_labels,
                          labels = c(1:3)
 )
 
-#------------------------
+#-----------------------
 #DURATION of TEST
 #Convert to minutes
 df_consent$test_duration <- df_consent$test_duration/(1000*60)
+
+print(paste0("Loaded ",dim(df_consent)[1], " rows."," Results are in df_consent"))
 
 #---------------------
 #END
