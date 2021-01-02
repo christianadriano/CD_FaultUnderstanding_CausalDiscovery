@@ -112,6 +112,9 @@ df_consent$gender_id<- factor(df_consent$gender,
 
 #----------------------------------
 "AGE and YEARS OF PROGRAMMING"
+#Fix input error
+df_consent[df_consent$years_programming<0,]$years_programming <- 0
+
 #Deal with wrong input (age == 100 year)
 median_age_undergrad <- median(df_consent[df_consent$profession=="Undergraduate_Student",]$age)
 df_consent[df_consent$age==100,]$age <- median_age_undergrad
@@ -262,7 +265,8 @@ computeMedians <- function(prof){
 }
 medians_list <- lapply(profession_list, computeMedians)
 
-df_quantiles <- data.frame(matrix(data=c(profession_list,rep(0,24)),ncol=5,nrow = 6, byrow = FALSE)) #initialize with all zeros
+df_quantiles <- data.frame(matrix(data=c(profession_list,rep(0,24)),ncol=5,nrow = 6, byrow = FALSE),
+                           stringsAsFactors=FALSE) #initialize with all zeros
 colnames(df_quantiles) <- c("profession","median","q2","q3","upper_wisker")
 
 #Quantiles
@@ -274,11 +278,11 @@ quantile_list <- lapply(profession_list,computeQuantiles)
 for(i in c(1:length(profession_list))){
   values <- unlist(quantile_list[i])
   prof <- profession_list[i]
-  df_quantiles[df_quantiles$profession==prof,]$q2 <- values[[2]]
-  df_quantiles[df_quantiles$profession==prof,]$median <- values[[3]]
-  df_quantiles[df_quantiles$profession==prof,]$q3 <- values[[4]]
-  inter_quartile <- values[[4]] - values[[2]]
-  df_quantiles[df_quantiles$profession==prof,]$upper_wisker <- values[[4]] + 1.5 * inter_quartile
+  df_quantiles[df_quantiles$profession==prof,]$q2 <- as.numeric(values[[2]])
+  df_quantiles[df_quantiles$profession==prof,]$median <- as.numeric(values[[3]])
+  df_quantiles[df_quantiles$profession==prof,]$q3 <- as.numeric(values[[4]])
+  inter_quartile <- as.numeric(values[[4]] - values[[2]])
+  df_quantiles[df_quantiles$profession==prof,]$upper_wisker <- as.numeric(values[[4]] + 1.5 * inter_quartile)
 } 
 
 #Replace all values that are above 30 min to the median of each professional group
@@ -287,8 +291,8 @@ df_consent$profession <- as.factor(df_consent$profession)
 for(prof in profession_list){
   upperwisker <- as.numeric(df_quantiles[df_quantiles$profession==prof,]$upper_wisker)
   median_value <- as.numeric(df_quantiles[df_quantiles$profession==prof,]$median)
-  df_consent[df_consent$profession==prof &
-               df_consent$test_duration>upperwisker,]$test_duration <- median_value
+  df_consent[(df_consent$profession==prof & 
+                df_consent$test_duration>upperwisker),]$test_duration <- median_value
 }
 "FAST TEST ANSWER MEMBERSHIP
 Merge the membership column that tells whether a worker is part of the fast or slow test takers.
