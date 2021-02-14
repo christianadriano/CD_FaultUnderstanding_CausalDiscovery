@@ -37,6 +37,21 @@ df_consent$qualification_score_id <- factor(df_consent$qualification_score_label
                                       labels=c(4:0)
                                       )
 #-----------------------
+#--------------------------
+"ITEM RESPONSE MODEL SCORES
+Merge Score factors computed through IRT Model fitting"
+df_irt <- read.csv(paste0(path,"//data//irt//","E1_QualificationTest_IRT.csv"))
+df_irt <-  dplyr::select(df_irt, worker_id,file_name,z1) #need file_name, because a few workers have more than one score.
+df_irt$worker_id <- as.factor(df_irt$worker_id) #convert to factor, so I can join with worker_id column
+df_consent$worker_id <- as.factor(df_consent$worker_id) #convert to factor, so I can join with worker_id column
+#only joins with people who qualified (qualification_score>=3), because only these are present in the task execution logs
+df_consent <- left_join(x=df_consent,y=df_irt,keep=FALSE, by=c("worker_id"="worker_id","file_name"="file_name"))#,"file_name"="file_name"))
+dim(df_consent) 
+df_consent <- rename(df_consent,adjusted_score=z1)
+
+
+
+#-----------------------
 "GENDER"
 
 df_consent$gender<- factor(df_consent$gender, 
