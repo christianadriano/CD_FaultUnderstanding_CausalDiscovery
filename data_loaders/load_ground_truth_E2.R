@@ -69,5 +69,10 @@ isCorrectList <- (df_E2_ground$answer=="YES_THERE_IS_AN_ISSUE" &  df_E2_ground$i
 
 df_E2_ground$isAnswerCorrect <- isCorrectList
 
-print("data loaded on df_E2_ground")
+#----------------
+#Create indexes
+source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//create_indexes_E2.R")
+df_E2 <- create_indexes(df_E2_ground)
+
+print("data loaded on df_E2")
 
