@@ -1,7 +1,7 @@
 "-------------------------------------------------------
 
+- Loads merged data of Tasks and Consent (demographics) from file merged_tasks_complexity_E2.csv
 - Loads the ground truth for experiment E2
-- Join worker demographics and qualification test info to each task (which is a row in the dataframe)
 - Includes IRT (item response theory) equalization of the grades
 - Includes Add Halstead complexity of each program statement
 
@@ -28,7 +28,6 @@ path <- "C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding
 "
 Load Ground Truth to E2 data
 "
-#df_E2 <- readARFF(str_c(path, "//consolidated_Final_Experiment_2.arff"))
 
 #Tasks data with code complexity information
 df_tasks <- read.csv(str_c(path, "merged_tasks_complexity_E2.csv"))
