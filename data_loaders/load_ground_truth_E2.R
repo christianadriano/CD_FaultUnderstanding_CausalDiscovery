@@ -19,31 +19,34 @@ Any other condition will set the column 'answer_correct' to FALSE
 
 library(tidyverse) #includes dplyr, stringr,tidyr,ggplot2,tibble,purr,forcats
 
-path <- "C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data//"
-
-
-#Tasks data with code complexity information
-df_tasks <- read.csv(str_c(path, "merged_tasks_complexity_E2.csv"))
-
-#Ground truth for tasks
-df_truth <- read.csv(str_c(path, "ground_truth_E2.csv"))
-
-#Select only the columns that will be left joined with df_E2
-df_truth <-  dplyr::select(df_truth, ID,LineID,isBugCovering,type,faulty_lines,all_Lines,LOC_inspection,LOC_original)
-
-"Left-join microtask_id,ID"
-df_truth$ID <- as.factor(df_truth$ID) #convert to factor, so I can join with microtask_id column
-df_tasks$microtask_id <- as.factor(df_tasks$microtask_id)
-df_E2_ground <- left_join(df_tasks,df_truth,by=c("microtask_id"="ID"))
-
-
-#Apply Ground Truth to E2 data
-isCorrectList <- (df_E2_ground$answer=="YES_THERE_IS_AN_ISSUE" &  df_E2_ground$isBugCovering) |
-  (
-    (df_E2_ground$answer=="NO_THERE_IS_NOT_AN_ISSUE" | df_E2_ground$answer=="I_DO_NOT_KNOW") & 
-      !df_E2_ground$isBugCovering
-  )
-df_E2_ground$isAnswerCorrect <- isCorrectList
-
-print("load_ground_truth executed! Data loaded on df_E2_ground")
-
+load_ground_truth <- function(){
+  
+  path <- "C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data//"
+  
+  
+  #Tasks data with code complexity information
+  df_tasks <- read.csv(str_c(path, "merged_tasks_complexity_E2.csv"))
+  
+  #Ground truth for tasks
+  df_truth <- read.csv(str_c(path, "ground_truth_E2.csv"))
+  
+  #Select only the columns that will be left joined with df_E2
+  df_truth <-  dplyr::select(df_truth, ID,LineID,isBugCovering,type,faulty_lines,all_Lines,LOC_inspection,LOC_original)
+  
+  "Left-join microtask_id,ID"
+  df_truth$ID <- as.factor(df_truth$ID) #convert to factor, so I can join with microtask_id column
+  df_tasks$microtask_id <- as.factor(df_tasks$microtask_id)
+  df_E2_ground <- left_join(df_tasks,df_truth,by=c("microtask_id"="ID"))
+  
+  
+  #Apply Ground Truth to E2 data
+  isCorrectList <- (df_E2_ground$answer=="YES_THERE_IS_AN_ISSUE" &  df_E2_ground$isBugCovering) |
+    (
+      (df_E2_ground$answer=="NO_THERE_IS_NOT_AN_ISSUE" | df_E2_ground$answer=="I_DO_NOT_KNOW") & 
+        !df_E2_ground$isBugCovering
+    )
+  df_E2_ground$isAnswerCorrect <- isCorrectList
+  
+  print(paste0("Loaded ",dim(df_E2_ground)[1], " rows."," Results are in df_E2_ground"))
+  return(df_E2_ground)
+}
