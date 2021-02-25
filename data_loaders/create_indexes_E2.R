@@ -196,7 +196,7 @@ create_indexes <- function(data_E2){
   #                           labels=c(0,1)
   # )
   
-  print(paste0("Loaded ",dim(df_E2)[1], " rows."," Results are in df_E2"))
+  print(paste0("Loaded ",dim(data_E2)[1], " rows."," Results are in df_E2"))
   
   return(data_E2);
 }
