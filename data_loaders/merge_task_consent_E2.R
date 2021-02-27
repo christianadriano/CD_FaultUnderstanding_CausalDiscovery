@@ -17,8 +17,10 @@ the consent data already includes
 
 TODO:
 (DONE) Test if the data is correct. The last step shrunk from 85 to 66 columns. Strange.
-- Drop duplicate columns
-- Remove suffixes of the remaining ones
+(DONE) Drop duplicate columns
+(DONE) Remove suffixes of the remaining ones
+Check if qualification score and profession matches for same worker id
+Check if I still need to create indexes
 
 "
 
@@ -32,18 +34,19 @@ df_E2_ground <- load_ground_truth();
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_consent_create_indexes_E2.R")
 df_consent <- load_consent_create_indexes();
 
-#---------------
-#Create indexes
-source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//create_indexes_E2.R")
-df_E2_indexed <- create_indexes(df_E2_ground)
-dim(df_E2_indexed)
+#select only the columns that will be necessary to add to the tasks data
+df_consent_selected <- select(df_consent,worker_id,file_name,adjusted_score, testDuration_fastMembership, is_fast)
+
 
 #----------------
 #Merge worker and task data
 
 "Left-join worker_id, worker_id"
-df_E2_final <- left_join(x=df_E2_indexed,y=df_consent,keep=FALSE, by=c("worker_id"="worker_id","file_name"="file_name"))
+df_E2_final <- left_join(x=df_E2_ground,y=df_consent_selected,keep=FALSE, by=c("worker_id"="worker_id","file_name"="file_name"))
 dim(df_E2_final) 
 
 #----------------
-
+#Create indexes
+#source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//create_indexes_E2.R")
+#df_E2_indexed <- create_indexes(df_E2_ground)
+#dim(df_E2_indexed)
