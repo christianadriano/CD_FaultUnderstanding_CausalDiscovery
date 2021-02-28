@@ -20,6 +20,10 @@ TODO:
 (DONE) Drop duplicate columns
 (DONE) Remove suffixes of the remaining ones
 Check if qualification score and profession matches for same worker id
+Check file matching_errors.csv 
+  - how many same worker_id, different demographics?
+  - is there a problem in the generaion of IRT file,
+  which is being later merged by the script load_consent_create_indexes()?
 Check if I still need to create indexes
 
 "
@@ -35,15 +39,19 @@ source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding/
 df_consent <- load_consent_create_indexes();
 
 #select only the columns that will be necessary to add to the tasks data
-df_consent_selected <- select(df_consent,worker_id,file_name,adjusted_score, testDuration_fastMembership, is_fast)
+df_consent_selected <- select(df_consent,worker_id,file_name,adjusted_score, qualification_score,testDuration_fastMembership, is_fast)
 
 
 #----------------
 #Merge worker and task data
 
 "Left-join worker_id, worker_id"
-df_E2_final <- left_join(x=df_E2_ground,y=df_consent_selected,keep=FALSE, by=c("worker_id"="worker_id","file_name"="file_name"))
+df_E2_final <- left_join(x=df_E2_ground,y=df_consent_selected,keep=FALSE, by=c("worker_id"="worker_id"))
 dim(df_E2_final) 
+
+#Testing the results, qualification_score is not matching.
+df_E2_final$qualification_score.x==df_E2_final$qualification_score.y
+
 
 #----------------
 #Create indexes
