@@ -19,13 +19,12 @@ TODO:
 (DONE) Test if the data is correct. The last step shrunk from 85 to 66 columns. Strange.
 (DONE) Drop duplicate columns
 (DONE) Remove suffixes of the remaining ones
+
 Check if qualification score and profession matches for same worker id
 Check file matching_errors.csv 
   - how many same worker_id, different demographics?
-  - is there a problem in the generaion of IRT file,
+  - is there a problem in the generaion of IRT file, 
   which is being later merged by the script load_consent_create_indexes()?
-Check if I still need to create indexes
-
 "
 
 #----------------
