@@ -72,6 +72,7 @@ m2 <- quap(
 ) 
 precis(m2,depth=2)
 
+#INTERACTION MODELS
 #Model-3 interaction term, prof influencing the effect of yoe on score
 # yoe->score<-prof
 # prof->score
@@ -117,8 +118,19 @@ precis(m3.3,depth=2)
 #--------------------------------------
 #COMPARING MODELS
 
-compare(m1.1, m1.2, m2, m3.1, m3.2, m3.3)
+c <- compare(m1.1, m1.2, m2, m3.1, m3.2, m3.3, sort="WAIC", func=WAIC)
+c
+#       WAIC    SE dWAIC   dSE pWAIC weight
+# m3.1 4846.0 45.80   0.0    NA  11.9   0.91 <-----------BETTER
+# m3.2 4851.5 45.74   5.5  4.42  16.5   0.06
+# m2   4852.9 45.27   6.9  8.27   7.1   0.03
+# m1.2 4878.2 43.61  32.2 15.09   1.5   0.00
+# m3.3 4881.9 44.29  35.9 14.32   6.4   0.00
+# m1.1 4984.1 42.27 138.0 22.50   6.6   0.00
 
+plot(c)
+#Plot shows that,except for m1.1, all other models have an overlap of WAIC within +/-SE
+#So might still choose a simpler model m2, which is without interactions.
 
 "Compare m3.3 with m3.1, because in the former the credible interval for all by do 
 not cross zero, but the intercept a crosses. Meanwhile, in m3.1, all but graduates 
