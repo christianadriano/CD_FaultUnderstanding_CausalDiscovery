@@ -18,10 +18,11 @@ library(stringr)
 library(dplyr)
 
 #Load data
-source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//load_consent_create_indexes_E2.R")
+source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_consent_create_indexes_E2.R")
 
+df_consent <- load_consent_create_indexes()
 #Remove NA's
-df_E2 <- df_E2[complete.cases(df_E2[,c("years_programming","qualification_score")]),]
+df_E2 <- df_consent[complete.cases(df_consent[,c("years_programming","qualification_score")]),]
 
 
 
@@ -55,6 +56,8 @@ m1.2 <- quap(
   ), data = df_E2
 ) 
 precis(m1.2)
+
+compare(m1.2,m1.1)
 
 #Model-2 both, but only additive effects
 # Yoe->Score<-prof
@@ -110,6 +113,12 @@ m3.3 <- quap(
   ), data = df_E2
 ) 
 precis(m3.3,depth=2)
+
+#--------------------------------------
+#COMPARING MODELS
+
+compare(m1.1, m1.2, m2, m3.1, m3.2, m3.3)
+
 
 "Compare m3.3 with m3.1, because in the former the credible interval for all by do 
 not cross zero, but the intercept a crosses. Meanwhile, in m3.1, all but graduates 
