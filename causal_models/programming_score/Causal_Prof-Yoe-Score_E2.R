@@ -11,6 +11,13 @@ years of experience and profession category, my model addresses the following qu
 by also knowing the number of years of experience in programming?
 (2) After I already know the number of years of experience in programming, what additional 
 value is there in also knowing the profession of the participant?
+
+TODOS:
+Create R-Project for Causal models for Score
+Check for collinearities (YoE and Age)
+Redo models EM models based on that
+Plan Multi-level models
+
 "
 
 library(rethinking)
