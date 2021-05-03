@@ -31,16 +31,9 @@ df_consent <- load_consent_create_indexes()
 #Remove NA's
 df_E2 <- df_consent[complete.cases(df_consent[,c("years_programming","qualification_score")]),]
 
-
-
 # standardize variables = (zero centered, standard deviation one)
 df_E2$yoe <- scale(df_E2$years_programming)
 df_E2$score <- scale(df_E2$qualification_score)
-#df_E2$yoe <- df_E2$years_programming
-#df_E2$score <-  df_E2$qualification_score
-
-
-#df_E2$profession_id <- as.integer(df_E2$profession_id)
 
 #Model-1.1 only profession
 m1.1 <- quap(
