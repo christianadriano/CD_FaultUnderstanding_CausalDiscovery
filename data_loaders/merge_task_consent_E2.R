@@ -20,7 +20,7 @@ TODO:
 (DONE) Drop duplicate columns
 (DONE) Remove suffixes of the remaining ones
 
-Check if qualification score and profession matches for same worker id
+(DONE) Check if qualification score and profession matches for same worker id
 Check file matching_errors.csv 
   - how many same worker_id, different demographics?
   - is there a problem in the generaion of IRT file, 
