@@ -54,6 +54,6 @@ df_E2_final$qualification_score.x==df_E2_final$qualification_score.y
 
 #----------------
 #Create indexes
-#source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//create_indexes_E2.R")
-#df_E2_indexed <- create_indexes(df_E2_ground)
-#dim(df_E2_indexed)
+source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//create_indexes_E2.R")
+df_E2_indexed <- create_indexes(df_E2_final)
+dim(df_E2_indexed)
