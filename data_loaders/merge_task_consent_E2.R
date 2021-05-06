@@ -21,16 +21,26 @@ TODO:
 (DONE) Remove suffixes of the remaining ones
 
 (DONE) Check if qualification score and profession matches for same worker id
-Check file matching_errors.csv 
-  - how many same worker_id, different demographics?
-  - is there a problem in the generaion of IRT file, 
+
+  Check file matching_errors.csv 
+  1- There seems to be problem in the generaion of IRT file, 
   which is being later merged by the script load_consent_create_indexes()?
+  - I think the problem is that some workers took the tests more than once and I kept their original scores.
+  - Moreover, while running the IRT, I took only one of these scores.
+  SOlution is to average these multiple scores and then, run the IRT adjustment.
+  
+  2- If there are different demographics w.r.t. profession, years of experience, and age, I need to pick one.
+ 
+  
 "
 
 #----------------
 #Load tasks with ground truth and complexity
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_ground_truth_E2.R")
 df_E2_ground <- load_ground_truth();
+
+#TODO Filter out fields in the ground truth that already exist in df_consent_selected
+
 
 #----------------
 #Load consent data
@@ -40,6 +50,8 @@ df_consent <- load_consent_create_indexes();
 #select only the columns that will be necessary to add to the tasks data
 df_consent_selected <- select(df_consent,worker_id,file_name,adjusted_score, qualification_score,testDuration_fastMembership, is_fast)
 
+#filter out workers who did not qualify for the test, because there is no task data for them
+df_consent_selected <- df_consent_selected[df_consent_selected$qualification_score>=3,]
 
 #----------------
 #Merge worker and task data
