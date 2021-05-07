@@ -37,19 +37,22 @@ load_consent_create_indexes <- function(){
   
   #------------------------
   "PROFESSION"
-  #relable professional_developer as professional
+  #re-lable professional_developer as professional
   df_consent[df_consent$profession=="Professional_Developer",]$profession <- "Professional"
   
-  #relable Others who are programmers
+  #re-lable Others who are programmers
   pattern <- "it|developer|programmer|computer|tech|technician|software|computer|qa|dba|data|physicist|systems|analyst|engineer"
   df_consent[(grep(pattern,tolower(df_consent$profession))),"profession"] <- "Programmer"
   df_consent[(grep("other",tolower(df_consent$profession))),"profession"] <- "Other"
   
   
   #Convert profession from factor to character 
+  #(Don't need to do this anymore, because it was solved 
+  #when extracted the Programmer profile from the Other category
   #df_consent$profession <- as.character(df_consent$experience)
   #Replaces 'Other...something' for only 'Other'
   #df_consent[grep("Other",df_consent$profession),"profession"] <- "Other"
+
   #Transform profession as factor
   df_consent$profession <- factor(df_consent$profession, 
                                   levels = c("Professional","Programmer", "Hobbyist",
@@ -64,20 +67,32 @@ load_consent_create_indexes <- function(){
   #------------------------
   "QUALIFICATION_SCORE"
   
-  #Transform profession as factor again
+  "I cannot transform qualification score as a factor anymore for two reasons:
+    - it is reasonable to assume a continuous scale 
+    - there will be more than the integer values, because some workers will have averaged values that result
+    from the fact that they took the more than one test.
+  "
   
-  df_consent$qualification_score_label<- factor(df_consent$qualification_score, 
-                                                levels = c(5:0),
-                                                labels = c("100%","80%","60%","40%","20%","0%")
-  )
-  df_consent$qualification_score_id <- factor(df_consent$qualification_score_label,
-                                              levels=levels(df_consent$qualification_score_label),
-                                              labels=c(5:0)
-  )
+  # Averaging worker scores
+  worker_id_list <- unique(df_consent$worker_id)
+  id <- worker_id_list[1]
+  for (id in worker_id_list) {
+    qualification_score_list <- df_consent[df_consent$worker_id == id,"qualification_score"]
+    average_score <- ave(qualification_score_list)
+    df_consent[df_consent$worker_id==id,"qualification_score"] <- average_score
+  }
+  
+  #test PASSED
+  # for (id in worker_id_list) {
+  #   qualification_score_list <- df_consent[df_consent$worker_id == id_test,"qualification_score"]
+  #   different_scores <- unique(qualification_score_list)
+  #   if(length(different_scores)>1)
+  #     print(id)
+  # }
   
   #--------------------------
   "ITEM RESPONSE MODEL SCORES
-Merge Score factors computed through IRT Model fitting"
+  Merge Score factors computed through IRT Model fitting"
   df_irt <- read.csv(paste0(path,"//data//irt//","E2_QualificationTest_IRT.csv"))
   df_irt <-  dplyr::select(df_irt, worker_id,file_name,z1) #need file_name, because a few workers have more than one score.
   df_irt$worker_id <- as.factor(df_irt$worker_id) #convert to factor, so I can join with worker_id column
