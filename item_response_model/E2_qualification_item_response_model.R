@@ -115,10 +115,58 @@ factors
 all wrong (271), all correct (289), and only test_4 correct (159)
 "
 hist(factors$score.dat$z1, breaks=10)
+#----------------------------------------------------------------
+#COMPARE z1 score (IRT score) and the qualification score (original)
 
+#Merge data from Qualification Score and IRT Score
+
+df_score <- data.frame(as.matrix(factors$score.dat)) #NOT CORRECT STILL NEED TO FIX IT
+head(df_score)
+
+df_merged <- left_join(df_consent,df_score.dat,by=c("test1"="test1","test2"="test2","test3"="test3","test4"="test4","test5"="test5"))
+
+#Center (subtract the mean) and Scales (divided by the standard deviation)
+qualification_scores <- scale(df_merged$qualification_score, center=TRUE, scale=TRUE)
+irt_scores <- scale(df_merged$z1, center=TRUE, scale=TRUE)
+
+score_type <- rep("original",length(qualification_scores))
+original_score_list <- cbind(qualification_scores,score_type)
+score_type <- rep("adjusted",length(irt_scores))
+irt_score_list <- cbind(irt_scores,score_type)
+
+all_score_list <- rbind(original_score_list,irt_score_list)
+df_all_scores <- data.frame(all_score_list)
+colnames(df_all_scores) <- c("score","type")
+df_all_scores$score <- as.numeric(as.character(df_all_scores$score))
+
+df_all_scores %>%
+  ggplot(aes(x=score, fill=type)) +
+  #geom_histogram(binwidth=0.05, color="darkgrey", fill="lightblue") +
+  geom_density(alpha=0.3)+
+  theme_minimal()+
+  theme(
+    legend.position=c(0.85, 0.90),
+    panel.spacing = unit(0.1, "lines"),
+    strip.text.x = element_text(size = 12),
+    plot.title = element_text(size=14),
+    axis.text.x = element_text(angle = 20, hjust = 1, size=12)
+  ) +
+  xlab("Scores (centered and scaled)") +
+  ylab("Frequency") +
+  ggtitle("Qualification score distribution E2") 
+
+"
+The chart shows that the adjusted score smoothed the distribution,
+but still preserved the two general patterns of concentration on 
+high and low medium-to-low scores. The reason for the smoothing is
+two-fold: adjusted score is continuous scale and the original 
+shifted some very low scores to a low-to-medium score. The latter
+corresponds to giving a lower weight to questions that most people
+got it correctly This was the case of question 4.
+"
 
 #----------------------------------------------------------------
-"Merge this with the Session data from E2"
+"Merge this with the consent data from E2"
 
 df_score.dat <- data.frame(factors$score.dat)
 
