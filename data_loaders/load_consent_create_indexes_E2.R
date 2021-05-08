@@ -45,15 +45,17 @@ load_consent_create_indexes <- function(){
   df_consent[(grep(pattern,tolower(df_consent$profession))),"profession"] <- "Programmer"
   df_consent[(grep("other",tolower(df_consent$profession))),"profession"] <- "Other"
   
-  
+  #-----------
+  #DO NOT NEED THIS ANYMORE
   #Convert profession from factor to character 
   #(Don't need to do this anymore, because it was solved 
   #when extracted the Programmer profile from the Other category
   #df_consent$profession <- as.character(df_consent$experience)
   #Replaces 'Other...something' for only 'Other'
   #df_consent[grep("Other",df_consent$profession),"profession"] <- "Other"
-
-  #Transform profession as factor
+  #---------
+ 
+   #Transform profession as factor
   df_consent$profession <- factor(df_consent$profession, 
                                   levels = c("Professional","Programmer", "Hobbyist",
                                              "Graduate_Student","Undergraduate_Student",
@@ -73,7 +75,7 @@ load_consent_create_indexes <- function(){
     from the fact that they took the more than one test.
   "
   
-  # Averaging worker scores
+  # Averaging worker qualification scores
   worker_id_list <- unique(df_consent$worker_id)
   id <- worker_id_list[1]
   for (id in worker_id_list) {
@@ -82,6 +84,15 @@ load_consent_create_indexes <- function(){
     df_consent[df_consent$worker_id==id,"qualification_score"] <- average_score
   }
   
+  # Averaging worker adjusted_scores
+  worker_id_list <- unique(df_consent$worker_id)
+  id <- worker_id_list[1]
+  for (id in worker_id_list) {
+    adjusted_score_list <- df_consent[df_consent$worker_id == id,"adjusted_score"]
+    average_score <- ave(adjusted_score_list)
+    df_consent[df_consent$worker_id==id,"adjusted_score"] <- average_score
+  }
+
   #test PASSED
   # for (id in worker_id_list) {
   #   qualification_score_list <- df_consent[df_consent$worker_id == id_test,"qualification_score"]
