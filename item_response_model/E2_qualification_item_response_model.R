@@ -6,26 +6,37 @@ library(ltm)
 library(psych)
 library(mirt)
 library(ggplot2)
+library(farff)
 
-source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_consent_create_indexes_E2.R")
+#-------------------------------------
+"LOAD CONSENT DATA EXPERIMENT-2"
+
+path <- "C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//"
+dataset_E2 <- readARFF(paste0(path,"//data//","consent_consolidated_Experiment_2.arff"))
+df_consent <- data.frame(dataset_E2)
+dim(df_consent) 
+
 
 "Remove participants for whom we did not take the qualification test" 
-df_E2 <- df_consent[complete.cases(df_consent[,"qualification_score"]),]
+df_consent <- df_consent[complete.cases(df_consent[,"qualification_score"]),]
 #Original size: 3657   31 , new size 1788 31
 
-"Replace false for 0(zero) and true for one(1)"
+#NOT Necessary anymore, I already converted this data from true/false to 1/0's
+#"Replace false for 0(zero) and true for one(1)"
 # df_E2$test1_ <-  ifelse(df_E2$test1=="true",1,0)
-# df_E2$test2_ <-  ifelse(df_E2$test2=="true",1,0)
-# df_E2$test3_ <-  ifelse(df_E2$test3=="true",1,0)
-# df_E2$test4_ <-  ifelse(df_E2$test4=="true",1,0)
-# df_E2$test5_ <-  ifelse(df_E2$test5=="true",1,0)
 
-df <- df_E2 %>% dplyr::select(test1,test2,test3,test4,test5)
-
-write.csv(df,"C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data//irt//E2_QualificationTestResults.csv")
+df_tests <- df_consent %>% dplyr::select(test1,test2,test3,test4,test5)
 
 
-IRT_model <- ltm(df ~ z1, IRT.param=TRUE)
+#For workers who have test outcomes that are distinct, 
+#allow to compute distinct IRT-scores, and then take the average.
+
+
+
+#------------------------------------------
+#BUILD THE IRT MODEL
+
+IRT_model <- ltm(df_tests ~ z1, IRT.param=TRUE)
 
 IRT_model
 # Coefficients:
@@ -103,34 +114,7 @@ factors
 "Factor scores shows tha the most frequent combination (Obs) were
 all wrong (271), all correct (289), and only test_4 correct (159)
 "
-
-#-----------
-#Plots
 hist(factors$score.dat$z1, breaks=10)
-
-df_score <- data.frame(factors$score.dat$z1) #NOT CORRECT STILL NEED TO FIX IT
-head(df_score)
-factors %>%
-  ggplot( aes(x=test_duration)) +
-  geom_histogram(binwidth=0.1, color="darkgrey", fill="lightblue") +
-  theme_minimal()+
-  theme(
-    legend.position="none",
-    panel.spacing = unit(0.1, "lines"),
-    strip.text.x = element_text(size = 12),
-    plot.title = element_text(size=14),
-    axis.text.x = element_text(angle = 20, hjust = 1, size=12)
-  ) +
-  xlab("Test Duration (minutes)") +
-  ylab("Assigned Probability (%)") +
-  facet_wrap(~text,nrow=3,ncol=2)+
-  ggtitle("Test Duration Across Professions (without outliers)") 
-
-
-
-
-hist(df_E2$qualification_score)
-
 
 
 #----------------------------------------------------------------
@@ -145,11 +129,24 @@ df_score.dat$test3 <- as.factor(df_score.dat$test3)
 df_score.dat$test4<- as.factor(df_score.dat$test4)
 df_score.dat$test5 <- as.factor(df_score.dat$test5)
 
-#LEFT JOIN to associate the new difficulty scores (z1) to the partipants.
-df_new <- left_join(df_E2,df_score.dat,by=c("test1"="test1","test2"="test2","test3"="test3","test4"="test4","test5"="test5"))
+#LEFT JOIN to associate the new difficulty scores (z1) to the participants.
+df_new <- left_join(df_consent,df_score.dat,by=c("test1"="test1","test2"="test2","test3"="test3","test4"="test4","test5"="test5"))
 
 
-#Store in the original file the new difficulty scores (z1) of the partipants
+#------------------
+#Check if same worker_id has different z-scores
+worker_id_list <- unique(df_new$worker_id)
+
+for (id in worker_id_list) {
+  irt_score_list <- df_new[df_new$worker_id == id,"qualification_score"]
+  different_scores <- unique(irt_score_list)
+  if(length(different_scores)>1)
+    print(id)
+}
+
+
+
+#Store in the original file the new difficulty scores (z1) of the participants
 write.csv(df_new,"C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data//irt//E2_QualificationTest_IRT.csv")
 
 #Visualizing the results
