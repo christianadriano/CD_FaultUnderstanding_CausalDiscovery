@@ -14,24 +14,18 @@ library(farff)
 path <- "C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//"
 dataset_E2 <- readARFF(paste0(path,"//data//","consent_consolidated_Experiment_2.arff"))
 df_consent <- data.frame(dataset_E2)
-dim(df_consent) 
+#dim(df_consent) 
 
 
 "Remove participants for whom we did not take the qualification test" 
 df_consent <- df_consent[complete.cases(df_consent[,"qualification_score"]),]
-#Original size: 3657   31 , new size 1788 31
+#Original size: 3658   21 , new size 1788 21
 
 #NOT Necessary anymore, I already converted this data from true/false to 1/0's
 #"Replace false for 0(zero) and true for one(1)"
 # df_E2$test1_ <-  ifelse(df_E2$test1=="true",1,0)
 
 df_tests <- df_consent %>% dplyr::select(test1,test2,test3,test4,test5)
-
-
-#For workers who have test outcomes that are distinct, 
-#allow to compute distinct IRT-scores, and then take the average.
-
-
 
 #------------------------------------------
 #BUILD THE IRT MODEL
@@ -55,11 +49,13 @@ were very discriminating.
 
 plot(IRT_model, type="ICC")
 
-"Except for Test-4, all other tests show good discriminative power"
+"The steep inclination of the sigmoid-like curves show that, except for test-4, 
+all other tests have a good discriminative power."
 
-plot(IRT_model, type="ICC", items=c(1,3))
+plot(IRT_model, type="ICC", items=c(1,2,4))
 
 #--------
+#NOT REVELANT INFORMATION
 "Plot the information, which tells me which area in the
 x-axis gives me more information in terms of discrimination 
 power of the items (all items). This is important to show design the items
@@ -67,10 +63,9 @@ in a way that they focus more or less on certain parameter
 configurations, which in the case of the example is 
 ability. 
 "
-plot(IRT_model, type="IIC", items=0)
+#plot(IRT_model, type="IIC", items=0)
 "The plot shows the test information covers from -4 to +4 with peak at zero."
 #---------
-
 
 factors <- factor.scores.ltm(IRT_model)
 factors
@@ -112,11 +107,24 @@ factors
 
 
 "Factor scores shows tha the most frequent combination (Obs) were
-all wrong (271), all correct (289), and only test_4 correct (159)
+all wrong (271), all correct (289), and only test_4 correct (159). 
+Thi high frequency of only test_4 correct (3rd top) shows that the
+IRT model is properly reflecting the fact that test_4 was easier than
+expected, i.e., much easier than all other tests. If tests were equally
+difficult, we would see higher frequency of all correct except one of 
+each the other tests. e.g.,(1,0,0,0,0), (0,1,0,0,0), (0,0,1,0,0), and (0,0,0,0,1).
+
+The table goes to an Appendix, but the comment goes to text.
+
+
 "
 hist(factors$score.dat$z1, breaks=10)
 #----------------------------------------------------------------
 #COMPARE z1 score (IRT score) and the qualification score (original)
+
+"
+
+"
 
 #Merge data from Qualification Score and IRT Score
 
@@ -180,6 +188,8 @@ df_score.dat$test5 <- as.factor(df_score.dat$test5)
 #LEFT JOIN to associate the new difficulty scores (z1) to the participants.
 df_new <- left_join(df_consent,df_score.dat,by=c("test1"="test1","test2"="test2","test3"="test3","test4"="test4","test5"="test5"))
 
+#Note that later on, I aggregate the different qualification and adjusted scores 
+#for the same worker_id. This is done in the script load_consent_create_indexes_E2.R
 
 #------------------
 #Check if same worker_id has different z-scores
