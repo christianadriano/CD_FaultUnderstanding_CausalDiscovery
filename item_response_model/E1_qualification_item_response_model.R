@@ -1,18 +1,21 @@
 "
 Item response model of the programming test qualification E1
+
+TODO:
+- How to interpret the Test Information Function?
+
 "
 
 library(dplyr)
-
 library(ltm)
 library(psych)
 library(mirt)
 
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_consent_create_indexes_E1.R")
-#dim(df_E1) #4776   21
-"Remove participants for whom we did not take the qualification test" 
+dim(df_E1) #4776   21
+#"Remove participants for whom we did not take the qualification test" 
 df <- df_E1[complete.cases(df_E1[,"qualification_score"]),] #left with 3699 rows
-#dim(df) 3699   21
+dim(df) #3699   21
 
 "Replace false for 0(zero) and true for 1(one)"
 df$test1_ <-  ifelse(df$test1=="true",1,0)
@@ -24,8 +27,6 @@ df$test4_ <-  ifelse(df$test4=="true",1,0)
 #df_tests <- dplyr::filter(df,!c(test1_==0 & test2_==0 & test3_==0 & test4_==0))
 df_tests <- df %>% dplyr::select(test1_,test2_,test3_,test4_)
 
-
-#write.csv(df_tests,"C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data//irt//E1_QualificationTestResults.csv")
 
 #------------------------------------------------------
 "Run the 2PL model, only difficulty and discrimination"
@@ -41,7 +42,8 @@ IRT_model_2PL
 
 "Coefficients for dffclt show the test was difficult. First and last question were more.
 
-Regarding discrimation, first and fourth questions were the most discriminating.
+Regarding discrimation, first and third questions were the most discriminating.
+This is visually confirmed by the plot of the Item characteristic curves
 "
 
 plot(IRT_model_2PL, type="ICC")
@@ -57,7 +59,6 @@ ability.
 
 The plot shows the test information covers from 0 to 2 with peak on one 
 standard deviation of the ability."
-
 plot(IRT_model_2PL, type="IIC", items=0)
 #--------
 
