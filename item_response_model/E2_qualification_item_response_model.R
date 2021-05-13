@@ -122,10 +122,6 @@ hist(factors$score.dat$z1, breaks=10)
 #----------------------------------------------------------------
 #COMPARE z1 score (IRT score) and the qualification score (original)
 
-"
-
-"
-
 #Merge data from Qualification Score and IRT Score
 
 df_score <- data.frame(as.matrix(factors$score.dat)) #NOT CORRECT STILL NEED TO FIX IT
