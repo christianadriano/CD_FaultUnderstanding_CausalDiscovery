@@ -6,6 +6,10 @@ library(farff)
 library(ggplot2)
 library(dplyr)
 
+# TODO
+# Remove the merge with IRT from load_consent_create_indexes_E1.R
+
+
 #--------------------------
 "LOAD FILES"
 path <- "C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data//"
