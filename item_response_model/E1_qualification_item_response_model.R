@@ -11,11 +11,15 @@ library(ltm)
 library(psych)
 library(mirt)
 
+#TODO:
+# Plot the ggplot density chart to compare qualification_score and adjusted score
+
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_consent_create_indexes_E1.R")
-dim(df_E1) #4776   21
+dim(df_consent) #3699   22
+
 #"Remove participants for whom we did not take the qualification test" 
-df <- df_E1[complete.cases(df_E1[,"qualification_score"]),] #left with 3699 rows
-dim(df) #3699   21
+#df <- df_consent[complete.cases(df_consent[,"qualification_score"]),] #left with 3699 rows
+#dim(df) #3699   21
 
 "Replace false for 0(zero) and true for 1(one)"
 df$test1_ <-  ifelse(df$test1=="true",1,0)
