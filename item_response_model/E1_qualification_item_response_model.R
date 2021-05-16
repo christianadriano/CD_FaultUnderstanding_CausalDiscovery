@@ -73,8 +73,16 @@ configurations, which in the case of the example is
 ability. 
 
 The plot shows the test information covers from 0 to 2 with peak on one 
-standard deviation of the ability."
+standard deviation of the ability, which has narrower distribution 
+compared with the distribution of test in E2. This means that the 
+E2 qualification test could discriminate among a wider spectrum of programming ability
+than the E1 qualification test. This was not accident, because, based on the outcomes
+of E1, I planned the E2 qualification test to have 5 questions (instead of 4) to 
+be more difficult.
+"
 plot(IRT_model_2PL, type="IIC", items=0)
+
+
 #--------
 
 factors <- factor.scores.ltm(IRT_model_2PL)
