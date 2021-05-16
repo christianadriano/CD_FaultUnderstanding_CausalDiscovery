@@ -50,10 +50,15 @@ IRT_model_2PL
 # test3_ 0.9294014 7.5319611
 # test4_ 2.3272393 0.2682696
 
-"Coefficients for dffclt show the test was difficult. First and last question were more.
+"Coefficients for dffclt show the test was difficult. While test 1 was both the second
+most difficult and second most dicriminative, the most difficult test (test 4) was the
+lowest in dicriminative power. Instead, test 3 was the most discriminative. 
 
-Regarding discrimation, first and third questions were the most discriminating.
-This is visually confirmed by the plot of the Item characteristic curves
+This can be visually confirmed by the inclination of the sigmoids of 
+the item characteristics curves in the figure below. 
+The steepest ones (test 1 and test 3) are the most discriminative)
+
+These results show that difficulty and discrimination are always correlated metrics.
 "
 
 plot(IRT_model_2PL, type="ICC")
