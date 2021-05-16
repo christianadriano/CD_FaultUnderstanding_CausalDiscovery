@@ -128,10 +128,10 @@ is not perfectly ordered."
 
 #Merge data from Qualification Score and IRT Score
 
-df_score <- data.frame(as.matrix(factors$score.dat)) #NOT CORRECT STILL NEED TO FIX IT
+df_score <- data.frame(as.matrix(factors$score.dat)) 
 head(df_score)
 
-df_merged <- left_join(df_consent,df_score.dat,by=c("test1"="test1","test2"="test2","test3"="test3","test4"="test4","test5"="test5"))
+df_merged <- left_join(df,df_score,by=c("test1_"="test1_","test2_"="test2_","test3_"="test3_","test4_"="test4_"))
 
 #Center (subtract the mean) and Scales (divided by the standard deviation)
 qualification_scores <- scale(df_merged$qualification_score, center=TRUE, scale=TRUE)
