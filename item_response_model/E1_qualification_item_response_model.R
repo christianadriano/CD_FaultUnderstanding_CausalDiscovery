@@ -166,8 +166,15 @@ df_all_scores %>%
 "
 The chart shows that the adjusted score smoothed the distribution,
 but still preserved the two general patterns of concentration on 
-high and low medium-to-low scores. The reason for the smoothing is
-two-fold: adjusted score is continuous scale and the original 
+high and low medium-to-low scores. 
+
+However, it also increased the frequency of the lowest score and
+highest score groups. The final distribution has more oa an
+exponential shape, while the original one had a right skewed Gaussian
+shape.
+
+
+The reason for the smoothing is two-fold: adjusted score is continuous scale and the original 
 shifted some very low scores to a low-to-medium score. The latter
 corresponds to giving a lower weight to questions that most people
 got it correctly This was the case of question 4.
