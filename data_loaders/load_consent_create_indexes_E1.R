@@ -22,8 +22,6 @@ dim(df_consent[is.na(df_consent$test1),]) #1077 are NA
 df_consent <- df_consent[!is.na(df_consent$test1),]
 dim(df_consent) #3699 are not NA.
 
-
-
 #-----------------------
 "QUALIFICATION_SCORE"
 
@@ -41,21 +39,13 @@ for (id in worker_id_list) {
   df_consent[df_consent$worker_id==id,"qualification_score"] <- average_score
 }
 
-# Averaging worker adjusted_scores
-worker_id_list <- unique(df_consent$worker_id)
-for (id in worker_id_list) {
-  adjusted_score_list <- df_consent[df_consent$worker_id == id,"adjusted_score"]
-  average_score <- ave(adjusted_score_list)
-  df_consent[df_consent$worker_id==id,"adjusted_score"] <- average_score
-}
-
 #test PASSED
-# for (id in worker_id_list) {
-#   qualification_score_list <- df_consent[df_consent$worker_id == id_test,"qualification_score"]
-#   different_scores <- unique(qualification_score_list)
-#   if(length(different_scores)>1)
-#     print(id)
-# }
+ for (id in worker_id_list) {
+   qualification_score_list <- df_consent[df_consent$worker_id == id,"qualification_score"]
+   different_scores <- unique(qualification_score_list)
+   if(length(different_scores)>1)
+     print(id)
+ }
 
 
 #-----------------------
@@ -69,6 +59,23 @@ df_consent$worker_id <- as.factor(df_consent$worker_id) #convert to factor, so I
 df_consent <- left_join(x=df_consent,y=df_irt,keep=FALSE, by=c("worker_id"="worker_id"))
 dim(df_consent) 
 df_consent <- rename(df_consent,adjusted_score=z1)
+
+# Averaging worker adjusted_scores
+worker_id_list <- unique(df_consent$worker_id)
+for (id in worker_id_list) {
+  adjusted_score_list <- df_consent[df_consent$worker_id == id,"adjusted_score"]
+  average_score <- ave(adjusted_score_list)
+  df_consent[df_consent$worker_id==id,"adjusted_score"] <- average_score
+}
+
+#test PASSED
+worker_id_list <- unique(df_consent$worker_id)
+for (id in worker_id_list) {
+  qualification_score_list <- df_consent[df_consent$worker_id == id,"adjusted_score"]
+  different_scores <- unique(qualification_score_list)
+  if(length(different_scores)>1)
+    print(paste0(id,"=",different_scores))
+}
 
 #-----------------------
 "GENDER"
