@@ -77,7 +77,6 @@ load_consent_create_indexes <- function(){
   
   # Averaging worker qualification scores
   worker_id_list <- unique(df_consent$worker_id)
-  id <- worker_id_list[1]
   for (id in worker_id_list) {
     qualification_score_list <- df_consent[df_consent$worker_id == id,"qualification_score"]
     average_score <- ave(qualification_score_list)
@@ -86,7 +85,6 @@ load_consent_create_indexes <- function(){
   
   # Averaging worker adjusted_scores
   worker_id_list <- unique(df_consent$worker_id)
-  id <- worker_id_list[1]
   for (id in worker_id_list) {
     adjusted_score_list <- df_consent[df_consent$worker_id == id,"adjusted_score"]
     average_score <- ave(adjusted_score_list)
