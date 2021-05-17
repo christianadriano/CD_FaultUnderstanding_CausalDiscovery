@@ -13,7 +13,6 @@ library(ggplot2)
 library(dplyr)
 library(tidyr)
 
-
 load_consent_create_indexes <- function(){
   
   #--------------------------
@@ -28,10 +27,10 @@ load_consent_create_indexes <- function(){
   "MISSING DATA"
   #remove rows without profession information
   df_consent <- df_consent[!is.na(df_consent$profession),] #left with 2463
-  dim(df_consent) #2463
+  dim(df_consent) #2463 21
   
   #Filter-out rows without test data
-  dim(df_consent[is.na(df_consent$test1),]) #1870 are NA
+  dim(df_consent[is.na(df_consent$test1),]) #675 21, so 1870 are NA
   df_consent <- df_consent[!is.na(df_consent$test1),]
   dim(df_consent) #1788 are not NA.
   
@@ -55,7 +54,7 @@ load_consent_create_indexes <- function(){
   #df_consent[grep("Other",df_consent$profession),"profession"] <- "Other"
   #---------
  
-   #Transform profession as factor
+  #Transform profession as factor
   df_consent$profession <- factor(df_consent$profession, 
                                   levels = c("Professional","Programmer", "Hobbyist",
                                              "Graduate_Student","Undergraduate_Student",
@@ -82,22 +81,16 @@ load_consent_create_indexes <- function(){
     average_score <- ave(qualification_score_list)
     df_consent[df_consent$worker_id==id,"qualification_score"] <- average_score
   }
-  
-  # Averaging worker adjusted_scores
-  worker_id_list <- unique(df_consent$worker_id)
-  for (id in worker_id_list) {
-    adjusted_score_list <- df_consent[df_consent$worker_id == id,"adjusted_score"]
-    average_score <- ave(adjusted_score_list)
-    df_consent[df_consent$worker_id==id,"adjusted_score"] <- average_score
-  }
+ 
 
   #test PASSED
-  # for (id in worker_id_list) {
-  #   qualification_score_list <- df_consent[df_consent$worker_id == id_test,"qualification_score"]
-  #   different_scores <- unique(qualification_score_list)
-  #   if(length(different_scores)>1)
-  #     print(id)
-  # }
+  worker_id_list <- unique(df_consent$worker_id)
+  for (id in worker_id_list) {
+     qualification_score_list <- df_consent[df_consent$worker_id == id,"qualification_score"]
+     different_scores <- unique(qualification_score_list)
+     if(length(different_scores)>1)
+       print(paste0(id,"=",different_scores))
+   }
   
   #--------------------------
   "ITEM RESPONSE MODEL SCORES
@@ -110,6 +103,23 @@ load_consent_create_indexes <- function(){
   df_consent <- left_join(x=df_consent,y=df_irt,keep=FALSE, by=c("worker_id"="worker_id","file_name"="file_name"))#,"file_name"="file_name"))
   dim(df_consent) 
   df_consent <- rename(df_consent,adjusted_score=z1)
+  
+  # Averaging worker adjusted_scores
+  worker_id_list <- unique(df_consent$worker_id)
+  for (id in worker_id_list) {
+    adjusted_score_list <- df_consent[df_consent$worker_id == id,"adjusted_score"]
+    average_score <- ave(adjusted_score_list)
+    df_consent[df_consent$worker_id==id,"adjusted_score"] <- average_score
+  }
+  
+  #test PASSED
+  worker_id_list <- unique(df_consent$worker_id)
+  for (id in worker_id_list) {
+    qualification_score_list <- df_consent[df_consent$worker_id == id,"adjusted_score"]
+    different_scores <- unique(qualification_score_list)
+    if(length(different_scores)>1)
+      print(paste0(id,"=",different_scores))
+  }
   
   #------------------------
   "FILE_NAME"
