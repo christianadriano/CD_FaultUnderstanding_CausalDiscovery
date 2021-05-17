@@ -40,6 +40,34 @@ df_consent$qualification_score_id <- factor(df_consent$qualification_score_label
                                       levels=levels(df_consent$qualification_score_label),
                                       labels=c(4:0)
                                       )
+
+# Averaging worker qualification scores
+worker_id_list <- unique(df_consent$worker_id)
+id <- worker_id_list[1]
+for (id in worker_id_list) {
+  qualification_score_list <- df_consent[df_consent$worker_id == id,"qualification_score"]
+  average_score <- ave(qualification_score_list)
+  df_consent[df_consent$worker_id==id,"qualification_score"] <- average_score
+}
+
+# Averaging worker adjusted_scores
+worker_id_list <- unique(df_consent$worker_id)
+id <- worker_id_list[1]
+for (id in worker_id_list) {
+  adjusted_score_list <- df_consent[df_consent$worker_id == id,"adjusted_score"]
+  average_score <- ave(adjusted_score_list)
+  df_consent[df_consent$worker_id==id,"adjusted_score"] <- average_score
+}
+
+#test PASSED
+# for (id in worker_id_list) {
+#   qualification_score_list <- df_consent[df_consent$worker_id == id_test,"qualification_score"]
+#   different_scores <- unique(qualification_score_list)
+#   if(length(different_scores)>1)
+#     print(id)
+# }
+
+
 #-----------------------
 #--------------------------
 "ITEM RESPONSE MODEL SCORES
