@@ -6,10 +6,6 @@ library(farff)
 library(ggplot2)
 library(dplyr)
 
-# TODO
-# Remove the merge with IRT from load_consent_create_indexes_E1.R
-
-
 #--------------------------
 "LOAD FILES"
 path <- "C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data//"
@@ -31,19 +27,14 @@ dim(df_consent) #3699 are not NA.
 #-----------------------
 "QUALIFICATION_SCORE"
 
-
-df_consent$qualification_score_label<- factor(df_consent$qualification_score, 
-                                          levels = c(4:0),
-                                          labels = c("100%","75%","50%","25%","0%")
-                                          )
-df_consent$qualification_score_id <- factor(df_consent$qualification_score_label,
-                                      levels=levels(df_consent$qualification_score_label),
-                                      labels=c(4:0)
-                                      )
+"I cannot transform qualification score as a factor anymore for two reasons:
+    - it is reasonable to assume a continuous scale 
+    - there will be more than the integer values, because some workers will have averaged values that result
+    from the fact that they took the more than one test.
+  "
 
 # Averaging worker qualification scores
 worker_id_list <- unique(df_consent$worker_id)
-id <- worker_id_list[1]
 for (id in worker_id_list) {
   qualification_score_list <- df_consent[df_consent$worker_id == id,"qualification_score"]
   average_score <- ave(qualification_score_list)
@@ -52,7 +43,6 @@ for (id in worker_id_list) {
 
 # Averaging worker adjusted_scores
 worker_id_list <- unique(df_consent$worker_id)
-id <- worker_id_list[1]
 for (id in worker_id_list) {
   adjusted_score_list <- df_consent[df_consent$worker_id == id,"adjusted_score"]
   average_score <- ave(adjusted_score_list)
