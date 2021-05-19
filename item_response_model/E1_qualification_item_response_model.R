@@ -181,17 +181,14 @@ got it correctly This was the case of question 4.
 "
 
 #----------------------------------------------------------------
-
-
-
-#----------------------------------------------------------------
+# WRITE IRT SCORE TO FILE
 
 df_score.dat <- data.frame(factors$score.dat)
 
-#LEFT JOIN to associate the new difficulty scores (z1) to the partipants.
+#LEFT JOIN to associate the new difficulty scores (z1) to the participants.
 df_new <- left_join(df,df_score.dat,by=c("test1_"="test1_","test2_"="test2_","test3_"="test3_","test4_"="test4_"))
 
-#Store in the original file the new difficulty scores (z1) of the partipants
+#Store in the original file the new difficulty scores (z1) of the participants
 write.csv(df_new,"C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//E1_QualificationTest_IRT.csv")
 
 #Visualizing the results
