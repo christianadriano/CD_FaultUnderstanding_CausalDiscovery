@@ -1,10 +1,11 @@
 "
-Item response model of the programming test qualification E1
-
-TODO:
-- Check why so few items with one and zero score after merge. line 134 135
+#Item Response Theory Model for Experiment -1
+## What is it? 
+## Why is it important?
+## What did it show?
 
 "
+
 
 library(dplyr)
 library(ltm)
@@ -19,9 +20,9 @@ dataset_E1 <- readARFF(paste0(path,"consent_consolidated_Experiment_1.arff"))
 df_consent <- data.frame(dataset_E1)
 dim(df_consent) #4776   16
 
-#"Remove participants for whom we did not take the qualification test" 
+"Remove participants for whom we did not take the qualification test, NA's in the column" 
 df <- df_consent[complete.cases(df_consent[,"qualification_score"]),] #left with 3699 rows
-dim(df) #3699   21
+dim(df) #3699   21, hence there were 1077 participants (4776-3699), who did not take the qualification test
 
 "Replace false for 0(zero) and true for 1(one)"
 df$test1_ <-  ifelse(df$test1=="true",1,0)
@@ -131,8 +132,11 @@ df_new <- left_join(df,df_score.dat,by=c("test1_"="test1_","test2_"="test2_","te
 write.csv(df_new,"C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data//irt//E1_QualificationTest_IRT.csv")
 
 #Visualizing the results
+#There are three participants who somehow did not pass the exam score<2, 
+#but managed to answer the survey, for this reason there three datapoints with score 1 and 0.
 plot(df_new$years_programming, df_new$z1)
 plot(df_new$years_programming, df_new$qualification_score)
+
 
 #----------------------------------------------------------------
 
