@@ -5,29 +5,59 @@ output: github_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-```
+library(ggplot2)
+library(dplyr)
 
-## GitHub Documents
-
-This is an R Markdown format used for publishing markdown documents to GitHub. When you click the **Knit** button all R code chunks are run and a markdown file (.md) suitable for publishing to GitHub is generated.
-
-## Including Code
-
-You can include R code in the document as follows:
-
-```{r load consent file, echo=FALSE}
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_consent_create_indexes_E1.R")
 df_consent <- load_consent_create_indexes();
 
-summary(df_consent)
 ```
 
-## Including Plots
+## About this report
 
-You can also embed plots, for example:
+1- How adjusted_score and qualification_score are distributed 
+2- How many people increased their score relative to their peers? 
+3- How many people decreased? 
+4- Who were these people who increased and decreased (distribution w.r.t. original score)?
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+This is an R Markdown format used for publishing markdown documents to GitHub. When you click the **Knit** button all R code chunks are run and a markdown file (.md) suitable for publishing to GitHub is generated.
+
+## #----------------------------------------------------------------
+# 1- How adjusted_score and qualification_score are distributed 
+
+```{r density plots, echo=FALSE}
+
+
+#Center (subtract the mean) and Scales (divided by the standard deviation)
+qualification_scores <- scale(df_consent$qualification_score, center=TRUE, scale=TRUE)
+irt_scores <- scale(df_consent$adjusted_score, center=TRUE, scale=TRUE)
+
+score_type <- rep("original",length(qualification_scores))
+original_score_list <- cbind(qualification_scores,score_type)
+score_type <- rep("adjusted",length(irt_scores))
+irt_score_list <- cbind(irt_scores,score_type)
+
+all_score_list <- rbind(original_score_list,irt_score_list)
+df_all_scores <- data.frame(all_score_list)
+colnames(df_all_scores) <- c("score","type")
+df_all_scores$score <- as.numeric(as.character(df_all_scores$score))
+
+df_all_scores %>%
+  ggplot(aes(x=score, fill=type)) +
+  #geom_histogram(binwidth=0.05, color="darkgrey", fill="lightblue") +
+  geom_density(alpha=0.3)+
+  theme_minimal()+
+  theme(
+    legend.position=c(0.85, 0.90),
+    panel.spacing = unit(0.1, "lines"),
+    strip.text.x = element_text(size = 12),
+    plot.title = element_text(size=14),
+    axis.text.x = element_text(angle = 20, hjust = 1, size=12)
+  ) +
+  xlab("Scores (centered and scaled)") +
+  ylab("Frequency") +
+  ggtitle("Qualification score distribution E2") 
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
