@@ -21,8 +21,16 @@ load_consent_create_indexes <- function(){
   
   #Filter-out rows without test data
   dim(df_consent[is.na(df_consent$test1),]) #1077 are NA
-  df_consent <- df_consent[!is.na(df_consent$test1),]
+  df_consent <- df_consent[complete.cases(df_consent[,"qualification_score"]),]
   dim(df_consent) #3699 are not NA.
+  
+  #-----------------------
+  "IMPUTATION ERROR"
+  
+  #Filter-out 3 rows that have demographics data but did not pass the test (qualification score<2)
+  #This should not have happened in normal execution, because demographics were collected only 
+  #at the end of the experiment. 
+  df_consent <- df_consent[!(df_consent$qualification_score<2 & !is.na(df_consent$years_programming)),]
   
   #-----------------------
   "QUALIFICATION_SCORE"
