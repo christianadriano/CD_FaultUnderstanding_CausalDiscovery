@@ -2,9 +2,9 @@
 E1 Compare adjusted_score and qualification_score (original)
 
 1- How adjusted_score and qualification_score are distributed 
-- How many people increased their score relative to their peers? 
-- How many people decreased? 
-- Who were these people who increased and decreased (distribution w.r.t. original score)?
+2- How many people increased their score relative to their peers? 
+3- How many people decreased? 
+4- Who were these people who increased and decreased (distribution w.r.t. original score)?
 
 "
 library(ggplot2)
@@ -17,16 +17,9 @@ df_consent <- load_consent_create_indexes();
 #----------------------------------------------------------------
 # 1- How adjusted_score and qualification_score are distributed 
 
-#Merge data from Qualification Score and IRT Score
-
-df_score <- data.frame(as.matrix(factors$score.dat)) 
-head(df_score)
-
-df_merged <- left_join(df,df_score,by=c("test1_"="test1_","test2_"="test2_","test3_"="test3_","test4_"="test4_"))
-
 #Center (subtract the mean) and Scales (divided by the standard deviation)
-qualification_scores <- scale(df_merged$qualification_score, center=TRUE, scale=TRUE)
-irt_scores <- scale(df_merged$z1, center=TRUE, scale=TRUE)
+qualification_scores <- scale(df_consent$qualification_score, center=TRUE, scale=TRUE)
+irt_scores <- scale(df_consent$adjusted_score, center=TRUE, scale=TRUE)
 
 score_type <- rep("original",length(qualification_scores))
 original_score_list <- cbind(qualification_scores,score_type)
