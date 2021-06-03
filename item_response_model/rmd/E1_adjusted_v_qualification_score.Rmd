@@ -80,20 +80,20 @@ The reason for the smoothing is two-fold: adjusted score is continuous scale and
 corresponds to giving a lower weight to questions that most people
 got it correctly This was the case of question 4.
 
-### How does the entropy (spread) of the distributions compare?
+## How does the entropy (spread) of the distributions compare?
 
-### Are the distributions statistically significant distinct?
+## Are the distributions statistically significant distinct?
 
-## Comparing Rankings
-#### 2.1 Ranking the participants by their score, how many changed their positions? 
+# Comparing Rankings
+## Ranking the participants by their score, how many changed their positions? 
 
-#### 2.2 How do participants who increased their ranking position compare to others w.r.t. their years of experience?
+## How do participants who increased their ranking position compare to others w.r.t. their years of experience?
 
-#### 2.3 How do participants who decreased their ranking position compare to others w.r.t. their years of experience?
+## How do participants who decreased their ranking position compare to others w.r.t. their years of experience?
 
-#### 2.4 Are participants who increased, descreased, not changed ranking positions statistically significant distinct w.r.t. to score and years of experience?
+## Are participants who increased, descreased, not changed ranking positions statistically significant distinct w.r.t. to score and years of experience?
 
-### 3. Comparing Correlation
-#### 3.1 Years of programming and Score 
-#### 3.2 Age and Score 
-#### 3.3 Gender and Score
+# Comparing Correlation
+## Years of programming and Score 
+## Age and Score 
+## Gender and Score
