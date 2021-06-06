@@ -84,8 +84,14 @@ got it correctly This was the case of question 4.
 
 ## Are the distributions statistically significant distinct?
 As the distributions do not look normal, which is confirmed by the Shapiro -Wilk normality test (@royston1995shapiro),
-I compared their means using the non-parametric kendall-tau test.
+I compared their means using the non-parametric Kruskal-Wallis test.
 
+
+```{r hypotheses tests, echo=TRUE}
+kruskal.test(df_consent$qualification_score,df_consent$adjusted_score)
+```
+
+The two distributions are statistically distinct. 
 
 ## How does the entropy (spread) of the distributions compare?
 
