@@ -9,7 +9,6 @@ E1 Compare adjusted_score and qualification_score (original)
 "
 library(ggplot2)
 
-
 "LOAD FILES"
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_consent_create_indexes_E1.R")
 df_consent <- load_consent_create_indexes();
