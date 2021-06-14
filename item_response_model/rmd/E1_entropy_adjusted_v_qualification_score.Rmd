@@ -40,10 +40,18 @@ Compare the dispersion of the adjusted versus the original score.
 qualification_scores <- scale(df_consent$qualification_score, center=TRUE, scale=TRUE)
 irt_scores <- scale(df_consent$adjusted_score, center=TRUE, scale=TRUE)
 
+qualification_disc <- discretize(qualification_scores, numBins = 5)
+irt_disc <- discretize(irt_scores,numBins = 5)
+
+
 ```
 
 ## How does the entropy (spread) of the distributions compare?
 
+```{r compute entropy, echo=FALSE}
+
+
+```
 
 # Comparing Rankings
 ## Ranking the participants by their score, how many changed their positions? 
