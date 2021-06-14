@@ -49,9 +49,17 @@ irt_disc <- discretize(irt_scores,numBins = 5)
 ## How does the entropy (spread) of the distributions compare?
 
 ```{r compute entropy, echo=FALSE}
+entropy(qualification_disc,method = "ML")
+entropy(irt_disc,method = "ML")
+
+entropy(qualification_disc,method = "Jeffreys")
+entropy(irt_disc,method = "Jeffreys")
+
 
 
 ```
+
+Entropy reduced after adjustment, which was expected.
 
 # Comparing Rankings
 ## Ranking the participants by their score, how many changed their positions? 
