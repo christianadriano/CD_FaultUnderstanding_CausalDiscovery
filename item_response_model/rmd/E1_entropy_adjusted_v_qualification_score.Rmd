@@ -41,7 +41,7 @@ qualification_scores <- scale(df_consent$qualification_score, center=TRUE, scale
 irt_scores <- scale(df_consent$adjusted_score, center=TRUE, scale=TRUE)
 
 qualification_disc <- discretize(qualification_scores, numBins = 5)
-irt_disc <- discretize(irt_scores,numBins = 5)
+irt_disc <- discretize(irt_scores,numBins = 10)
 
 
 ```
