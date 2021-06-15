@@ -40,6 +40,10 @@ Investigate the impact of the score adjustment on the association between score 
 qualification_scores <- scale(df_consent$qualification_score, center=TRUE, scale=TRUE)
 irt_scores <- scale(df_consent$adjusted_score, center=TRUE, scale=TRUE)
 
+
+qualification_scores <- discretize(qualification_scores, numBins = 5)
+irt_scores <- discretize(irt_scores,numBins = 5)
+
 score_type <- rep("original",length(qualification_scores))
 original_score_list <- cbind(qualification_scores,score_type)
 score_type <- rep("adjusted",length(irt_scores))
