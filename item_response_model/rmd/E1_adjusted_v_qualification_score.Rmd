@@ -119,6 +119,15 @@ The two distributions are statistically distinct.
 
 
 # Comparing Rankings
+
+I used to metrics to compare the models: ambiguity and discrepancy.
+
+Ambiguity: How many participants are assigned conflicting scores in the two competing models (original and adjusted model)?
+
+Discrepancy: What is the maximum number of predictions
+that could change if we were to switch the model that we
+deploy with a competing model?
+
 ## Ranking the participants by their score, how many changed their positions? 
 
 ## How do participants who increased their ranking position compare to others w.r.t. their years of experience?
