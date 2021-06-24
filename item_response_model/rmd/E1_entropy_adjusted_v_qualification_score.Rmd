@@ -59,7 +59,10 @@ entropy(irt_disc,method = "Jeffreys")
 
 ```
 
-Entropy reduced after adjustment, which was expected.
+Entropy reduced after adjustment, which was expected, because the adjusted score worked to rebalance the grades based on the difficulty of questions inferred by the number of people who got each question right.
+
+## Comparative Entropy by Participant Group
+Was the change in entropy more accentuated for certain groups of participants?
 
 # Comparing Rankings
 ## Ranking the participants by their score, how many changed their positions? 
