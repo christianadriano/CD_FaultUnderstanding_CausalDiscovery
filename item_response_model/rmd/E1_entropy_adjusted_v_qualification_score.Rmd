@@ -36,12 +36,12 @@ Compare the dispersion of the adjusted versus the original score.
 
 ```{r density plots, echo=FALSE}
 
-#Center (subtract the mean) and Scales (divided by the standard deviation)
-qualification_scores <- scale(df_consent$qualification_score, center=TRUE, scale=TRUE)
-irt_scores <- scale(df_consent$adjusted_score, center=TRUE, scale=TRUE)
+#Center (subtract the mean) but not Scales (divided by the standard deviation)
+qualification_scores <- scale(df_consent$qualification_score, center=TRUE, scale=FALSE)
+irt_scores <- scale(df_consent$adjusted_score, center=TRUE, scale=FALSE)
 
 qualification_disc <- discretize(qualification_scores, numBins = 5)
-irt_disc <- discretize(irt_scores,numBins = 10)
+irt_disc <- discretize(irt_scores,numBins = 5)
 
 
 ```
@@ -54,6 +54,10 @@ entropy(irt_disc,method = "ML")
 
 entropy(qualification_disc,method = "Jeffreys")
 entropy(irt_disc,method = "Jeffreys")
+
+#Not Scaled
+entropy(df_consent$qualification_score,method = "Jeffreys")
+entropy(irt_scores,method = "Jeffreys")
 
 
 
