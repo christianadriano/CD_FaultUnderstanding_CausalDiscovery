@@ -20,6 +20,8 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 library(ggplot2)
 library(dplyr)
+library (entropy)
+
 
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_consent_create_indexes_E1.R")
 df_consent <- load_consent_create_indexes();
@@ -39,6 +41,9 @@ if(shift<0){
 } else if(shift>0){
     irt_score <- df_consent$adjusted_score - abs(shift)
 }
+
+qualification_scores <- df_consent$qualification_score
+
 ```
 
 
@@ -91,6 +96,39 @@ shape.
 The reason for the smoothing is two-fold: adjusted score is continuous scale and the original shifted some very low scores to a low-to-medium score. The latter
 corresponds to giving a lower weight to questions that most people
 got it correctly This was the case of question 4.
+
+```{r dicretized data density plots, echo=FALSE}
+qualification_disc <- discretize(df_consent$qualification_score, numBins = 5)
+irt_disc <- discretize(irt_scores,numBins = 5)
+
+score_type <- rep("original",length(qualification_disc))
+original_score_list <- cbind(qualification_disc,score_type)
+score_type <- rep("adjusted",length(irt_disc))
+irt_score_list <- cbind(irt_disc,score_type)
+
+all_score_list <- rbind(original_score_list,irt_score_list)
+df_all_scores <- data.frame(all_score_list)
+colnames(df_all_scores) <- c("score","type")
+df_all_scores$score <- as.numeric(as.character(df_all_scores$score))
+
+df_all_scores %>%
+  ggplot(aes(x=score, fill=type)) +
+  #geom_histogram(binwidth=0.05, color="darkgrey", fill="lightblue") +
+  geom_density(alpha=0.3)+
+  theme_minimal()+
+  theme(
+    legend.position=c(0.85, 0.90),
+    panel.spacing = unit(0.1, "lines"),
+    strip.text.x = element_text(size = 12),
+    plot.title = element_text(size=14),
+    axis.text.x = element_text(angle = 20, hjust = 1, size=12)
+  ) +
+  xlab("Scores") +
+  ylab("Frequency") +
+  ggtitle("Qualification score distribution E1") 
+
+
+```
 
 ## Are the distributions statistically significant distinct?
 In order to pick the appropriate statistical test, I tested if the distributions are normal. For that I used the Shapiro-Wilk normality test (@royston1995shapiro). The null hypothesis of Shapiro's test is that the population is distributed normally.
