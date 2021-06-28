@@ -63,7 +63,7 @@ entropy(irt_scores,method = "Jeffreys")
 
 ```
 
-Entropy reduced after adjustment, which was expected, because the adjusted score worked to rebalance the grades based on the difficulty of questions inferred by the number of people who got each question right.
+Entropy increase after adjustment, which was unexpected, because the goal of the adjusted score was to rebalance the grades based on the difficulty of questions inferred by the number of people who got each question right.
 
 ## Comparative Entropy by Participant Group
 Was the change in entropy more accentuated for certain groups of participants?
