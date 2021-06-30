@@ -21,6 +21,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(ggplot2)
 library(dplyr)
 library (entropy)
+library(scale)
 
 
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_consent_create_indexes_E1.R")
@@ -126,6 +127,12 @@ The bar plot shows two consequences of the adjustment: left shift and shrinkage.
 
 The change in scores stems from giving a lower weight to questions that most people
 got it correctly, which is the case of question 4.
+
+```{rescaling}
+
+irt_scores_rescaled <- rescale(irt_scores,c(0,4))
+
+```
 
 ## Are the distributions statistically significant distinct?
 In order to pick the appropriate statistical test, I tested if the distributions are normal. For that I used the Shapiro-Wilk normality test (@royston1995shapiro). The null hypothesis of Shapiro's test is that the population is distributed normally.
