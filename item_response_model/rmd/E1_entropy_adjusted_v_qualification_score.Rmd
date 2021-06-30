@@ -20,7 +20,8 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 library(ggplot2)
 library(dplyr)
-library (entropy)
+library(entropy)
+library(scales)
 
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_consent_create_indexes_E1.R")
 df_consent <- load_consent_create_indexes();
@@ -34,17 +35,26 @@ Compare the dispersion of the adjusted versus the original score.
 # Comparing Distributions
 
 
-```{r density plots, echo=FALSE}
+```{r align distributions, include=FALSE}
+shift <-min(df_consent$adjusted_score) 
+if(shift<0){
+  irt_scores <- df_consent$adjusted_score + abs(shift)
+} else if(shift>0){
+    irt_scores <- df_consent$adjusted_score - abs(shift)
+}
 
-#Center (subtract the mean) but not Scales (divided by the standard deviation)
-qualification_scores <- scale(df_consent$qualification_score, center=TRUE, scale=FALSE)
-irt_scores <- scale(df_consent$adjusted_score, center=TRUE, scale=FALSE)
-
-qualification_disc <- discretize(qualification_scores, numBins = 5)
-irt_disc <- discretize(irt_scores,numBins = 5)
-
+irt_scores <- rescale(irt_scores,c(0,4))
+qualification_scores <- df_consent$qualification_score
 
 ```
+
+#Center (subtract the mean) but not Scales (divided by the standard deviation)
+#qualification_scores <- scale(df_consent$qualification_score, center=TRUE, scale=FALSE)
+#irt_scores <- scale(df_consent$adjusted_score, center=TRUE, scale=FALSE)
+
+#qualification_disc <- discretize(qualification_scores, numBins = 5)
+#irt_disc <- discretize(irt_scores,numBins = 5)
+
 
 ## How does the entropy (spread) of the distributions compare?
 
@@ -58,8 +68,6 @@ entropy(irt_disc,method = "Jeffreys")
 #Not Scaled
 entropy(df_consent$qualification_score,method = "Jeffreys")
 entropy(irt_scores,method = "Jeffreys")
-
-
 
 ```
 
