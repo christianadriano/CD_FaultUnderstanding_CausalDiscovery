@@ -13,6 +13,7 @@ library(psych)
 library(mirt)
 library(farff)
 library(ggplot2)
+library(scales)
 
 "LOAD FILES"
 path <- "C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data//"
@@ -121,9 +122,24 @@ certain items are more difficult than others. This explains why this column
 is not perfectly ordered."
 
 #----------------------------------------------------------------
-# WRITE IRT SCORE TO FILE
+# ALIGN AND RESCALE
+# align to start in zero and rescale to fit the original qualification score
 
 df_score.dat <- data.frame(factors$score.dat)
+
+shift <-min(df_score.dat$z1) 
+if(shift<0){
+  df_score.dat$z1 <-df_score.dat$z1 + abs(shift)
+} else if(shift>0){
+  df_score.dat$z1 <- df_score.dat$z1 - abs(shift)
+}
+
+#rescale to fit the original qualification score between zero and four
+df_score.dat$z1 <- scales::rescale(df_score.dat$z1,to=c(0,4))
+
+#----------------------------------------------------------------
+# WRITE IRT SCORE TO FILE
+
 
 #LEFT JOIN to associate the new difficulty scores (z1) to the participants.
 df_new <- left_join(df,df_score.dat,by=c("test1_"="test1_","test2_"="test2_","test3_"="test3_","test4_"="test4_"))
