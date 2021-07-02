@@ -21,8 +21,6 @@ knitr::opts_chunk$set(echo = TRUE)
 library(ggplot2)
 library(dplyr)
 library (entropy)
-library(scales)
-
 
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_consent_create_indexes_E1.R")
 df_consent <- load_consent_create_indexes();
@@ -34,20 +32,6 @@ df_consent <- load_consent_create_indexes();
 Investigate the impact of the score adjustment on the association between score and the other covariates, e.g, years of experience, age, gender, duration, explanation size, confidence, and accuracy of tasks.
 
 # Comparing Distributions
-
-``` {r align distributions, include=FALSE}
-shift <-min(df_consent$adjusted_score) 
-if(shift<0){
-  irt_scores <- df_consent$adjusted_score + abs(shift)
-} else if(shift>0){
-    irt_scores <- df_consent$adjusted_score - abs(shift)
-}
-
-irt_scores <- rescale(irt_scores,c(0,4))
-qualification_scores <- df_consent$qualification_score
-
-```
-
 
 ## How do the distribution overlap?
 
