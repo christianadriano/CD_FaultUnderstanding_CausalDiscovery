@@ -7,6 +7,8 @@ library(psych)
 library(mirt)
 library(ggplot2)
 library(farff)
+library(scales)
+
 
 #-------------------------------------
 "LOAD CONSENT DATA EXPERIMENT-2"
@@ -119,13 +121,28 @@ The table goes to an Appendix, but the comment goes to text.
 
 "
 hist(factors$score.dat$z1, breaks=10)
+
+#----------------------------------------------------------------
+# ALIGN AND RESCALE
+# align to start in zero and rescale to fit the original qualification score
+
+df_score.dat <- data.frame(factors$score.dat)
+
+shift <-min(df_score.dat$z1) 
+if(shift<0){
+  df_score.dat$z1 <-df_score.dat$z1 + abs(shift)
+} else if(shift>0){
+  df_score.dat$z1 <- df_score.dat$z1 - abs(shift)
+}
+
+#rescale to fit the original qualification score between zero and four
+df_score.dat$z1 <- scales::rescale(df_score.dat$z1,to=c(0,5))
+
+
 #----------------------------------------------------------------
 #COMPARE z1 score (IRT score) and the qualification score (original)
 
 #Merge data from Qualification Score and IRT Score
-
-df_score <- data.frame(as.matrix(factors$score.dat)) #NOT CORRECT STILL NEED TO FIX IT
-head(df_score)
 
 df_merged <- left_join(df_consent,df_score.dat,by=c("test1"="test1","test2"="test2","test3"="test3","test4"="test4","test5"="test5"))
 
