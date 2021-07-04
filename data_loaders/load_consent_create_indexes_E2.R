@@ -68,7 +68,7 @@ load_consent_create_indexes <- function(){
   #------------------------
   "QUALIFICATION_SCORE"
   
-  "I cannot transform qualification score as a factor anymore for two reasons:
+  "I am not transforming the qualification score as a factor anymore for two reasons:
     - it is reasonable to assume a continuous scale 
     - there will be more than the integer values, because some workers will have averaged values that result
     from the fact that they took the more than one test.
@@ -82,7 +82,6 @@ load_consent_create_indexes <- function(){
     df_consent[df_consent$worker_id==id,"qualification_score"] <- average_score
   }
  
-
   #test PASSED
   worker_id_list <- unique(df_consent$worker_id)
   for (id in worker_id_list) {
@@ -104,21 +103,36 @@ load_consent_create_indexes <- function(){
   dim(df_consent) 
   df_consent <- rename(df_consent,adjusted_score=z1)
   
-  # Averaging worker adjusted_scores
+  #Averaging the worker adjusted and qualification score (to keep consistency)
   worker_id_list <- unique(df_consent$worker_id)
   for (id in worker_id_list) {
-    adjusted_score_list <- df_consent[df_consent$worker_id == id,"adjusted_score"]
-    average_score <- ave(adjusted_score_list)
+    #Qualification Score
+    score_list <- df_consent[df_consent$worker_id == id,"qualification_score"]
+    average_score <- ave(score_list)
+    df_consent[df_consent$worker_id==id,"qualification_score"] <- average_score
+    
+    #Adjusted Score
+    score_list <- df_consent[df_consent$worker_id == id,"adjusted_score"]
+    average_score <- ave(score_list)
     df_consent[df_consent$worker_id==id,"adjusted_score"] <- average_score
   }
   
-  #test PASSED
+  #Sanity Check, each worker should have a unique scores (adjusted and original/qualification)
+  #test PASSED!
   worker_id_list <- unique(df_consent$worker_id)
   for (id in worker_id_list) {
-    qualification_score_list <- df_consent[df_consent$worker_id == id,"adjusted_score"]
-    different_scores <- unique(qualification_score_list)
+    #Qualification Score
+    score_list <- df_consent[df_consent$worker_id == id,"qualification_score"]
+    different_scores <- unique(score_list)
     if(length(different_scores)>1)
       print(paste0(id,"=",different_scores))
+    
+    #Adjusted Score
+    score_list <- df_consent[df_consent$worker_id == id,"adjusted_score"]
+    different_scores <- unique(score_list)
+    if(length(different_scores)>1)
+      print(paste0(id,"=",different_scores))
+    
   }
   
   #------------------------
