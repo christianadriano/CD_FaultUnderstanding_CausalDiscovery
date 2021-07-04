@@ -218,14 +218,23 @@ df_new <- left_join(df_consent,df_score.dat,by=c("test1"="test1","test2"="test2"
 #Check if same worker_id has different z-scores
 worker_id_list <- unique(df_new$worker_id)
 
+counter <- 0
+vector <- character(0) #empty vector
 for (id in worker_id_list) {
   irt_score_list <- df_new[df_new$worker_id == id,"qualification_score"]
   different_scores <- unique(irt_score_list)
-  if(length(different_scores)>1)
-    print(id)
+  if(length(different_scores)>1){
+    counter <- counter +1
+    vector <- c(vector,id)
+  }
 }
-
-
+print(vector)
+print(counter)
+#42 IDs have more than one score, which means that people took the test twice, 
+#which is corroborated by the fact that the id's are composed.
+#This happened because these participants removed the cookie that was saved 
+#in the local computers after taking the first qualification test.
+#This is not a problem. It will generate some variance in the measurements.
 
 #Store in the original file the new difficulty scores (z1) of the participants
 write.csv(df_new,"C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data//irt//E2_QualificationTest_IRT.csv")
