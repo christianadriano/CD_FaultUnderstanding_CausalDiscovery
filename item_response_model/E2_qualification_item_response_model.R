@@ -1,5 +1,16 @@
 "
 Item response model of the programming test qualification E2
+Goals of this script:
+- Generates an adjusted score based on an item reponse model (@item_response_theory)
+- Rescale the adjusted score to match the scale range of the original qualification score
+
+TODO
+- Fix merging bug
+- Convert this file to rmd so I easily publish the charts
+- Add small explanation in the beginning of the file 
+- Add citations
+- Revise writing
+
 "
 library(dplyr)
 library(ltm)
@@ -9,19 +20,18 @@ library(ggplot2)
 library(farff)
 library(scales)
 
-
 #-------------------------------------
 "LOAD CONSENT DATA EXPERIMENT-2"
 
 path <- "C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//"
 dataset_E2 <- readARFF(paste0(path,"//data//","consent_consolidated_Experiment_2.arff"))
 df_consent <- data.frame(dataset_E2)
-#dim(df_consent) 
 
-
-"Remove participants for whom we did not take the qualification test" 
+"Remove participants who did not take the qualification test" 
 df_consent <- df_consent[complete.cases(df_consent[,"qualification_score"]),]
-#Original size: 3658   21 , new size 1788 21
+#Original size: 3658   21
+#New size: 1788 21
+#dim(df_consent) 
 
 #NOT Necessary anymore, I already converted this data from true/false to 1/0's
 #"Replace false for 0(zero) and true for one(1)"
@@ -57,7 +67,7 @@ all other tests have a good discriminative power."
 plot(IRT_model, type="ICC", items=c(1,2,4))
 
 #--------
-#NOT REVELANT INFORMATION
+#NOT REVELANT INFORMATION??
 "Plot the information, which tells me which area in the
 x-axis gives me more information in terms of discrimination 
 power of the items (all items). This is important to show design the items
