@@ -149,15 +149,67 @@ if(shift<0){
 df_score.dat$z1 <- scales::rescale(df_score.dat$z1,to=c(0,5))
 
 
+
 #----------------------------------------------------------------
-#COMPARE z1 score (IRT score) and the qualification score (original)
+"Merge the new scores with the original consent data"
 
-#Merge data from Qualification Score and IRT Score
+df_score.dat <- data.frame(factors$score.dat)
 
-df_merged <- left_join(df_consent,df_score.dat,by=c("test1"="test1","test2"="test2","test3"="test3","test4"="test4","test5"="test5"))
+#Convert to double to be able to join with the fields tes1..5 of df_score.dat
+df_score.dat$test1 <- as.factor(df_score.dat$test1)
+df_score.dat$test2 <- as.factor(df_score.dat$test2)
+df_score.dat$test3 <- as.factor(df_score.dat$test3)
+df_score.dat$test4<- as.factor(df_score.dat$test4)
+df_score.dat$test5 <- as.factor(df_score.dat$test5)
+
+#LEFT JOIN to associate the new difficulty scores (z1) to the participants.
+df_new <- left_join(df_consent,df_score.dat,by=c("test1"="test1","test2"="test2","test3"="test3","test4"="test4","test5"="test5"))
+
+#Note that later on, I aggregate the different qualification and adjusted scores 
+#for the same worker_id. This is done in the script load_consent_create_indexes_E2.R
+
+#---------------------------------
+#Sanity check after merging
+
+#Check if same worker_id has different qualification scores
+#It does! However, this was the same as before and it is not a problem. 
+#See explanation below.
+
+worker_id_list <- unique(df_new$worker_id)
+
+counter <- 0
+vector <- character(0) #empty vector
+for (id in worker_id_list) {
+  score_list <- df_new[df_new$worker_id == id,"qualification_score"]
+  different_scores <- unique(score_list)
+  if(length(different_scores)>1){
+    counter <- counter +1
+    vector <- c(vector,id)
+  }
+}
+print(vector)
+print(counter)
+#42 IDs have more than one score, which means that people took the test twice, 
+#which is corroborated by the fact that the id's are composed.
+#This happened because these participants removed the cookie that was saved 
+#in the local computers after taking the first qualification test.
+#This is not a problem. It will generate some variance in the measurements,
+#which I will average later on when merging these scores with the tasks data
+#(see file load_consent_create_indexes_E2.R)
+
+#----------------------------------------
+
+#Store in the original file the new difficulty scores (z1) of the participants
+write.csv(df_new,"C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data//irt//E2_QualificationTest_IRT.csv")
+
+#-----------------------------------------------------------------
+#Analysis
+
+## Distribution of the Adjusted versus the Original Score
+
 
 #Center (subtract the mean) and Scales (divided by the standard deviation)
-qualification_scores <- scale(df_merged$qualification_score, center=TRUE, scale=TRUE)
+qualification_scores <- scale(df_new$qualification_score, center=TRUE, scale=TRUE)
 irt_scores <- scale(df_merged$z1, center=TRUE, scale=TRUE)
 
 score_type <- rep("original",length(qualification_scores))
@@ -196,49 +248,6 @@ corresponds to giving a lower weight to questions that most people
 got it correctly This was the case of question 4.
 "
 
-#----------------------------------------------------------------
-"Merge this with the consent data from E2"
-
-df_score.dat <- data.frame(factors$score.dat)
-
-#Convert to double to be able to join with the fields tes1..5 of df_score.dat
-df_score.dat$test1 <- as.factor(df_score.dat$test1)
-df_score.dat$test2 <- as.factor(df_score.dat$test2)
-df_score.dat$test3 <- as.factor(df_score.dat$test3)
-df_score.dat$test4<- as.factor(df_score.dat$test4)
-df_score.dat$test5 <- as.factor(df_score.dat$test5)
-
-#LEFT JOIN to associate the new difficulty scores (z1) to the participants.
-df_new <- left_join(df_consent,df_score.dat,by=c("test1"="test1","test2"="test2","test3"="test3","test4"="test4","test5"="test5"))
-
-#Note that later on, I aggregate the different qualification and adjusted scores 
-#for the same worker_id. This is done in the script load_consent_create_indexes_E2.R
-
-#------------------
-#Check if same worker_id has different z-scores
-worker_id_list <- unique(df_new$worker_id)
-
-counter <- 0
-vector <- character(0) #empty vector
-for (id in worker_id_list) {
-  irt_score_list <- df_new[df_new$worker_id == id,"qualification_score"]
-  different_scores <- unique(irt_score_list)
-  if(length(different_scores)>1){
-    counter <- counter +1
-    vector <- c(vector,id)
-  }
-}
-print(vector)
-print(counter)
-#42 IDs have more than one score, which means that people took the test twice, 
-#which is corroborated by the fact that the id's are composed.
-#This happened because these participants removed the cookie that was saved 
-#in the local computers after taking the first qualification test.
-#This is not a problem. It will generate some variance in the measurements.
-
-#Store in the original file the new difficulty scores (z1) of the participants
-write.csv(df_new,"C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data//irt//E2_QualificationTest_IRT.csv")
-
 #Visualizing the results
 plot(df_new$years_programming, df_new$z1)
 title("Factor Scores by Years of Programming - E2")
@@ -250,7 +259,7 @@ cor.test(df_new$years_programming, df_new$z1)
 cor.test(df_new$years_programming, df_new$qualification_score)
 #cor =0.321539 t = 14.351, df = 1786, p-value < 2.2e-16
 
-#Correlation did not change and continue to be significant
+#Correlation did not change and continued to be significant
 
 #----------------------------------------------------------------
 
