@@ -31,6 +31,10 @@ df_consent <- load_consent_create_indexes();
 
 Investigate the impact of the score adjustment on the association between score and the other covariates, e.g, years of experience, age, gender, duration, explanation size, confidence, and accuracy of tasks.
 
+## TODO
+- Change chart colors to tons of grey
+- Change labels
+
 # Comparing Distributions
 
 ## How do the distribution overlap?
