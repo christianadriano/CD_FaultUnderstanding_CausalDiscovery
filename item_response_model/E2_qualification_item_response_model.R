@@ -5,7 +5,8 @@ Goals of this script:
 - Rescale the adjusted score to match the scale range of the original qualification score
 
 TODO
-- Fix merging bug
+- Fix merging bug (DONE)
+- Rename column z1 to irt_adjusted_score, which is more meaningful
 - Convert this file to rmd so I easily publish the charts
 - Add small explanation in the beginning of the file 
 - Add citations
@@ -148,12 +149,8 @@ if(shift<0){
 #rescale to fit the original qualification score between zero and four
 df_score.dat$z1 <- scales::rescale(df_score.dat$z1,to=c(0,5))
 
-
-
 #----------------------------------------------------------------
 "Merge the new scores with the original consent data"
-
-df_score.dat <- data.frame(factors$score.dat)
 
 #Convert to double to be able to join with the fields tes1..5 of df_score.dat
 df_score.dat$test1 <- as.factor(df_score.dat$test1)
@@ -209,8 +206,11 @@ write.csv(df_new,"C://Users//Christian//Documents//GitHub//CausalModel_FaultUnde
 
 
 #Center (subtract the mean) and Scales (divided by the standard deviation)
-qualification_scores <- scale(df_new$qualification_score, center=TRUE, scale=TRUE)
-irt_scores <- scale(df_merged$z1, center=TRUE, scale=TRUE)
+#qualification_scores <- scale(df_new$qualification_score, center=TRUE, scale=TRUE)
+#irt_scores <- scale(df_new$z1, center=TRUE, scale=TRUE)
+
+qualification_scores <- df_new$qualification_score
+irt_scores <- df_new$z1
 
 score_type <- rep("original",length(qualification_scores))
 original_score_list <- cbind(qualification_scores,score_type)
