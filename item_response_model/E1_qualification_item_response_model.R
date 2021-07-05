@@ -4,6 +4,10 @@
 ## Why is it important?
 ## What did it show?
 
+
+TODO
+- Rename column z1 to irt_adjusted_score, which is more meaningful
+
 "
 
 
