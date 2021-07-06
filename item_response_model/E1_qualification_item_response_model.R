@@ -131,8 +131,8 @@ is not perfectly ordered."
 
 df_score.dat <- data.frame(factors$score.dat)
 
-colnames(df_score.dat)[8] <- "irt_qualification_score"
-colnames(df_score.dat)[9] <- "irt_qualification_score.standard_error"
+colnames(df_score.dat)[7] <- "irt_qualification_score"
+colnames(df_score.dat)[8] <- "irt_qualification_score.standard_error"
 
 shift <-min(df_score.dat$irt_qualification_score) 
 if(shift<0){
@@ -147,7 +147,6 @@ df_score.dat$irt_qualification_score <- scales::rescale(df_score.dat$irt_qualifi
 
 #----------------------------------------------------------------
 # WRITE IRT SCORE TO FILE
-
 
 #LEFT JOIN to associate the new difficulty scores (irt_qualification_score) to the participants.
 df_new <- left_join(df,df_score.dat,by=c("test1_"="test1_","test2_"="test2_","test3_"="test3_","test4_"="test4_"))
