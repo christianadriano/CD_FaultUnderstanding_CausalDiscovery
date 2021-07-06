@@ -6,7 +6,7 @@
 
 
 TODO
-- Rename column z1 to irt_adjusted_score, which is more meaningful
+- Rename column z1 to irt_adjusted_score, which is more meaningful (DONE)
 
 "
 
@@ -131,30 +131,34 @@ is not perfectly ordered."
 
 df_score.dat <- data.frame(factors$score.dat)
 
-shift <-min(df_score.dat$z1) 
+colnames(df_score.dat)[8] <- "irt_qualification_score"
+colnames(df_score.dat)[9] <- "irt_qualification_score.standard_error"
+
+shift <-min(df_score.dat$irt_qualification_score) 
 if(shift<0){
-  df_score.dat$z1 <-df_score.dat$z1 + abs(shift)
+  df_score.dat$irt_qualification_score <-df_score.dat$irt_qualification_score + abs(shift)
 } else if(shift>0){
-  df_score.dat$z1 <- df_score.dat$z1 - abs(shift)
+  df_score.dat$irt_qualification_score <- df_score.dat$irt_qualification_score - abs(shift)
 }
 
+
 #rescale to fit the original qualification score between zero and four
-df_score.dat$z1 <- scales::rescale(df_score.dat$z1,to=c(0,4))
+df_score.dat$irt_qualification_score <- scales::rescale(df_score.dat$irt_qualification_score,to=c(0,4))
 
 #----------------------------------------------------------------
 # WRITE IRT SCORE TO FILE
 
 
-#LEFT JOIN to associate the new difficulty scores (z1) to the participants.
+#LEFT JOIN to associate the new difficulty scores (irt_qualification_score) to the participants.
 df_new <- left_join(df,df_score.dat,by=c("test1_"="test1_","test2_"="test2_","test3_"="test3_","test4_"="test4_"))
 
-#Store in the original file the new difficulty scores (z1) of the participants
+#Store in the original file the new difficulty scores (irt_qualification_score) of the participants
 write.csv(df_new,"C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data//irt//E1_QualificationTest_IRT.csv")
 
 #Visualizing the results
 #There are three participants who somehow did not pass the exam score<2, 
 #but managed to answer the survey, for this reason there three datapoints with score 1 and 0.
-plot(df_new$years_programming, df_new$z1)
+plot(df_new$years_programming, df_new$irt_qualification_score)
 plot(df_new$years_programming, df_new$qualification_score)
 
 
