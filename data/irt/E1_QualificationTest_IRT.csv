@@ -1,4 +1,4 @@
-"","time_stamp","event","worker_id","consent_date","test1","test2","test3","test4","qualification_score","test_duration","feedback","gender","years_programming","difficulty","country","age","test1_","test2_","test3_","test4_","Obs","Exp","z1","se.z1"
+"","time_stamp","event","worker_id","consent_date","test1","test2","test3","test4","qualification_score","test_duration","feedback","gender","years_programming","difficulty","country","age","test1_","test2_","test3_","test4_","Obs","Exp","irt_qualification_score","irt_qualification_score.standard_error"
 "1","2014 10 24 08:59:53.139000","CONSENT","0_1","1.414155593137E12","false","true","false","false",1,77599,NA,NA,NA,NA,NA,NA,0,1,0,0,878,777.59397896251,0.71219762968042,0.902294960111203
 "2","2014 10 24 08:59:58.462000","CONSENT","1_1","1.414155598462E12","false","false","false","true",1,152639,NA,NA,NA,NA,NA,NA,0,0,0,1,590,530.430890704887,0.540576584990148,0.91384294122806
 "3","2014 10 24 09:00:21.293000","CONSENT","2_1","1.414155621293E12","false","false","false","true",1,102579,NA,NA,NA,NA,NA,NA,0,0,0,1,590,530.430890704887,0.540576584990148,0.91384294122806
