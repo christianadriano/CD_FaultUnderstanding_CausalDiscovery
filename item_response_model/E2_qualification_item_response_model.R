@@ -6,7 +6,7 @@ Goals of this script:
 
 TODO
 - Fix merging bug (DONE)
-- Rename column z1 to irt_adjusted_score, which is more meaningful
+- Rename column z1 to irt_adjusted_score, which is more meaningful (DONE)
 - Convert this file to rmd so I easily publish the charts
 - Add small explanation in the beginning of the file 
 - Add citations
@@ -139,15 +139,18 @@ hist(factors$score.dat$z1, breaks=10)
 
 df_score.dat <- data.frame(factors$score.dat)
 
-shift <-min(df_score.dat$z1) 
+colnames(df_score.dat)[8] <- "irt_qualification_score"
+colnames(df_score.dat)[9] <- "irt_qualification_score.standard_error"
+
+shift <-min(df_score.dat$irt_qualification_score) 
 if(shift<0){
-  df_score.dat$z1 <-df_score.dat$z1 + abs(shift)
+  df_score.dat$irt_qualification_score <-df_score.dat$irt_qualification_score + abs(shift)
 } else if(shift>0){
-  df_score.dat$z1 <- df_score.dat$z1 - abs(shift)
+  df_score.dat$irt_qualification_score <- df_score.dat$irt_qualification_score - abs(shift)
 }
 
 #rescale to fit the original qualification score between zero and four
-df_score.dat$z1 <- scales::rescale(df_score.dat$z1,to=c(0,5))
+df_score.dat$irt_qualification_score <- scales::rescale(df_score.dat$irt_qualification_score,to=c(0,5))
 
 #----------------------------------------------------------------
 "Merge the new scores with the original consent data"
@@ -159,7 +162,7 @@ df_score.dat$test3 <- as.factor(df_score.dat$test3)
 df_score.dat$test4<- as.factor(df_score.dat$test4)
 df_score.dat$test5 <- as.factor(df_score.dat$test5)
 
-#LEFT JOIN to associate the new difficulty scores (z1) to the participants.
+#LEFT JOIN to associate the new difficulty scores (irt_qualification_score) to the participants.
 df_new <- left_join(df_consent,df_score.dat,by=c("test1"="test1","test2"="test2","test3"="test3","test4"="test4","test5"="test5"))
 
 #Note that later on, I aggregate the different qualification and adjusted scores 
@@ -196,7 +199,7 @@ print(counter)
 
 #----------------------------------------
 
-#Store in the original file the new difficulty scores (z1) of the participants
+#Store in the original file the new difficulty scores (irt_qualification_score) of the participants
 write.csv(df_new,"C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data//irt//E2_QualificationTest_IRT.csv")
 
 #-----------------------------------------------------------------
@@ -204,13 +207,8 @@ write.csv(df_new,"C://Users//Christian//Documents//GitHub//CausalModel_FaultUnde
 
 ## Distribution of the Adjusted versus the Original Score
 
-
-#Center (subtract the mean) and Scales (divided by the standard deviation)
-#qualification_scores <- scale(df_new$qualification_score, center=TRUE, scale=TRUE)
-#irt_scores <- scale(df_new$z1, center=TRUE, scale=TRUE)
-
 qualification_scores <- df_new$qualification_score
-irt_scores <- df_new$z1
+irt_scores <- df_new$irt_qualification_score
 
 score_type <- rep("original",length(qualification_scores))
 original_score_list <- cbind(qualification_scores,score_type)
@@ -249,12 +247,12 @@ got it correctly This was the case of question 4.
 "
 
 #Visualizing the results
-plot(df_new$years_programming, df_new$z1)
+plot(df_new$years_programming, df_new$irt_qualification_score)
 title("Factor Scores by Years of Programming - E2")
 plot(df_new$years_programming, df_new$qualification_score)
 title("Average Scores by Years of Programming - E2")
 
-cor.test(df_new$years_programming, df_new$z1)
+cor.test(df_new$years_programming, df_new$irt_qualification_score)
 #cor=0.3082745, t = 13.695, df = 1786, p-value < 2.2e-16
 cor.test(df_new$years_programming, df_new$qualification_score)
 #cor =0.321539 t = 14.351, df = 1786, p-value < 2.2e-16
