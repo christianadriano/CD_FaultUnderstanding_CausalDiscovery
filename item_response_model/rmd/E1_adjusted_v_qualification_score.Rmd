@@ -41,14 +41,10 @@ Investigate the impact of the score adjustment on the association between score 
 
 ```{r density plots, echo=FALSE}
 
-#Center (subtract the mean) and Scales (divided by the standard deviation)
-#qualification_scores <- scale(df_consent$qualification_score, center=TRUE, scale=TRUE)
-#irt_scores <- scale(df_consent$adjusted_score, center=TRUE, scale=TRUE)
-
 score_type <- rep("original",length(df_consent$qualification_score))
 original_score_list <- cbind(df_consent$qualification_score,score_type)
-score_type <- rep("adjusted",length(irt_scores))
-irt_score_list <- cbind(irt_scores,score_type)
+score_type <- rep("adjusted",length(df_consent$adjusted_score))
+irt_score_list <- cbind(df_consent$adjusted_score,score_type)
 
 all_score_list <- rbind(original_score_list,irt_score_list)
 df_all_scores <- data.frame(all_score_list)
@@ -64,8 +60,8 @@ df_all_scores %>%
     legend.position=c(0.85, 0.90),
     panel.spacing = unit(0.1, "lines"),
     strip.text.x = element_text(size = 12),
-    plot.title = element_text(size=14),
-    axis.text.x = element_text(angle = 20, hjust = 1, size=12)
+    plot.title = element_text(size=12),
+    axis.text.x = element_text(angle = 0, hjust = 1, size=12)
   ) +
   xlab("Scores") +
   ylab("Frequency") +
@@ -80,14 +76,16 @@ Another effect is that adjusted score has more intermediate scores because it is
 
 ```{r dicretized data density plots, echo=FALSE}
 qualification_disc <- discretize(df_consent$qualification_score, numBins = 5)
-irt_disc <- discretize(irt_scores,numBins = 5)
+irt_disc <- discretize(df_consent$adjusted_score,numBins = 5)
 
 score_type <- rep("original",length(qualification_disc))
 original_score_list <- cbind(qualification_disc,score_type)
-score_type <- rep("adjusted",length(irt_disc))
-irt_score_list <- cbind(irt_disc,score_type)
+#score_type <- rep("adjusted",length(df_consent$adjusted_score))
+#irt_score_list <- cbind(irt_disc,score_type)
+score_type <- rep("adjusted discretized",length(irt_disc))
+irt_discretized_score_list <- cbind(irt_disc,score_type)
 
-all_score_list <- rbind(original_score_list,irt_score_list)
+all_score_list <- rbind(original_score_list,irt_discretized_score_list)
 df_all_scores <- data.frame(all_score_list)
 df_all_scores$score <- row.names(df_all_scores)
 colnames(df_all_scores) <- c("count","type","score")
@@ -96,17 +94,16 @@ colnames(df_all_scores) <- c("count","type","score")
 df_all_scores %>%
   ggplot(aes(x=score, y=count , fill=type)) +
   geom_bar(stat = "identity")+ 
-  #geom_density(alpha=0.3)+
   theme_minimal()+
   theme(
     legend.position=c(0.85, 0.90),
     panel.spacing = unit(0.1, "lines"),
     strip.text.x = element_text(size = 12),
-    plot.title = element_text(size=14),
-    axis.text.x = element_text(angle = 20, hjust = 1, size=12)
+    plot.title = element_text(size=12),
+    axis.text.x = element_text(angle = 20, hjust = 1, size=10)
   ) +
   xlab("Scores") +
-  ylab("Frequency") +
+  ylab("Count") +
   ggtitle("Qualification score distribution E1") 
 
 
@@ -123,8 +120,8 @@ In order to pick the appropriate statistical test, I tested if the distributions
 
 
 ```{r hypotheses tests, echo=TRUE}
-shapiro.test(scale(df_consent$qualification_score))
-shapiro.test(scale(df_consent$adjusted_score))
+shapiro.test(df_consent$qualification_score)
+shapiro.test(df_consent$adjusted_score)
 ```
 The two distributions rejected the null hypothesis of the Shapiro normality test, which implies that the distributions are not normal.
 
@@ -133,13 +130,24 @@ Therefore, I chose the non-parametric Kruskal-Wallis test @kruskalwallis1952rank
 Because the distributions are in different scale, I rescale them so they are still comparable. The rescaling involved (1) centering on their means and (2) normalizing. This corresponds respectively to (1) subtract the mean from each data point and (2) divide each data point by the standard deviation.
 
 
+```{r hypotheses tests discretized, echo=TRUE}
+df_qualification_disc <- data.frame(discretize(df_consent$qualification_score, numBins = 5))
+df_irt_disc <- data.frame(discretize(df_consent$adjusted_score,numBins = 5))
+kruskal.test(df_qualification_disc$Freq,
+             df_irt_disc$Freq
+             )
+```
+Hence, statistically not distinct.
+
 ```{r hypotheses tests, echo=TRUE}
-kruskal.test(scale(df_consent$qualification_score,center=TRUE,scale=TRUE),
-             scale(df_consent$adjusted_score,center=TRUE,scale=TRUE)
+kruskal.test(df_consent$qualification_score,
+             df_consent$adjusted_score
              )
 ```
 
 The two distributions are statistically distinct. 
+
+
 
 ## How does the entropy (spread) of the distributions compare?
 
