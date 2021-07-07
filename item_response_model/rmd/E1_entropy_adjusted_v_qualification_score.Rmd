@@ -33,10 +33,6 @@ Compare the dispersion of the adjusted versus the original score.
 
 # Comparing Distributions
 
-
-
-
-
 ## How does the entropy (spread) of the distributions compare?
 ### Discretized adjusted_score
 Discretization consists of forcing the adjusted_score values to fit the same bins of the qualification_score distribution (5 bins, from zero to four).
@@ -52,7 +48,7 @@ adjusted_entropy <- entropy(irt_disc,method = "Jeffreys")
 
 change =100*((adjusted_entropy-original_entropy)/original_entropy)
 
-print(paste0("Decrease in entropy= ",round(change,2),"%"))
+print(paste0("Change in entropy= ",round(change,2),"%"))
 
 ```
 
@@ -67,7 +63,7 @@ original_entropy <- entropy(df_consent$qualification_score,method = "Jeffreys")
 adjusted_entropy <- entropy(df_consent$adjusted_score,method = "Jeffreys")
 change =100*((adjusted_entropy-original_entropy)/original_entropy)
 
-print(paste0("Decrease in entropy= ",round(change,2),"%"))
+print(paste0("Change in entropy= ",round(change,2),"%"))
 ```
 
 However, without discretization, the entropy decreased only 1.04%.
