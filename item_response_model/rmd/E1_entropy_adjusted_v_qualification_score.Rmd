@@ -33,30 +33,44 @@ Compare the dispersion of the adjusted versus the original score.
 
 # Comparing Distributions
 
-#Center (subtract the mean) but not Scales (divided by the standard deviation)
-#qualification_scores <- scale(df_consent$qualification_score, center=TRUE, scale=FALSE)
-#irt_scores <- scale(df_consent$adjusted_score, center=TRUE, scale=FALSE)
 
-#qualification_disc <- discretize(qualification_scores, numBins = 5)
-#irt_disc <- discretize(irt_scores,numBins = 5)
+
 
 
 ## How does the entropy (spread) of the distributions compare?
+### Discretized adjusted_score
+Discretization consists of forcing the adjusted_score values to fit the same bins of the qualification_score distribution (5 bins, from zero to four).
 
-```{r compute entropy, echo=FALSE}
-entropy(qualification_disc,method = "ML")
-entropy(irt_disc,method = "ML")
+```{r compute entropy discretized, echo=FALSE}
 
-entropy(qualification_disc,method = "Jeffreys")
-entropy(irt_disc,method = "Jeffreys")
+#Discretized
+qualification_disc <- discretize(df_consent$qualification_score, numBins = 5)
+irt_disc <- discretize(df_consent$adjusted_score,numBins = 5)
 
-#Not Scaled
-entropy(df_consent$qualification_score,method = "Jeffreys")
-entropy(irt_scores,method = "Jeffreys")
+original_entropy <- entropy(qualification_disc,method = "Jeffreys")
+adjusted_entropy <- entropy(irt_disc,method = "Jeffreys")
+
+change =100*((original_entropy-adjusted_entropy)/original_entropy)
+
+print(paste0("Decrease in entropy= ",round(change,2),"%"))
 
 ```
 
-Entropy increase after adjustment, which was unexpected, because the goal of the adjusted score was to rebalance the grades based on the difficulty of questions inferred by the number of people who got each question right.
+Discretized adjusted_score showed a large drop in entropy. The drop in entropy was unexpected, because the goal of the adjusted score was to re-balance the grades based on the difficulty of questions inferred by the number of people who got each question right.
+
+Note that this discretrized distribution can also be used as a shifted distribution to study model invariance.
+
+## Not discretized, which is how the adjusted_score values will be used.
+```{r compute entropy, echo=FALSE}
+#Not scaled and Not discretized
+original_entropy <- entropy(df_consent$qualification_score,method = "Jeffreys")
+adjusted_entropy <- entropy(df_consent$adjusted_score,method = "Jeffreys")
+change =100*((original_entropy-adjusted_entropy)/original_entropy)
+
+print(paste0("Decrease in entropy= ",round(change,2),"%"))
+```
+
+However, without discretization, the entropy decreased only 1.04%.
 
 ## Comparative Entropy by Participant Group
 Was the change in entropy more accentuated for certain groups of participants?
