@@ -61,14 +61,14 @@ load_consent_create_indexes <- function(){
   #-----------------------
   #--------------------------
   "ITEM RESPONSE MODEL SCORES
-Merge Score factors computed through IRT Model fitting"
+  Merge Score factors computed through IRT Model fitting"
   df_irt <- read.csv(paste0(path,"//irt//","E1_QualificationTest_IRT.csv"))
-  df_irt <-  dplyr::select(df_irt, worker_id,z1) #need file_name, because a few workers have more than one score.
+  df_irt <-  dplyr::select(df_irt, worker_id,irt_qualification_score) #need file_name, because a few workers have more than one score.
   df_irt$worker_id <- as.factor(df_irt$worker_id) #convert to factor, so I can join with worker_id column
   df_consent$worker_id <- as.factor(df_consent$worker_id) #convert to factor, so I can join with worker_id column
   df_consent <- left_join(x=df_consent,y=df_irt,keep=FALSE, by=c("worker_id"="worker_id"))
   dim(df_consent) 
-  df_consent <- rename(df_consent,adjusted_score=z1)
+  df_consent <- rename(df_consent,adjusted_score=irt_qualification_score)
   
   # Averaging worker adjusted_scores
   worker_id_list <- unique(df_consent$worker_id)
@@ -180,3 +180,4 @@ The interquartile range is the difference between the 2nd and 3rd quartiles
   return(df_consent)
   
 }
+
