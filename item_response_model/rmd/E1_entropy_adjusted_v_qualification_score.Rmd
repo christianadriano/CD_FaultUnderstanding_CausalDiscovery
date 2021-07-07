@@ -50,7 +50,7 @@ irt_disc <- discretize(df_consent$adjusted_score,numBins = 5)
 original_entropy <- entropy(qualification_disc,method = "Jeffreys")
 adjusted_entropy <- entropy(irt_disc,method = "Jeffreys")
 
-change =100*((original_entropy-adjusted_entropy)/original_entropy)
+change =100*((adjusted_entropy-original_entropy)/original_entropy)
 
 print(paste0("Decrease in entropy= ",round(change,2),"%"))
 
@@ -65,7 +65,7 @@ Note that this discretrized distribution can also be used as a shifted distribut
 #Not scaled and Not discretized
 original_entropy <- entropy(df_consent$qualification_score,method = "Jeffreys")
 adjusted_entropy <- entropy(df_consent$adjusted_score,method = "Jeffreys")
-change =100*((original_entropy-adjusted_entropy)/original_entropy)
+change =100*((adjusted_entropy-original_entropy)/original_entropy)
 
 print(paste0("Decrease in entropy= ",round(change,2),"%"))
 ```
