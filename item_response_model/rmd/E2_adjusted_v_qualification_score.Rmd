@@ -127,9 +127,6 @@ The two distributions rejected the null hypothesis of the Shapiro normality test
 
 Therefore, I chose the non-parametric Kruskal-Wallis test @kruskalwallis1952ranktest with a null-hypothesis that the mean values of the original and adjusted score are the same.
 
-Because the distributions are in different scale, I rescale them so they are still comparable. The rescaling involved (1) centering on their means and (2) normalizing. This corresponds respectively to (1) subtract the mean from each data point and (2) divide each data point by the standard deviation.
-
-
 ```{r hypotheses tests discretized, echo=TRUE}
 df_qualification_disc <- data.frame(discretize(df_consent$qualification_score, numBins = 6))
 df_irt_disc <- data.frame(discretize(df_consent$adjusted_score,numBins = 6))
@@ -145,14 +142,53 @@ kruskal.test(df_consent$qualification_score,
              )
 ```
 
-The two distributions are statistically distinct. 
+The two distributions ARE statistically distinct. 
 
 
 
-## How does the entropy (spread) of the distributions compare?
+## Entropy comparison
+How does the entropy (spread) of the distributions compare?
+
+### Discretized adjusted_score
+Discretization consists of forcing the adjusted_score values to fit the same bins of the qualification_score distribution (5 bins, from zero to four).
+
+```{r compute entropy discretized, echo=FALSE}
+
+#Discretized
+qualification_disc <- discretize(df_consent$qualification_score, numBins = 6)
+irt_disc <- discretize(df_consent$adjusted_score,numBins = 6)
+
+original_entropy <- entropy(qualification_disc,method = "Jeffreys")
+adjusted_entropy <- entropy(irt_disc,method = "Jeffreys")
+
+change =100*((adjusted_entropy-original_entropy)/original_entropy)
+
+print(paste0("Change in entropy= ",round(change,2),"%"))
+
+```
+
+Discretized adjusted_score showed a large drop in entropy. The drop in entropy was unexpected, because the goal of the adjusted score was to re-balance the grades based on the difficulty of questions inferred by the number of people who got each question right.
+
+Note that this discretrized distribution can also be used as a shifted distribution to study model invariance.
+
+### Not discretized, which is how the adjusted_score values will be used.
+```{r compute entropy, echo=FALSE}
+#Not scaled and Not discretized
+original_entropy <- entropy(df_consent$qualification_score,method = "Jeffreys")
+adjusted_entropy <- entropy(df_consent$adjusted_score,method = "Jeffreys")
+change =100*((adjusted_entropy-original_entropy)/original_entropy)
+
+print(paste0("Change in entropy= ",round(change,2),"%"))
+```
+
+However, without discretization, the entropy decreased only 1.04%.
+
+### Comparative Entropy by Participant Group
+Was there more accentuated  change in entropy for certain groups of participants?
 
 
-# Comparing Rankings
+
+## Ranking Comparison
 
 I used to metrics to compare the models: ambiguity and discrepancy.
 
