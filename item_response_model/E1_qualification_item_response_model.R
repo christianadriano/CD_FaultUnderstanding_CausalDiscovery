@@ -145,7 +145,24 @@ if(shift<0){
 #rescale to fit the original qualification score between zero and four
 df_score.dat$irt_qualification_score <- scales::rescale(df_score.dat$irt_qualification_score,to=c(0,4))
 
-#----------------------------------------------------------------
+#---------------------------------
+# COMPARING DISTRIBUTIONS
+
+plot(df_new$years_programming, df_new$irt_qualification_score)
+plot(df_new$years_programming, df_new$qualification_score)
+
+#There are three participants who somehow did not pass the exam score<2, 
+#but managed to answer the survey, for this reason there are three datapoints with score 1 and 0.
+
+#---------------------------------
+# CORRELATION
+
+cor.test(df_new$years_programming, df_new$irt_qualification_score)
+#cor=0.1726465, t = 3.8561, df = 484, p-value = 0.0001308
+cor.test(df_new$years_programming, df_new$qualification_score)
+#cor =0.2060549 t = 4.6326, df = 484, p-value = 4.647e-06
+
+#--------------------------------------
 # WRITE IRT SCORE TO FILE
 
 #LEFT JOIN to associate the new difficulty scores (irt_qualification_score) to the participants.
@@ -154,16 +171,11 @@ df_new <- left_join(df,df_score.dat,by=c("test1_"="test1_","test2_"="test2_","te
 #Store in the original file the new difficulty scores (irt_qualification_score) of the participants
 write.csv(df_new,"C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data//irt//E1_QualificationTest_IRT.csv")
 
-#Visualizing the results
-#There are three participants who somehow did not pass the exam score<2, 
-#but managed to answer the survey, for this reason there three datapoints with score 1 and 0.
-plot(df_new$years_programming, df_new$irt_qualification_score)
-plot(df_new$years_programming, df_new$qualification_score)
 
-
-#----------------------------------------------------------------
-
-"alpha is the discrimination of item i (tells me that for every one unit increase 
+#-------------------------------------
+# FURTHER IRT ANALYSES
+  
+  "alpha is the discrimination of item i (tells me that for every one unit increase 
 in trait, there is a alpha increase in the log(odds) probability of getting the item correct. 
 Alpha equal to one is equivalente to Probability equal to 73%. Alpha =2 (P=88%), Alpha=3 (95%), 
 Alpha=4 (P=98%). " 
