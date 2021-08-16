@@ -6,7 +6,12 @@ library(farff)
 library(ggplot2)
 library(dplyr)
 
-load_consent_create_indexes <- function(){
+"--------------------------------------------------------------------
+About the load function
+is_student =1 adds a column with the classification of is_student_E1.csv
+default = 0
+"
+load_consent_create_indexes <- function(load_is_student=0){
   
   #--------------------------
   "LOAD FILES"
@@ -168,6 +173,16 @@ The interquartile range is the difference between the 2nd and 3rd quartiles
   upperwisker <- as.numeric(upper_wisker)
   median_value <- as.numeric(median)
   df_consent[df_consent$test_duration>40,]$test_duration <- median_value
+  
+  #---------------------
+  #
+  if(load_is_student){
+    df_is_student <- read.csv(paste0(path,"is_student_E1.csv"))
+    df_is_student <- df_is_student  %>% select("worker_id","is_student")
+    df_consent <- dplyr::left_join(df_consent,df_is_student,
+                                   by=c("worker_id"="worker_id"),
+                                   keep=FALSE,copy=FALSE)
+  }
   
   #---------------------
   
