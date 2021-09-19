@@ -160,7 +160,6 @@ These datapoints have values > 3rd quartile + 1.5*interquartile range.
 The interquartile range is the difference between the 2nd and 3rd quartiles
 "
   #Quantiles
-  
   values <- quantile(df_consent$test_duration)
   q2 <- values[[2]]
   median <- values[[3]]
