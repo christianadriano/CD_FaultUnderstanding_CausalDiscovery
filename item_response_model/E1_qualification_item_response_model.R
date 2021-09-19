@@ -4,10 +4,6 @@
 ## Why is it important?
 ## What did it show?
 
-
-TODO
-- Rename column z1 to irt_adjusted_score, which is more meaningful (DONE)
-
 "
 
 
@@ -145,6 +141,15 @@ if(shift<0){
 #rescale to fit the original qualification score between zero and four
 df_score.dat$irt_qualification_score <- scales::rescale(df_score.dat$irt_qualification_score,to=c(0,4))
 
+#--------------------------------------
+# WRITE IRT SCORE TO FILE
+
+#LEFT JOIN to associate the new difficulty scores (irt_qualification_score) to the participants.
+df_new <- left_join(df,df_score.dat,by=c("test1_"="test1_","test2_"="test2_","test3_"="test3_","test4_"="test4_"))
+
+#Store in the original file the new difficulty scores (irt_qualification_score) of the participants
+write.csv(df_new,"C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data//irt//E1_QualificationTest_IRT.csv")
+
 #---------------------------------
 # COMPARING DISTRIBUTIONS
 
@@ -157,20 +162,10 @@ plot(df_new$years_programming, df_new$qualification_score)
 #---------------------------------
 # CORRELATION
 
-cor.test(df_new$years_programming, df_new$irt_qualification_score)
-#cor=0.1726465, t = 3.8561, df = 484, p-value = 0.0001308
-cor.test(df_new$years_programming, df_new$qualification_score)
-#cor =0.2060549 t = 4.6326, df = 484, p-value = 4.647e-06
-
-#--------------------------------------
-# WRITE IRT SCORE TO FILE
-
-#LEFT JOIN to associate the new difficulty scores (irt_qualification_score) to the participants.
-df_new <- left_join(df,df_score.dat,by=c("test1_"="test1_","test2_"="test2_","test3_"="test3_","test4_"="test4_"))
-
-#Store in the original file the new difficulty scores (irt_qualification_score) of the participants
-write.csv(df_new,"C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data//irt//E1_QualificationTest_IRT.csv")
-
+cor.test(df_new$years_programming, df_new$irt_qualification_score, method="kendall")
+#z = 5.1085, p-value = 3.247e-07, tau=0.1745489 >>>>MEDIUM CORRELATION
+cor.test(df_new$years_programming, df_new$qualification_score, method="kendall")
+#z = 5.1603, p-value = 2.466e-07, tau=0.1945103 >>>>MEDIUM CORRELATION
 
 #-------------------------------------
 # FURTHER IRT ANALYSES
