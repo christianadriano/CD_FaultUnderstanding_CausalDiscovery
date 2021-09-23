@@ -21,7 +21,7 @@ cor.test(x=df_E1$yoe, y=df_E1$age, method="kendall")
 #------------------------------
 #By Profession
 
-profession_list <- unique(df_E1$is_student)
+profession_list <- unique(df_E1$profession)
 
 for (prof in profession_list) {
   df_prof <- df_E1[df_E1$profession==prof,]
@@ -33,14 +33,7 @@ for (prof in profession_list) {
         )
 }
 
-#Non-Significant
- # "Undergraduate_Student: statistic = -0.2207, p-value = 0.8253, tau = -0.0078"
- # "Other: statistic = 0.5907, p-value = 0.5547, tau = 0.0413"
- # "Graduate_Student: statistic = 1.772, p-value = 0.0764, tau = 0.0785"
-
-#Significant and Medium or Strong
- # "Hobbyist: statistic = 7.524, p-value = 0, tau = 0.2458"
- # "Professional: statistic = 14.8838, p-value = 0, tau = 0.5173"
- # "Programmer: statistic = 3.0979, p-value = 0.0019, tau = 0.3193"
-
+# Non-Significant
+#  "non-student: statistic = 3.4491, p-value = 6e-04, tau = 0.1238"
+#  "student: statistic = 1.2751, p-value = 0.2023, tau = 0.1152"
 
