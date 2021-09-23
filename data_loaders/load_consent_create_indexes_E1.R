@@ -176,9 +176,15 @@ The interquartile range is the difference between the 2nd and 3rd quartiles
   #---------------------
   #
   if(load_is_student){
-    df_is_student <- read.csv(paste0(path,"is_student_E1.csv"))
-    df_is_student <- df_is_student  %>% select("worker_id","is_student")
-    df_consent <- dplyr::left_join(df_consent,df_is_student,
+    df_aux <- read.csv(paste0(path,"is_student_E1.csv"))
+    df_aux <- df_aux  %>% select("worker_id","is_student")
+    #Create labels as three types of professions (student, non-student, other)
+    df_aux[df_aux$is_student=="0" & !is.na(df_aux$is_student),"profession"] <- "non-student"
+    df_aux[df_aux$is_student=="1" & !is.na(df_aux$is_student),"profession"] <- "student"
+    df_aux[is.na(df_aux$is_student),]$profession <- "other"
+    df_aux$profession <- factor(df_aux$profession)
+    
+    df_consent <- dplyr::left_join(df_consent,df_aux,
                                    by=c("worker_id"="worker_id"),
                                    keep=FALSE,copy=FALSE)
   }
