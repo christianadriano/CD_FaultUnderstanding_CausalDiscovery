@@ -33,9 +33,7 @@ df_E1 %>%
   facet_wrap(~text,nrow=3,ncol=2)+
   ggtitle("E1: Years of Programming across Professions") 
 
-"We can see in the density plots that groups show similar shapes of distribution. 
-I would say that Programmer is a more dispersed version of professional,
-and the same of Hobbyists with relation to Graduates and Others to Undergrads"
+"Students show a more concentrated distribution"
 
 #Boxplots
 df_E1 %>%
@@ -56,13 +54,11 @@ df_E1 %>%
   ylab("Years of Programming") +
   ggtitle("E1: Years of Programming across Professions") 
 
-"As expected, the more senior groups have higher programming experience, which 
+"As expected, non-students have higher programming experience, which 
 contributes to a wider ranges (size of inter-quartiles, i.e., boxes). 
 
-Concerning outliers, except for Programmers, all other professions have a similar 
-outliers counts. The only distinction is the outliers for Students are below 
-20 years of experience, whereas the 'Other' go up to 35 years. This makes sense, 
-because students are supposed to be among the youngest  study cohorts."
+Concerning outliers, non-students also have more outliers, which 
+is expected for a group that is more diverse."
 
 #----------------------------------------------------------------
 #AGE
@@ -84,9 +80,9 @@ df_E1 %>%
   facet_wrap(~text,nrow=3,ncol=2)+
   ggtitle("E1: Age of Participants across Professions") 
 
-"We can see in the density plots that groups show similar shapes of distribution. 
-I would say that Programmer is a more dispersed version of professional,
-and the same of Hobbyists with relation to Graduates and Others to Undergrads"
+"Very different distribution shapes. Studets are more concetrated and
+more lepticurtic, whereas non-students are more spread (platicurtic) and
+have peak (highest density) above the students."
 
 #Boxplots
 df_E1 %>%
@@ -105,3 +101,8 @@ df_E1 %>%
   xlab("Profession") +
   ylab("Age (years)") +
   ggtitle("E1: Age of Participants across Professions") 
+"
+Besides show no overlap between dsitributions, the chart
+shows that non-students also present more outliers w.r.t. 
+age.
+"
