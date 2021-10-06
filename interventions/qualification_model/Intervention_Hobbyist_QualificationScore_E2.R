@@ -21,7 +21,6 @@ remotes::install_github("rmcelreath/rethinking")
 install.packages("Rtools")
 install.packages("shape")
 
-install.packages(c("coda","mvtnorm","devtools","loo","dagitty"))
 install.packages("ps")
 install.packages("backports")
 library(ps)
@@ -83,7 +82,8 @@ pairs(m1)
 
 
 #Load data
-source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//load_consent_create_indexes_E2.R")
+source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_consent_create_indexes_E2.R")
+df_E2 <- load_consent_create_indexes()
 df_E2$profession_id <- as.integer(df_E2$profession_id)
 
 
