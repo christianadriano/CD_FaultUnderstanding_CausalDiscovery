@@ -16,19 +16,15 @@ See example in script Examples_RethinkingPackage.R
 
 "
 
-
-
 #Load data
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_consent_create_indexes_E2.R")
 df_E2 <- load_consent_create_indexes()
 df_E2$profession_id <- as.integer(df_E2$profession_id)
 
-
-
 #-----------------------------
 #Test Duration
-f <- alist(
-  y ~ dnorm( mu , sigma ),
+m_duration_1 <- alist(
+  score ~ dnorm( mu , sigma ),
   mu ~ dnorm( 0 , 10 ),
   sigma ~ dexp( 1 )
 )
