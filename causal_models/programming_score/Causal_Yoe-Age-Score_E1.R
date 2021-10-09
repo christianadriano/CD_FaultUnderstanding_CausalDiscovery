@@ -7,8 +7,9 @@ library(stringr)
 library(dplyr)
 
 #Load data
-source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//load_consent_create_indexes_E1.R")
-
+source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_consent_create_indexes_E1.R")
+df_E1 <- load_consent_create_indexes(load_is_student=1)
+  
 "Remove participants for whom we do not have years of experience information  (who did not complete the survey)"
 df <- df_E1[complete.cases(df_E1[,"years_programming"]),] #left with 486 rows
 
