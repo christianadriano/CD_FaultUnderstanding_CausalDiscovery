@@ -13,10 +13,11 @@ by also knowing the number of years of experience in programming?
 value is there in also knowing the profession of the participant?
 
 TODOS:
-Create R-Project for Causal models for Score
-Check for collinearities (YoE and Age)
-Redo models EM models based on that
-Plan Multi-level models
+Plan Multi-level models to check if the phenomenon of shrinkage happens
+
+DONE - Redo models EM models
+DONE - Check for collinearities (YoE and Age)
+DONE - Create R-Project for Causal models for Score
 
 "
 
