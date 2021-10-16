@@ -1,7 +1,7 @@
 ---
 title: "Causal effects on Programming Score"
 output: html_notebook
-autho: Christian Adriano
+author: Christian Adriano
 ---
 
 *Context:* Source code inspection is pervasive activity in software programming and might involve the inspection of dozens of lines of code. For this reason, experiments on these tasks require hundreds of participants. Although we can rely on crowdsourcing sites to reach out participants, there is no guarantee that particpants will have enough programming abilities to understand a source code that they have never seen.
