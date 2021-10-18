@@ -29,3 +29,25 @@ remove_outliers_test_duration <- function(df_dataframe){
   df_dataframe <- df_dataframe[(df_dataframe$test_duration<=15 & df_dataframe$test_duration>=1) ,]
   return(df_dataframe)
 }
+
+
+"
+OUTLIERS in TASK DURATION
+Code comprehension studies show that a programmer takes from 12 to 24 seconds is also the 
+average minimum time to read one line of code.
+
+On average each task took 5 min. Each task is associated with program statements of
+different sizes (loc) which are part of source code (Java method) also with various sizes (loc).
+Therefore, it is not easy to determine a single lower and upper-bound for a task.
+
+So, as rule of thumb I used the distribution of each, more specifically, the dots beyond the
+wiskers in the boxplot.
+
+Lower bound (minimum time) 24s per task, which is time to read one line of code (24s)
+
+Upper bound (maximum time) 30 min per task
+"
+remove_outliers_task_duration <- function(df_dataframe){
+  #TODO  Check how I did it
+  return(df_dataframe)
+}
