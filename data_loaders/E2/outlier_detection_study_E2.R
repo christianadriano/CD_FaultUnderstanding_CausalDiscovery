@@ -23,7 +23,7 @@ Maybe it does not make sense to have an automatic outlier detection for test dur
 
 "
 
-#install.packages("outliers")
+#install.packyears_programmings("outliers")
 library(outliers)
 library(farff)
 library(tidyr)
@@ -71,6 +71,45 @@ outliers::grubbs.test(df_consent[df_consent$profession=="Hobbyist",]$age, opposi
 #lowest value 18 is an outlier
 
 #-----------------------------------------------------------------------------
+
+# Years of Programming (experience)
+
+#GRUBBS TEST - https://www.statsandr.com/blog/outliers-detection-in-r/
+outliers::grubbs.test(df_consent[df_consent$profession=="Undergraduate_Student",]$years_programming,opposite = FALSE)
+#highest value 20 is an outlier
+outliers::grubbs.test(df_consent[df_consent$profession=="Undergraduate_Student",]$years_programming,opposite = TRUE)
+#lowest value 0 is an outlier
+
+#substitute the outlier for the median value
+df_consent[df_consent$profession=="Undergraduate_Student" &
+             df_consent$years_programming==20,]$years_programming <- median(df_consent[
+               df_consent$profession=="Undergraduate_Student",]$years_programming)
+
+
+outliers::grubbs.test(df_consent[df_consent$profession=="Professional",]$years_programming, opposite = FALSE)
+#highest value 35 is an outlier
+outliers::grubbs.test(df_consent[df_consent$profession=="Professional",]$years_programming, opposite = TRUE)
+#lowest value 0 is an outlier
+
+#substitute the outlier for the median value
+df_consent[df_consent$profession=="Professional" &
+             df_consent$years_programming==35,]$years_programming <- median(df_consent[
+               df_consent$profession=="Professional",]$years_programming)
+
+
+outliers::grubbs.test(df_consent[df_consent$profession=="Graduate_Student",]$years_programming, opposite = FALSE)
+#highest value 17 is an outlier
+outliers::grubbs.test(df_consent[df_consent$profession=="Graduate_Student",]$years_programming, opposite = TRUE)
+#lowest value 0 is an outlier
+df_consent[df_consent$profession=="Graduate_Student" & df_consent$years_programming==17,]$years_programming <- median(df_consent[df_consent$profession=="Graduate_Student",]$years_programming)
+
+outliers::grubbs.test(df_consent[df_consent$profession=="Hobbyist",]$years_programming, opposite=FALSE)
+#highest value 35 is an outlier
+outliers::grubbs.test(df_consent[df_consent$profession=="Hobbyist",]$years_programming, opposite=TRUE)
+#lowest value 0 is an outlier
+
+#-----------------------------------------------------------------------------
+
 # TEST DURATION 
 outliers::grubbs.test(df_consent[df_consent$profession=="Undergraduate_Student",]$test_duration,opposite = FALSE)
 # highest value 14.7441 is an outlier
