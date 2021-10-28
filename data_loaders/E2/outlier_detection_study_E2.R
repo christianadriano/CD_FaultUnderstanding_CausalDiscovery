@@ -4,6 +4,21 @@ CONSENT Data E2
 
 Comparative Study of the Outcomes of Traditional Outlier Detection Methods
 
+
+There are various outliers tests, the following three Grubbs test [Grubbs 1969], 
+Tietjen-Moore test (Tietjen & Moore 1972)and the extreme Studentized deviate) ESD test (Rosner 1983). 
+
+The Grubbs test is to verify the presence of a single outlier, while the Tiejen-Moore and the ESD tests are for multiple outliers. 
+
+However, the Tiejen-Moore requires that the number of outliers be given as input for the test).
+All these tests assume that the distribution is univariate and normal (i.e., Gaussian).
+
+Grubbs, Frank (February 1969), Procedures for Detecting Outlying Observations in Samples, Technometrics, 11(1), pp. 1-21.
+
+Rosner, Bernard (May 1983), Percentage Points for a Generalized ESD Many-Outlier Procedure,Technometrics, 25(2), pp. 165-172.
+
+Tietjen and Moore (August 1972), Some Grubbs-Type Statistics for the Detection of Outliers, Technometrics, 14(3), pp. 583-597.
+
 Goal(Goal-Base Question Metric):
 
 What: Compare the outcomes of different outlier detection methods
@@ -14,16 +29,10 @@ Data: Crowdsourced answers from programmers about location of software faults
 
 
 Gist of results:
-Method M1 produced was prefered for dataset D1 because .....
-
-TODO: 
-- Should outlier of TEST DURATION be adjusted by the number of correct answers? Because people who did not read the answer, might have gotten it wrong.
-Maybe it does not make sense to have an automatic outlier detection for test duration...
-- Revise the Grubber method and see if there is some discussion about it.
-
+None of the distributions are normal, so they do not satisfy the assumptions of the outlier tests.
 "
 
-#install.packyears_programmings("outliers")
+#install.package("outliers")
 library(outliers)
 library(farff)
 library(tidyr)
@@ -33,8 +42,26 @@ source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding/
 df_consent <- load_consent_create_indexes()
 dim(df_consent) #1788
 
+
+
+"Testing for normality"
+
+#AGE
+shapiro.test(df_consent$age)
+#data:  df_consent$age W = 0.88595, p-value < 2.2e-16 NOT NORMAL
+
+shapiro.test(df_consent$years_programming)
+#data:  df_consent$age W = 0.71584, p-value < 2.2e-16 NOT NORMAL
+
+"None of the distributions are normal, so they do not satisfy the assumptions of the outlier tests."
+
+
+"Below is only a study using the Grubbs test"
+
 #---------------------------------------
 # AGE
+
+
 
 #GRUBBS TEST - https://www.statsandr.com/blog/outliers-detection-in-r/
 outliers::grubbs.test(df_consent[df_consent$profession=="Undergraduate_Student",]$age,opposite = FALSE)
