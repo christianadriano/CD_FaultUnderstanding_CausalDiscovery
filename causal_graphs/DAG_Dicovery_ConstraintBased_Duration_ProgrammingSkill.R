@@ -1,17 +1,14 @@
 
 "
-Causal discovery for the programming skill and test Duration related factors
+Causal discovery using Constrained-Based Algorithms 
+Qualification Score Causal Model
 
 profession [exogenous];
 years_programming [exogenous];
 age [exogenous]
 test_duration [endogenous];
-qualification_score [outcome];
 adjusted_score [outcome];
 
-Algorithms used
-
-- Constrained based pc.stable
 Constrained-based algorithms execute a conditional independence tests
 induced by each hypothetical graph. Because these tests are executed
 sequentially (i.e., multiple times), there is a risk of false positives (i.e., false discovery)
@@ -19,9 +16,25 @@ by compounding errors. Therefore, algorithms try to minimize this risk
 in various ways. To test the sensitivity of our data to this risk
 we executed methods with increasingly power to mitigate false positives.
 
-PC (pc.stable), seminal constraint-based structure learning algorithm \cite{colombo2014order}
-#Colombo D, Maathuis MH (2014). "Order-Independent Constraint-Based Causal Structure Learning". Journal of Machine Learning Research, 15:3921–3962.
+\begin{list}
+\item PC (pc.stable), seminal constraint-based structure learning algorithm \cite{colombo2014order}
+#Colombo D, Maathuis MH (2014). Order-Independent Constraint-Based Causal Structure Learning. Journal of Machine Learning Research, 15:3921–3962.
 
+\item Incremental Association (iamb) is based on the Markov blanket detection algorithm \cite{tsamardinos2003algorithms} that executes a 
+two-phase selection, more specifically a forward selection followed by a iteration to remove false positives.
+
+Tsamardinos I, Aliferis CF, Statnikov A (2003). Algorithms for Large Scale Markov Blanket Discovery. Proceedings of the Sixteenth International Florida Artificial Intelligence Research Society Conference, 376–381.
+
+\item Incremental Association with FDR (iamb.fdr) is an improvement on the IAMB. It adjusts the tests 
+significance threshold with false discovery rate heuristics \cite{pena2008learning,gasse2014hybrid}
+
+Pena JM (2008). Learning Gaussian Graphical Models of Gene Networks with False Discovery Rate Control. Proceedings of the Sixth European Conference on Evolutionary Computation, Machine Learning and Data Mining in Bioinformatics, 165–176.
+
+Gasse M, Aussem A, Elghazel H (2014). A Hybrid Algorithm for Bayesian Network Structure Learning with Application to Multi-Label Learning. Expert Systems with Applications, 41(15):6755–6772.
+
+\end{list}
+
+The library used was bnlearn \cite{bnlearn2007bayesian}
 https://www.bnlearn.com/documentation/man/structure.learning.html
 
 
@@ -80,13 +93,16 @@ blacklist_5 <- data.frame(from = c("adjusted_score"),
 blacklist_all <- rbind(blacklist_1,blacklist_3,blacklist_4,blacklist_5) 
 
 #------------------------------------------
-#Including Profession
+#Including Profession as Node
 
 bn <- pc.stable(df_selected,blacklist = blacklist_all)
-plot(bn,main="All Professions, Constraint-Based Discovery")
+plot(bn,main="All Professions, pc.stable algorithm")
 
-bn <-tabu(df_selected,blacklist = blacklist_all)
-plot(bn,main="All Professions, Score-Based Discovery")
+bn <-iamb(df_selected,blacklist = blacklist_all)
+plot(bn,main="All Professions, iamb algorithm")
+
+bn <-iamb.fdr(df_selected,blacklist = blacklist_all)
+plot(bn,main="All Professions, iamb.fdr algorithm")
 
 #-----------------------------------------
 #BY PROFESSION
@@ -147,6 +163,26 @@ Only in Hobbyists that test duration is a mediator for effect on adjusted_score
 Test duration has years_prog as parent in Hobbyist, Undergrad, 
 Programmer, and Other.
 "
+
+
+#----------------------------------
+#
+for (i in 1:length(professions)) {
+  choice = professions[i]
+  df_prof <- df_selected[df_selected$profession==choice,]
+  df_prof <- 
+    dplyr::select(df_prof,
+                  years_prog,
+                  age,
+                  speed,
+                  test_duration,
+                  adjusted_score
+    );
+  bn <-pc.stable(df_prof,blacklist = blacklist_all)
+  plot(bn,main=choice)
+  #graphviz.plot(bn,main=choice,shape="ellipse",layout = "circo");
+}
+
 
 
 #-------------------------------------
