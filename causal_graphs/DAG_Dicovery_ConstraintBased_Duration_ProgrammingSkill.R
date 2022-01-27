@@ -118,7 +118,7 @@ blacklist_all <- blacklist_all[!(blacklist_all$to %in% c("profession") ),]
 professions = c("Other", "Undergraduate_Student","Graduate_Student","Hobbyist",
                 "Programmer","Professional")
 
-#Constraint-Based Algorithm
+#PC-STABLE
 for (i in 1:length(professions)) {
   choice = professions[i]
   df_prof <- df_selected[df_selected$profession==choice,]
@@ -139,7 +139,7 @@ for (i in 1:length(professions)) {
 test duration seem relevant only for professional, undergrad, grad, hobbyist
 only in undegrad that test duration is affected by years_prog"
 
-#PC-STABLE
+#IAMB
 for (i in 1:length(professions)) {
   choice = professions[i]
   df_prof <- df_selected[df_selected$profession==choice,]
@@ -151,7 +151,7 @@ for (i in 1:length(professions)) {
                   test_duration,
                   adjusted_score
     );
-  bn <-pc.stable(df_prof,blacklist = blacklist_all)
+  bn <-iamb(df_prof,blacklist = blacklist_all)
   plot(bn,main=choice)
   #graphviz.plot(bn,main=choice,shape="ellipse",layout = "circo");
 }
@@ -166,7 +166,7 @@ Programmer, and Other.
 
 
 #----------------------------------
-#
+#IAMB.FDR
 for (i in 1:length(professions)) {
   choice = professions[i]
   df_prof <- df_selected[df_selected$profession==choice,]
@@ -178,14 +178,14 @@ for (i in 1:length(professions)) {
                   test_duration,
                   adjusted_score
     );
-  bn <-pc.stable(df_prof,blacklist = blacklist_all)
+  bn <-iamb.fdr(df_prof,blacklist = blacklist_all)
   plot(bn,main=choice)
   #graphviz.plot(bn,main=choice,shape="ellipse",layout = "circo");
 }
 
 
-
-#-------------------------------------
+#---------------------------------------------------------------------
+#---------------------------------------------------------------------
 #Using now the qualification_score
 
 df_selected <-
@@ -220,21 +220,27 @@ blacklist_5 <- data.frame(from = c("speed"),
 
 blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_3,blacklist_4,blacklist_5) 
 
+
 #------------------------------------------
-#Including Profession
+#Including Profession as Node
 
 bn <- pc.stable(df_selected,blacklist = blacklist_all)
-plot(bn,main="All Professions, Constraint-Based Discovery")
+plot(bn,main="All Professions, pc.stable algorithm")
 
-bn <-tabu(df_selected,blacklist = blacklist_all)
-plot(bn,main="All Professions, Score-Based Discovery")
+bn <-iamb(df_selected,blacklist = blacklist_all)
+plot(bn,main="All Professions, iamb algorithm")
 
+bn <-iamb.fdr(df_selected,blacklist = blacklist_all)
+plot(bn,main="All Professions, iamb.fdr algorithm")
+
+#-----------------------------------------
+#Remove Profession as Node
 
 #Remove profession from blacklist
 blacklist_all <- blacklist_all[!(blacklist_all$from %in% c("profession") ),]
 blacklist_all <- blacklist_all[!(blacklist_all$to %in% c("profession") ),]
 
-#Constraint-Based Algorithm
+#PC-STABLE
 for (i in 1:length(professions)) {
   choice = professions[i]
   df_prof <- df_selected[df_selected$profession==choice,]
@@ -257,7 +263,7 @@ Only in undegrad that test duration is affected by years_prog
 Hence, qualification_Score and adjusted_score produced the same graphs with the PC algorithm
 "
 
-#Score-based algorithm - Hill Climbing
+#IAMB
 for (i in 1:length(professions)) {
   choice = professions[i]
   df_prof <- df_selected[df_selected$profession==choice,]
@@ -269,7 +275,7 @@ for (i in 1:length(professions)) {
                   test_duration,
                   adjusted_score
     );
-  bn <-tabu(df_prof,blacklist = blacklist_all)
+  bn <-iamb(df_prof,blacklist = blacklist_all)
   plot(bn,main=choice)
   #graphviz.plot(bn,main=choice,shape="ellipse",layout = "circo");
 }
@@ -283,6 +289,23 @@ Programmer, and Other.
 
 Hence, qualification_score and adjusted_score produced the same graph with the tabu algorithm
 "
+
+#IAMB-FDR
+for (i in 1:length(professions)) {
+  choice = professions[i]
+  df_prof <- df_selected[df_selected$profession==choice,]
+  df_prof <- 
+    dplyr::select(df_prof,
+                  years_prog,
+                  age,
+                  speed,
+                  test_duration,
+                  adjusted_score
+    );
+  bn <-iamb.fdr(df_prof,blacklist = blacklist_all)
+  plot(bn,main=choice)
+  #graphviz.plot(bn,main=choice,shape="ellipse",layout = "circo");
+}
 
 
 #TODO
