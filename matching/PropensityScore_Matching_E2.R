@@ -1,5 +1,5 @@
 "
-Propensity score matching
+Propensity score matching (Testing Package MatchIt)
 "
 
 library(tableone)
