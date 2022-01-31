@@ -34,14 +34,13 @@ Gasse M, Aussem A, Elghazel H (2014). A Hybrid Algorithm for Bayesian Network St
 
 \end{list}
 
-The library used was bnlearn \cite{bnlearn2007bayesian}
+The library used was bnlearn \cite{scutari2010learning}
 https://www.bnlearn.com/documentation/man/structure.learning.html
+Learning Bayesian Networks with the bnlearn R - https://arxiv.org/pdf/0908.3817.pdf
 
 #TODO
 #compare graphs produced by each of the methods. Check how sensitive they are to false discovery rate.
 #compare how professions are distinct in terms of adjusted_score and qualification_score
-
-#https://arxiv.org/pdf/0908.3817.pdf
 
 " 
 
