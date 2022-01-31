@@ -1,6 +1,6 @@
 
 "
-Causal discovery using Constrained-Based Algorithms 
+Causal discovery using Constraint-Based Algorithms 
 Qualification Score Causal Model
 
 profession [exogenous];
@@ -9,7 +9,7 @@ age [exogenous]
 test_duration [endogenous];
 adjusted_score [outcome];
 
-Constrained-based algorithms execute a conditional independence tests
+Constraint-based algorithms execute a conditional independence tests
 induced by each hypothetical graph. Because these tests are executed
 sequentially (i.e., multiple times), there is a risk of false positives (i.e., false discovery)
 by compounding errors. Therefore, algorithms try to minimize this risk
@@ -37,6 +37,11 @@ Gasse M, Aussem A, Elghazel H (2014). A Hybrid Algorithm for Bayesian Network St
 The library used was bnlearn \cite{bnlearn2007bayesian}
 https://www.bnlearn.com/documentation/man/structure.learning.html
 
+#TODO
+#compare graphs produced by each of the methods. Check how sensitive they are to false discovery rate.
+#compare how professions are distinct in terms of adjusted_score and qualification_score
+
+#https://arxiv.org/pdf/0908.3817.pdf
 
 " 
 
@@ -308,9 +313,4 @@ for (i in 1:length(professions)) {
 }
 
 
-#TODO
-#compare how professions are distinct in terms of adjusted_score and qualification_score
-#Compare the strength of graph connections using adjusted_score and qualification_score
-
-#https://arxiv.org/pdf/0908.3817.pdf
 
