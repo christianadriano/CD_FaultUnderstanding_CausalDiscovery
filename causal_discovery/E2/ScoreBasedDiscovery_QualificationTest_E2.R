@@ -1,6 +1,6 @@
 
 "
-Causal discovery for the programming skill and test Duration related factors
+Score-Based Causal discovery for the programming skill and test Duration related factors
 
 profession [exogenous];
 years_programming [exogenous];
