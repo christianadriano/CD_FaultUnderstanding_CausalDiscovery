@@ -1,7 +1,6 @@
 
 "
-Causal discovery using Constraint-Based Algorithms 
-Qualification Score Causal Model
+Constraint-Based discovery of qualification Score causal graph
 
 profession [exogenous];
 years_programming [exogenous];
@@ -39,6 +38,13 @@ https://www.bnlearn.com/documentation/man/structure.learning.html
 Learning Bayesian Networks with the bnlearn R - https://arxiv.org/pdf/0908.3817.pdf
 
 #TODO
+
+#Draw hypothetical graph (prior)
+
+#Profession not supported, so need to run the analysis by profession
+#Include speed_fast/slow
+#Specify the query on duration and YoE (the reflect on causal discovery)
+
 #compare graphs produced by each of the methods. Check how sensitive they are to false discovery rate.
 #compare how professions are distinct in terms of adjusted_score and qualification_score
 
@@ -51,6 +57,7 @@ library(dplyr)
 
 #Load only Consent data. No data from tasks, only from demographics and qualification test
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_consent_create_indexes_E2.R")
+df_consent <- load_consent_create_indexes()
 
 #Evaluate how fast and slow can explain adjusted_score score
 df_consent_fast <- df_consent[df_consent$is_fast,]
