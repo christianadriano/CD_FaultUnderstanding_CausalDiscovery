@@ -68,7 +68,7 @@ df_consent <- rename(df_consent,years_prog=years_programming)
 
 df_selected <-
   dplyr::select(df_consent,
-                profession, #categorical
+                #profession, #not using because it is categorical and the current methods do not support it
                 age,
                 years_prog,
                 test_duration,
@@ -76,7 +76,7 @@ df_selected <-
                 adjusted_score #outcome
                 );
 
-df_selected$profession <- as.factor(df_selected$profession)
+#df_selected$profession <- as.factor(df_selected$profession)
 
 node.names <- colnames(df_selected)
 
@@ -86,14 +86,14 @@ blacklist_1 <- data.frame(from = c("years_prog"),
 
 #Prevent speed to be parents of age and years_prog and profession
 blacklist_2 <- data.frame(from = c("speed"), 
-                          to   = c("years_prog","age","profession"))
+                          to   = c("years_prog","age"))#,"profession"))
 
 #profession has parent nodes
-blacklist_3 <- data.frame(from = node.names[-grep("profession", node.names)], 
-                          to   = c("profession"))
+#blacklist_3 <- data.frame(from = node.names[-grep("profession", node.names)], 
+#                          to   = c("profession"))
 #test_duration is not parent of age, years_prog, profession
 blacklist_4 <- data.frame(from = c("test_duration"),
-                          to   = c("profession","years_prog","age"))#,"is_fast"))
+                          to   = c("years_prog","age"))#"profession","is_fast"))
 #adjusted_score cannot be parent of anyone
 blacklist_5 <- data.frame(from = c("adjusted_score"),
                           to   = node.names[-grep("adjusted_score", node.names)])
@@ -101,11 +101,9 @@ blacklist_5 <- data.frame(from = c("adjusted_score"),
 #Task Accuracy can only be measured with all tasks data. 
 #Here we are dealing only with programmer demographic data.
 
-blacklist_all <- rbind(blacklist_1,blacklist_3,blacklist_4,blacklist_5) 
+blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_4,blacklist_5) 
 
 #------------------------------------------
-#Including Profession as Node
-
 bn <- pc.stable(df_selected,blacklist = blacklist_all)
 plot(bn,main="All Professions, pc.stable algorithm")
 
@@ -116,6 +114,19 @@ bn <-iamb.fdr(df_selected,blacklist = blacklist_all)
 plot(bn,main="All Professions, iamb.fdr algorithm")
 
 #-----------------------------------------
+#-----------------------------------------
+
+df_selected <-
+  dplyr::select(df_consent,
+                profession,
+                age,
+                years_prog,
+                test_duration,
+                speed, #or use is_fast, which is binary
+                adjusted_score #outcome
+  );
+
+df_selected$profession <- as.factor(df_selected$profession)
 #BY PROFESSION
 
 #Remove profession from blacklist
