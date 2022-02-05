@@ -1,4 +1,3 @@
-
 "
 Score-Based Causal discovery for the programming skill and test Duration related factors
 
@@ -9,7 +8,37 @@ test_duration [endogenous];
 qualification_score [outcome];
 adjusted_score [outcome];
 
+
+\begin{list}
+
+\item Hill-Climbing (hc): a hill climbing greedy search that explores the space of the directed acyclic graphs by single-arc addition, removal and reversals; with random restarts to avoid local optima. The optimized implementation uses score caching, score decomposability and score equivalence to reduce the number of duplicated tests.
+
+\item Tabu Search (tabu): a modified hill-climbing able to escape local optima by selecting a network that minimally decreases the score function.
+
+\end{list}
+
+Pena JM (2008). Learning Gaussian Graphical Models of Gene Networks with False Discovery Rate Control. Proceedings of the Sixth European Conference on Evolutionary Computation, Machine Learning and Data Mining in Bioinformatics, 165–176.
+
+Gasse M, Aussem A, Elghazel H (2014). A Hybrid Algorithm for Bayesian Network Structure Learning with Application to Multi-Label Learning. Expert Systems with Applications, 41(15):6755–6772.
+
+
+The library used was bnlearn \cite{scutari2010learning}
+https://www.bnlearn.com/documentation/man/structure.learning.html
+Learning Bayesian Networks with the bnlearn R - https://arxiv.org/pdf/0908.3817.pdf
+
+#TODO
+
+#Draw hypothetical graph (prior)
+
+#Profession not supported, so need to run the analysis by profession
+#Include speed_fast/slow
+#Specify the query on duration and YoE (the reflect on causal discovery)
+
+#compare graphs produced by each of the methods. Check how sensitive they are to false discovery rate.
+#compare how professions are distinct in terms of adjusted_score and qualification_score
+
 " 
+
 library(bnlearn)
 library(dplyr)
 
@@ -32,9 +61,7 @@ df_selected <-
                 test_duration,
                 speed, #or use is_fast, which is binary
                 adjusted_score #outcome
-  );
-
-#df_selected$profession <- as.factor(df_selected$profession)
+                );
 
 node.names <- colnames(df_selected)
 
@@ -60,16 +87,16 @@ blacklist_5 <- data.frame(from = c("adjusted_score"),
 #Here we are dealing only with programmer demographic data.
 
 blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_4,blacklist_5) 
-#------------------------------------------
-#Including Profession
 
-bn <- pc.stable(df_selected,blacklist = blacklist_all)
-plot(bn,main="All Professions, Constraint-Based Discovery")
+#----------------------------------------------
+bn <- hc(df_selected,blacklist = blacklist_all)
+plot(bn,main="All Professions, hill climbing algorithm")
 
-bn <-tabu(df_selected,blacklist = blacklist_all)
-plot(bn,main="All Professions, Score-Based Discovery")
+bn < tabu(df_selected,blacklist = blacklist_all)
+plot(bn,main="All Professions, tabu algorithm")
 
-#-----------------------------------------
+#----------------------------------------------
+#----------------------------------------------
 #BY PROFESSION
 
 #Remove profession from blacklist
@@ -82,23 +109,6 @@ blacklist_all <- blacklist_all[!(blacklist_all$to %in% c("profession") ),]
 #Run structure discovery for each profession
 professions = c("Other", "Undergraduate_Student","Graduate_Student","Hobbyist",
                 "Programmer","Professional")
-
-#Constraint-Based Algorithm
-for (i in 1:length(professions)) {
-  choice = professions[i]
-  df_prof <- df_selected[df_selected$profession==choice,]
-  df_prof <- 
-    dplyr::select(df_prof,
-                  years_prog,
-                  age,
-                  speed,
-                  test_duration,
-                  adjusted_score
-    );
-  bn <-pc.stable(df_prof,blacklist = blacklist_all)
-  plot(bn,main=choice)
-  #graphviz.plot(bn,main=choice,shape="ellipse",layout = "circo");
-}
 
 "Analysis of results of the PC algorithm
 test duration seem relevant only for professional, undergrad, grad, hobbyist
@@ -116,7 +126,24 @@ for (i in 1:length(professions)) {
                   test_duration,
                   adjusted_score
     );
-  bn <-tabu(df_prof,blacklist = blacklist_all)
+  bn <-hc(df_prof,blacklist = blacklist_all)
+  plot(bn,main=choice)
+  #graphviz.plot(bn,main=choice,shape="ellipse",layout = "circo");
+}
+
+#Score-based algorithm - Tabu
+for (i in 1:length(professions)) {
+  choice = professions[i]
+  df_prof <- df_selected[df_selected$profession==choice,]
+  df_prof <- 
+    dplyr::select(df_prof,
+                  years_prog,
+                  age,
+                  speed,
+                  test_duration,
+                  adjusted_score
+    );
+  bn <-hc(df_prof,blacklist = blacklist_all)
   plot(bn,main=choice)
   #graphviz.plot(bn,main=choice,shape="ellipse",layout = "circo");
 }
@@ -129,7 +156,8 @@ Test duration has years_prog as parent in Hobbyist, Undergrad,
 Programmer, and Other.
 "
 
-#-------------------------------------
+#-------------------------------------------------------
+#-------------------------------------------------------
 #Using now the qualification_score
 
 df_selected <-
@@ -167,7 +195,7 @@ blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_3,blacklist_4,blacklist
 #------------------------------------------
 #Including Profession
 
-bn <- pc.stable(df_selected,blacklist = blacklist_all)
+bn <- hc(df_selected,blacklist = blacklist_all)
 plot(bn,main="All Professions, Constraint-Based Discovery")
 
 bn <-tabu(df_selected,blacklist = blacklist_all)
