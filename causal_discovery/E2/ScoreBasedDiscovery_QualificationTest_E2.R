@@ -89,11 +89,11 @@ blacklist_5 <- data.frame(from = c("adjusted_score"),
 blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_4,blacklist_5) 
 
 #----------------------------------------------
-bn <- hc(df_selected,blacklist = blacklist_all)
-plot(bn,main="All Professions, hill climbing algorithm")
+bn_hc <- hc(df_selected,blacklist = blacklist_all)
+plot(bn_hc,main="All Professions, hill climbing algorithm")
 
-bn < tabu(df_selected,blacklist = blacklist_all)
-plot(bn,main="All Professions, tabu algorithm")
+bn_tabu <-tabu(df_selected,blacklist = blacklist_all)
+plot(bn_tabu,main="All Professions, tabu algorithm")
 
 #----------------------------------------------
 #----------------------------------------------
