@@ -72,7 +72,6 @@ df_selected <-
                 age,
                 years_prog,
                 test_duration,
-                speed, #or use is_fast, which is binary
                 adjusted_score #outcome
                 );
 
@@ -85,8 +84,8 @@ blacklist_1 <- data.frame(from = c("years_prog"),
                           to   = c("age"))
 
 #Prevent speed to be parents of age and years_prog and profession
-blacklist_2 <- data.frame(from = c("speed"), 
-                          to   = c("years_prog","age"))#,"profession"))
+#blacklist_2 <- data.frame(from = c("speed"), 
+#                          to   = c("years_prog","age"))#,"profession"))
 
 #profession has parent nodes
 #blacklist_3 <- data.frame(from = node.names[-grep("profession", node.names)], 
@@ -101,7 +100,7 @@ blacklist_5 <- data.frame(from = c("adjusted_score"),
 #Task Accuracy can only be measured with all tasks data. 
 #Here we are dealing only with programmer demographic data.
 
-blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_4,blacklist_5) 
+blacklist_all <- rbind(blacklist_1,blacklist_4,blacklist_5) 
 
 #------------------------------------------
 bn <- pc.stable(df_selected,blacklist = blacklist_all)
@@ -113,6 +112,15 @@ plot(bn,main="All Professions, iamb algorithm")
 bn <-iamb.fdr(df_selected,blacklist = blacklist_all)
 plot(bn,main="All Professions, iamb.fdr algorithm")
 
+"
+All three algorithms produced the same graph.
+years_prog only connected to Adjusted_Score by an undirected edge
+age -> test_duration
+age -> years_prog
+test_duration -> years_prog
+no edge between years_prog and test_duration
+"
+
 #-----------------------------------------
 #-----------------------------------------
 
@@ -122,7 +130,6 @@ df_selected <-
                 age,
                 years_prog,
                 test_duration,
-                speed, #or use is_fast, which is binary
                 adjusted_score #outcome
   );
 
@@ -132,8 +139,6 @@ df_selected$profession <- as.factor(df_selected$profession)
 #Remove profession from blacklist
 blacklist_all <- blacklist_all[!(blacklist_all$from %in% c("profession") ),]
 blacklist_all <- blacklist_all[!(blacklist_all$to %in% c("profession") ),]
-#blacklist_all <- blacklist_all[!(blacklist_all$from %in% c("speed") ),]
-#blacklist_all <- blacklist_all[!(blacklist_all$to %in% c("speed") ),]
 
 
 #Run structure discovery for each profession
@@ -148,7 +153,6 @@ for (i in 1:length(professions)) {
     dplyr::select(df_prof,
                   years_prog,
                   age,
-                  speed,
                   test_duration,
                   adjusted_score
     );
@@ -169,7 +173,6 @@ for (i in 1:length(professions)) {
     dplyr::select(df_prof,
                   years_prog,
                   age,
-                  speed,
                   test_duration,
                   adjusted_score
     );
@@ -196,7 +199,6 @@ for (i in 1:length(professions)) {
     dplyr::select(df_prof,
                   years_prog,
                   age,
-                  speed,
                   test_duration,
                   adjusted_score
     );
