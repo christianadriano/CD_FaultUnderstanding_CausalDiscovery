@@ -1,6 +1,6 @@
 
 "
-Constraint-Based discovery of qualification Score causal graph
+Constraint-Based discovery of Qualification Test causal graph
 
 profession [exogenous];
 years_programming [exogenous];
@@ -37,19 +37,39 @@ The library used was bnlearn \cite{scutari2010learning}
 https://www.bnlearn.com/documentation/man/structure.learning.html
 Learning Bayesian Networks with the bnlearn R - https://arxiv.org/pdf/0908.3817.pdf
 
-#TODO
 
-#Draw hypothetical graph (prior)
+Summary of results
 
-#Profession not supported, so need to run the analysis by profession
-#Include speed_fast/slow
-#Specify the query on duration and YoE (the reflect on causal discovery)
+Draw hypothetical graph (prior)
+Specify the query on duration and YoE (the reflect on causal discovery)
 
+The hypothetical graph assumed that both YoE and Duration are causes of the test score.
+Age is a cause of YoE. We also believed that YoE should be a cause of Duration,
+as more experienced people would take less time to comprehend the program and complete the test questions.
+However, we found surprising results:
+
+1- Duration is detected as a cause of Score for all professions, except Other and Graduate Students. 
+
+2- YoE was detected as a cause of Duration only for undergraduate students. 
+
+3- YoE was detected as a cause of Score, except for Graduate students.
+
+Ultimately, as expected, Age was detected as a causal effect of YoE. Although Age, as well as Gender and
+Country of origin are not features that we selected, the association between Age and YoE contributes to
+increase confidence on the trustworthiness of the self-reported demographics data.
+
+
+For each of these findings, we investigate if they generalize across YoE strata and 
+compute the effect size of the causal associations that were not ruled out.
+
+#Categorical variables are not supported, so need to run the analysis by profession and speed_cluster
+
+#Discussion of results
 #compare graphs produced by each of the methods. Check how sensitive they are to false discovery rate.
 #compare how professions are distinct in terms of adjusted_score and qualification_score
+#compare between speed_clusters
 
 " 
-
 
 
 library(bnlearn)
@@ -75,32 +95,19 @@ df_selected <-
                 adjusted_score #outcome
                 );
 
-#df_selected$profession <- as.factor(df_selected$profession)
-
 node.names <- colnames(df_selected)
 
 #years_prog is not parent of age.
 blacklist_1 <- data.frame(from = c("years_prog"), 
                           to   = c("age"))
-
-#Prevent speed to be parents of age and years_prog and profession
-#blacklist_2 <- data.frame(from = c("speed"), 
-#                          to   = c("years_prog","age"))#,"profession"))
-
-#profession has parent nodes
-#blacklist_3 <- data.frame(from = node.names[-grep("profession", node.names)], 
-#                          to   = c("profession"))
 #test_duration is not parent of age, years_prog, profession
-blacklist_4 <- data.frame(from = c("test_duration"),
-                          to   = c("years_prog","age"))#"profession","is_fast"))
+blacklist_2 <- data.frame(from = c("test_duration"),
+                          to   = c("years_prog","age")) #"profession",
 #adjusted_score cannot be parent of anyone
-blacklist_5 <- data.frame(from = c("adjusted_score"),
+blacklist_3 <- data.frame(from = c("adjusted_score"),
                           to   = node.names[-grep("adjusted_score", node.names)])
 
-#Task Accuracy can only be measured with all tasks data. 
-#Here we are dealing only with programmer demographic data.
-
-blacklist_all <- rbind(blacklist_1,blacklist_4,blacklist_5) 
+blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_3) 
 
 #------------------------------------------
 bn <- pc.stable(df_selected,blacklist = blacklist_all)
@@ -218,7 +225,6 @@ df_selected <-
                 age,
                 years_prog,
                 test_duration,
-                speed, #or use is_fast, which is binary
                 qualification_score #outcome
   );
 
@@ -228,21 +234,14 @@ node.names <- colnames(df_selected)
 #years_prog is not parent of age.
 blacklist_1 <- data.frame(from = c("years_prog"), 
                           to   = c("age"))
-#profession has parent nodes
-blacklist_2 <- data.frame(from = node.names[-grep("profession", node.names)], 
-                          to   = c("profession"))
 #test_duration is not parent of age, years_prog, profession
-blacklist_3 <- data.frame(from = c("test_duration"),
-                          to   = c("profession","years_prog","age"))
+blacklist_2 <- data.frame(from = c("test_duration"),
+                          to   = c("years_prog","age")) #"profession",
 #qualification_score cannot be parent of anyone
-blacklist_4 <- data.frame(from = c("qualification_score"),
+blacklist_3 <- data.frame(from = c("qualification_score"),
                           to   = node.names[-grep("qualification_score", node.names)])
-#Prevent speed to be parents of age and years_prog and profession
-blacklist_5 <- data.frame(from = c("speed"), 
-                          to   = c("years_prog","age","profession"))
 
-
-blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_3,blacklist_4,blacklist_5) 
+blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_3) 
 
 
 #------------------------------------------
