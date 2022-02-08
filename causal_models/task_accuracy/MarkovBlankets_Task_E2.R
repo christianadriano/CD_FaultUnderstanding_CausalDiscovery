@@ -43,9 +43,15 @@ Task.Type -> Difficulty;
 graph <- dagitty(dag)
 plot(graph)
 
-`for( v in names( graph ) ){
-  cat(v, ":", markovBlanket( graph, v ), "\n" )
+covariates <- names(graph)
+i=1;
+while(i<2) {
+  v <- covariates[i];
+  markovBlanket(graph,v);
+  i=i+1;
+#  cat(v, ":", markovBlanket( graph, v ), "\n" )
 }
+
 "
 
 Accuracy : Confidence Explanation 
