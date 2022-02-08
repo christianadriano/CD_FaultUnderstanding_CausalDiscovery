@@ -38,7 +38,7 @@ https://www.bnlearn.com/documentation/man/structure.learning.html
 Learning Bayesian Networks with the bnlearn R - https://arxiv.org/pdf/0908.3817.pdf
 
 
-Summary of results
+##Summary of results
 
 Draw hypothetical graph (prior)
 Specify the query on duration and YoE (the reflect on causal discovery)
