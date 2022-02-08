@@ -11,6 +11,7 @@ independent of Difficulty, Duration, Answer.Type and all of the exposure variabl
 See file MarkovBlankets_Tasks_E2.R for implications of the Markov Blankets of other variables.
 
 "
+install.packages("dagitty")
 library(ggdag)
 library( dagitty )
 library (ggm)
