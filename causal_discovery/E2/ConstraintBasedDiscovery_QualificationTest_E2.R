@@ -67,6 +67,8 @@ compute the effect size of the causal associations that were not ruled out.
 #Discussion of results
 #compare graphs produced by each of the methods. Check how sensitive they are to false discovery rate.
 #compare how professions are distinct in terms of adjusted_score and qualification_score
+Results from adjusted_score and qualification score are the same across professions.
+
 #compare between speed_clusters
 
 " 
@@ -89,8 +91,8 @@ df_consent <- rename(df_consent,years_prog=years_programming)
 df_selected <-
   dplyr::select(df_consent,
                 #profession, #not using because it is categorical and the current methods do not support it
-                age,
                 years_prog,
+                age,
                 test_duration,
                 adjusted_score #outcome
                 );
@@ -165,12 +167,7 @@ for (i in 1:length(professions)) {
     );
   bn <-pc.stable(df_prof,blacklist = blacklist_all)
   plot(bn,main=choice)
-  #graphviz.plot(bn,main=choice,shape="ellipse",layout = "circo");
 }
-
-"Analysis of results of the PC algorithm
-test duration seem relevant only for professional, undergrad, grad, hobbyist
-only in undegrad that test duration is affected by years_prog"
 
 #IAMB
 for (i in 1:length(professions)) {
@@ -185,19 +182,8 @@ for (i in 1:length(professions)) {
     );
   bn <-iamb(df_prof,blacklist = blacklist_all)
   plot(bn,main=choice)
-  #graphviz.plot(bn,main=choice,shape="ellipse",layout = "circo");
 }
 
-"Analysis of results of the Tabu algorithm
-Test duration has not effect on adjusted_score for other and Programmer
-Test duration has no parents for Graduate and Professional
-Only in Hobbyists that test duration is a mediator for effect on adjusted_score
-Test duration has years_prog as parent in Hobbyist, Undergrad, 
-Programmer, and Other.
-"
-
-
-#----------------------------------
 #IAMB.FDR
 for (i in 1:length(professions)) {
   choice = professions[i]
@@ -211,9 +197,16 @@ for (i in 1:length(professions)) {
     );
   bn <-iamb.fdr(df_prof,blacklist = blacklist_all)
   plot(bn,main=choice)
-  #graphviz.plot(bn,main=choice,shape="ellipse",layout = "circo");
 }
 
+"All three algorithms produced the same results with one exception.
+For Hobbyist, the IAM and IAM.FDR determined that Age->Duration
+For all professions Age -> YoE
+Only for undergrads YoE -> Test_Duration
+All (except Programmer and Other) Test_Duration -> Adjusted_Score
+All (except Graduate_Student) YoE -> Adjusted_Score
+Only for undergraduate, Age -> Adjusted_Score. 
+"
 
 #---------------------------------------------------------------------
 #---------------------------------------------------------------------
@@ -221,9 +214,8 @@ for (i in 1:length(professions)) {
 
 df_selected <-
   dplyr::select(df_consent,
-                profession, #categorical
-                age,
                 years_prog,
+                age,
                 test_duration,
                 qualification_score #outcome
   );
@@ -263,6 +255,15 @@ plot(bn,main="All Professions, iamb.fdr algorithm")
 blacklist_all <- blacklist_all[!(blacklist_all$from %in% c("profession") ),]
 blacklist_all <- blacklist_all[!(blacklist_all$to %in% c("profession") ),]
 
+df_selected <-
+  dplyr::select(df_consent,
+                profession,
+                years_prog,
+                age,
+                test_duration,
+                qualification_score #outcome
+  );
+
 #PC-STABLE
 for (i in 1:length(professions)) {
   choice = professions[i]
@@ -271,13 +272,11 @@ for (i in 1:length(professions)) {
     dplyr::select(df_prof,
                   years_prog,
                   age,
-                  speed,
                   test_duration,
-                  adjusted_score
+                  qualification_score
     );
   bn <-pc.stable(df_prof,blacklist = blacklist_all)
   plot(bn,main=choice)
-  #graphviz.plot(bn,main=choice,shape="ellipse",layout = "circo");
 }
 
 "Analysis of results of the PC algorithm
@@ -294,9 +293,8 @@ for (i in 1:length(professions)) {
     dplyr::select(df_prof,
                   years_prog,
                   age,
-                  speed,
                   test_duration,
-                  adjusted_score
+                  qualification_score
     );
   bn <-iamb(df_prof,blacklist = blacklist_all)
   plot(bn,main=choice)
@@ -321,14 +319,13 @@ for (i in 1:length(professions)) {
     dplyr::select(df_prof,
                   years_prog,
                   age,
-                  speed,
                   test_duration,
-                  adjusted_score
+                  qualification_score
     );
   bn <-iamb.fdr(df_prof,blacklist = blacklist_all)
   plot(bn,main=choice)
-  #graphviz.plot(bn,main=choice,shape="ellipse",layout = "circo");
 }
+
 
 
 
