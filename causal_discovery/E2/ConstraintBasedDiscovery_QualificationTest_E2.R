@@ -377,4 +377,28 @@ for (i in 1:length(professions)) {
 
 "Fast answer cluster has same results as no clustering"
 
+df_selected <-
+  dplyr::select(df_consent_slow,
+                profession,
+                years_prog,
+                age,
+                test_duration,
+                adjusted_score #outcome
+  );
 
+#IAMB-FDR SLOW
+for (i in 1:length(professions)) {
+  choice = professions[i]
+  df_prof <- df_selected[df_selected$profession==choice,]
+  df_prof <- 
+    dplyr::select(df_prof,
+                  years_prog,
+                  age,
+                  test_duration,
+                  adjusted_score
+    );
+  bn <-iamb.fdr(df_prof,blacklist = blacklist_all)
+  plot(bn,main=paste(choice,"(slow answers)"))
+}
+
+"Slow clustering showed only one edge Age->YoE for Hobbyists"
