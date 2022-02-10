@@ -56,10 +56,9 @@ df_consent <- rename(df_consent,years_prog=years_programming)
 df_selected <-
   dplyr::select(df_consent,
                 #profession, #not using because it is categorical and the current methods do not support it
-                age,
                 years_prog,
+                age,
                 test_duration,
-                speed, #or use is_fast, which is binary
                 adjusted_score #outcome
                 );
 
@@ -69,24 +68,14 @@ node.names <- colnames(df_selected)
 blacklist_1 <- data.frame(from = c("years_prog"), 
                           to   = c("age"))
 
-#Prevent speed to be parents of age and years_prog and profession
-blacklist_2 <- data.frame(from = c("speed"), 
-                          to   = c("years_prog","age"))#,"profession"))
-
-#profession has parent nodes
-#blacklist_3 <- data.frame(from = node.names[-grep("profession", node.names)], 
-#                          to   = c("profession"))
-#test_duration is not parent of age, years_prog, profession
-blacklist_4 <- data.frame(from = c("test_duration"),
-                          to   = c("years_prog","age"))#"profession","is_fast"))
+#test_duration is not parent of age, years_prog
+blacklist_2 <- data.frame(from = c("test_duration"),
+                          to   = c("years_prog","age"))
 #adjusted_score cannot be parent of anyone
-blacklist_5 <- data.frame(from = c("adjusted_score"),
+blacklist_3 <- data.frame(from = c("adjusted_score"),
                           to   = node.names[-grep("adjusted_score", node.names)])
 
-#Task Accuracy can only be measured with all tasks data. 
-#Here we are dealing only with programmer demographic data.
-
-blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_4,blacklist_5) 
+blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_3) 
 
 #----------------------------------------------
 bn_hc <- hc(df_selected,blacklist = blacklist_all)
@@ -95,16 +84,29 @@ plot(bn_hc,main="All Professions, hill climbing algorithm")
 bn_tabu <-tabu(df_selected,blacklist = blacklist_all)
 plot(bn_tabu,main="All Professions, tabu algorithm")
 
+"
+Both algorithms produced the same graph. It has two additional 
+edges than the graph discovered by the CB algorithms. 
+The two additional edges are years_prog->test_duration, age->adjusted_score
+"
+
 #----------------------------------------------
 #----------------------------------------------
 #BY PROFESSION
 
+df_selected <-
+  dplyr::select(df_consent,
+                profession, #not using because it is categorical and the current methods do not support it
+                years_prog,
+                age,
+                test_duration,
+                adjusted_score #outcome
+  );
+
+
 #Remove profession from blacklist
 blacklist_all <- blacklist_all[!(blacklist_all$from %in% c("profession") ),]
 blacklist_all <- blacklist_all[!(blacklist_all$to %in% c("profession") ),]
-#blacklist_all <- blacklist_all[!(blacklist_all$from %in% c("speed") ),]
-#blacklist_all <- blacklist_all[!(blacklist_all$to %in% c("speed") ),]
-
 
 #Run structure discovery for each profession
 professions = c("Other", "Undergraduate_Student","Graduate_Student","Hobbyist",
@@ -122,13 +124,11 @@ for (i in 1:length(professions)) {
     dplyr::select(df_prof,
                   years_prog,
                   age,
-                  speed,
                   test_duration,
                   adjusted_score
     );
   bn <-hc(df_prof,blacklist = blacklist_all)
   plot(bn,main=choice)
-  #graphviz.plot(bn,main=choice,shape="ellipse",layout = "circo");
 }
 
 #Score-based algorithm - Tabu
@@ -143,9 +143,8 @@ for (i in 1:length(professions)) {
                   test_duration,
                   adjusted_score
     );
-  bn <-hc(df_prof,blacklist = blacklist_all)
+  bn <-tabu(df_prof,blacklist = blacklist_all)
   plot(bn,main=choice)
-  #graphviz.plot(bn,main=choice,shape="ellipse",layout = "circo");
 }
 
 "Analysis of results of the Tabu algorithm
