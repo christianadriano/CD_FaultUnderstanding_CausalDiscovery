@@ -45,17 +45,10 @@ library(dplyr)
 #Load only Consent data. No data from tasks, only from demographics and qualification test
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_consent_create_indexes_E2.R")
 df_consent <- load_consent_create_indexes()
-
-#Evaluate how fast and slow can explain adjusted_score score
-df_consent_fast <- df_consent[df_consent$is_fast,]
-df_consent_slow <- df_consent[!df_consent$is_fast,]
-
-df_consent <- rename(df_consent,speed=testDuration_fastMembership)
 df_consent <- rename(df_consent,years_prog=years_programming)
 
 df_selected <-
   dplyr::select(df_consent,
-                #profession, #not using because it is categorical and the current methods do not support it
                 years_prog,
                 age,
                 test_duration,
@@ -131,6 +124,15 @@ for (i in 1:length(professions)) {
   plot(bn,main=choice)
 }
 
+"Results of Hill Climbing
+years_prog -> test_duration, all except Grad_student and Professionals
+years_prog -> adjusted_score, all except Grad_student
+test_duration -> adjusted_score, all except Other and Programmer
+age -> years_prog, all
+age -> duration, none
+age -> adjusted_score, all except Grad_student and Other
+"
+
 #Score-based algorithm - Tabu
 for (i in 1:length(professions)) {
   choice = professions[i]
@@ -139,7 +141,6 @@ for (i in 1:length(professions)) {
     dplyr::select(df_prof,
                   years_prog,
                   age,
-                  speed,
                   test_duration,
                   adjusted_score
     );
@@ -147,13 +148,7 @@ for (i in 1:length(professions)) {
   plot(bn,main=choice)
 }
 
-"Analysis of results of the Tabu algorithm
-Test duration has not effect on adjusted_score for other and Programmer
-Test duration has no parents for Graduate and Professional
-Only in Hobbyists that test duration is a mediator for effect on adjusted_score
-Test duration has years_prog as parent in Hobbyist, Undergrad, 
-Programmer, and Other.
-"
+"Results of Tabu produced the exact same results as Hill Climbing"
 
 #-------------------------------------------------------
 #-------------------------------------------------------
@@ -165,7 +160,6 @@ df_selected <-
                 age,
                 years_prog,
                 test_duration,
-                speed, #or use is_fast, which is binary
                 qualification_score #outcome
   );
 
@@ -219,7 +213,6 @@ for (i in 1:length(professions)) {
     );
   bn <-pc.stable(df_prof,blacklist = blacklist_all)
   plot(bn,main=choice)
-  #graphviz.plot(bn,main=choice,shape="ellipse",layout = "circo");
 }
 
 "Analysis of results of the PC algorithm
