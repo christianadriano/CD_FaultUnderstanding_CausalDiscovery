@@ -328,8 +328,9 @@ for (i in 1:length(professions)) {
   plot(bn,main=paste(choice,"(slow answers)"))
 }
 
-"Slow clustering showed only one edge Age->YoE for Hobbyists"
+"Slow answer clustering graphs showed no edges"
 
+#-------------------------------------------------------
 
 #Remove profession from blacklist
 #blacklist_all <- blacklist_all[!(blacklist_all$from %in% c("profession") ),]
