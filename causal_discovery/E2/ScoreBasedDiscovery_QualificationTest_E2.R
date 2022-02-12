@@ -156,7 +156,6 @@ for (i in 1:length(professions)) {
 
 df_selected <-
   dplyr::select(df_consent,
-                profession, #categorical
                 age,
                 years_prog,
                 test_duration,
@@ -169,37 +168,44 @@ node.names <- colnames(df_selected)
 #years_prog is not parent of age.
 blacklist_1 <- data.frame(from = c("years_prog"), 
                           to   = c("age"))
-#profession has parent nodes
-blacklist_2 <- data.frame(from = node.names[-grep("profession", node.names)], 
-                          to   = c("profession"))
-#test_duration is not parent of age, years_prog, profession
-blacklist_3 <- data.frame(from = c("test_duration"),
-                          to   = c("profession","years_prog","age"))
+
+#test_duration is not parent of age, years_prog
+blacklist_2 <- data.frame(from = c("test_duration"),
+                          to   = c("years_prog","age"))
 #qualification_score cannot be parent of anyone
-blacklist_4 <- data.frame(from = c("qualification_score"),
+blacklist_3 <- data.frame(from = c("qualification_score"),
                           to   = node.names[-grep("qualification_score", node.names)])
-#Prevent speed to be parents of age and years_prog and profession
-blacklist_5 <- data.frame(from = c("speed"), 
-                          to   = c("years_prog","age","profession"))
 
-
-blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_3,blacklist_4,blacklist_5) 
+blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_3) 
 
 #------------------------------------------
-#Including Profession
 
 bn <- hc(df_selected,blacklist = blacklist_all)
-plot(bn,main="All Professions, Constraint-Based Discovery")
+plot(bn,main="All Professions, Hill-Climbing")
 
 bn <-tabu(df_selected,blacklist = blacklist_all)
-plot(bn,main="All Professions, Score-Based Discovery")
+plot(bn,main="All Professions, Tabu")
+
+"Identical results"
+
+#--------------------------
+#Including Profession
+
+df_selected <-
+  dplyr::select(df_consent,
+                profession, #included only for building models for each profession
+                age,
+                years_prog,
+                test_duration,
+                qualification_score #outcome
+  );
 
 
 #Remove profession from blacklist
-blacklist_all <- blacklist_all[!(blacklist_all$from %in% c("profession") ),]
-blacklist_all <- blacklist_all[!(blacklist_all$to %in% c("profession") ),]
+#blacklist_all <- blacklist_all[!(blacklist_all$from %in% c("profession") ),]
+#blacklist_all <- blacklist_all[!(blacklist_all$to %in% c("profession") ),]
 
-#Constraint-Based Algorithm
+#Score-based algorithm - Hill Climbing
 for (i in 1:length(professions)) {
   choice = professions[i]
   df_prof <- df_selected[df_selected$profession==choice,]
@@ -207,7 +213,6 @@ for (i in 1:length(professions)) {
     dplyr::select(df_prof,
                   years_prog,
                   age,
-                  speed,
                   test_duration,
                   adjusted_score
     );
@@ -221,7 +226,7 @@ Only in undegrad that test duration is affected by years_prog
 Hence, qualification_Score and adjusted_score produced the same graphs with the PC algorithm
 "
 
-#Score-based algorithm - Hill Climbing
+#Score-based algorithm - Tabu algorithm
 for (i in 1:length(professions)) {
   choice = professions[i]
   df_prof <- df_selected[df_selected$profession==choice,]
@@ -235,26 +240,9 @@ for (i in 1:length(professions)) {
     );
   bn <-tabu(df_prof,blacklist = blacklist_all)
   plot(bn,main=choice)
-  #graphviz.plot(bn,main=choice,shape="ellipse",layout = "circo");
 }
 
-"Analysis of results of the Tabu algorithm
-Test duration has not effect on adjusted_score for other and Programmer
-Test duration has no parents for Graduate and Professional
-Only in Hobbyists that test duration is a mediator for effect on adjusted_score
-Test duration has years_prog as parent in Hobbyist, Undergrad, 
-Programmer, and Other.
-
-Hence, qualification_score and adjusted_score produced the same graph with the tabu algorithm
-"
-
-
-#TODO
-#compare how professions are distinct in terms of adjusted_score and qualification_score
-#Compare the strength of graph connections using adjusted_score and qualification_score
-
-#https://arxiv.org/pdf/0908.3817.pdf
-
+"Qualification score results were identical to Adjusted score"
 
 #------------------------------------------------------
 #SPEED CLUSTERS
