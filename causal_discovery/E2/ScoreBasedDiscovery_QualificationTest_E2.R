@@ -97,10 +97,6 @@ df_selected <-
   );
 
 
-#Remove profession from blacklist
-blacklist_all <- blacklist_all[!(blacklist_all$from %in% c("profession") ),]
-blacklist_all <- blacklist_all[!(blacklist_all$to %in% c("profession") ),]
-
 #Run structure discovery for each profession
 professions = c("Other", "Undergraduate_Student","Graduate_Student","Hobbyist",
                 "Programmer","Professional")
@@ -200,11 +196,6 @@ df_selected <-
                 qualification_score #outcome
   );
 
-
-#Remove profession from blacklist
-#blacklist_all <- blacklist_all[!(blacklist_all$from %in% c("profession") ),]
-#blacklist_all <- blacklist_all[!(blacklist_all$to %in% c("profession") ),]
-
 #Score-based algorithm - Hill Climbing
 for (i in 1:length(professions)) {
   choice = professions[i]
@@ -214,17 +205,11 @@ for (i in 1:length(professions)) {
                   years_prog,
                   age,
                   test_duration,
-                  adjusted_score
+                  qualification_score
     );
-  bn <-pc.stable(df_prof,blacklist = blacklist_all)
+  bn <-hc(df_prof,blacklist = blacklist_all)
   plot(bn,main=choice)
 }
-
-"Analysis of results of the PC algorithm
-Test duration has not effect on adjusted_score for other and Programmer
-Only in undegrad that test duration is affected by years_prog
-Hence, qualification_Score and adjusted_score produced the same graphs with the PC algorithm
-"
 
 #Score-based algorithm - Tabu algorithm
 for (i in 1:length(professions)) {
@@ -234,9 +219,8 @@ for (i in 1:length(professions)) {
     dplyr::select(df_prof,
                   years_prog,
                   age,
-                  speed,
                   test_duration,
-                  adjusted_score
+                  qualification_score
     );
   bn <-tabu(df_prof,blacklist = blacklist_all)
   plot(bn,main=choice)
@@ -247,48 +231,73 @@ for (i in 1:length(professions)) {
 #------------------------------------------------------
 #SPEED CLUSTERS
 #------------------------------------------------------
-#Will only used the IAM.FDR
+#Will only used TABU
 
 df_consent <- load_consent_create_indexes()
-
-df_consent <- rename(df_consent,speed=testDuration_fastMembership)
 df_consent <- rename(df_consent,years_prog=years_programming)
 
-#Evaluate how fast and slow can explain adjusted_score score
-df_consent_fast <- df_consent[df_consent$is_fast,]
-df_consent_slow <- df_consent[!df_consent$is_fast,]
-
 df_selected <-
-  dplyr::select(df_consent_fast,
-                profession,
+  dplyr::select(df_consent,
                 years_prog,
                 age,
                 test_duration,
                 adjusted_score #outcome
   );
 
+
 node.names <- colnames(df_selected)
 
 #years_prog is not parent of age.
 blacklist_1 <- data.frame(from = c("years_prog"), 
                           to   = c("age"))
-#test_duration is not parent of age, years_prog, profession
+#test_duration is not parent of age, years_prog,
 blacklist_2 <- data.frame(from = c("test_duration"),
-                          to   = c("years_prog","age")) #"profession",
+                          to   = c("years_prog","age")) 
 #adjusted_score cannot be parent of anyone
 blacklist_3 <- data.frame(from = c("adjusted_score"),
                           to   = node.names[-grep("adjusted_score", node.names)])
 
 blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_3) 
 
-#Remove profession from blacklist
-blacklist_all <- blacklist_all[!(blacklist_all$from %in% c("profession") ),]
-blacklist_all <- blacklist_all[!(blacklist_all$to %in% c("profession") ),]
+#------------------------------------------
+
+#Evaluate how fast and slow can explain adjusted_score score
+df_consent_fast <- df_consent[df_consent$is_fast,]
+df_consent_fast <-
+  dplyr::select(df_consent_fast,
+                years_prog,
+                age,
+                test_duration,
+                adjusted_score #outcome
+  );
+bn <- tabu(df_consent_fast,blacklist = blacklist_all)
+plot(bn,main="FAST Answers (Tabu algorithm)")
+"FAST answers graph is identical to no clustering by answer speed. "
+
+df_consent_slow <- df_consent[!df_consent$is_fast,]
+df_consent_slow <-
+  dplyr::select(df_consent_slow,
+                years_prog,
+                age,
+                test_duration,
+                adjusted_score #outcome
+  );
+bn <-tabu(df_consent_slow,blacklist = blacklist_all)
+plot(bn,main="SLOW Answers (Tabu algorithm)")
+
+"
+SLOW answer present only the folling two edges
+year_prog->adjusted_score, years_prog -> test_duration
+"
+
+#---------------------------------
+#Analysis of SPEED cluster by Profession
 
 #TABU FAST
+df_consent_fast <- df_consent[df_consent$is_fast,]
 for (i in 1:length(professions)) {
   choice = professions[i]
-  df_prof <- df_selected[df_selected$profession==choice,]
+  df_prof <- df_selected[df_consent_fast$profession==choice,]
   df_prof <- 
     dplyr::select(df_prof,
                   years_prog,
@@ -302,19 +311,12 @@ for (i in 1:length(professions)) {
 
 "Fast answer cluster has same results as no clustering"
 
-df_selected <-
-  dplyr::select(df_consent_slow,
-                profession,
-                years_prog,
-                age,
-                test_duration,
-                adjusted_score #outcome
-  );
 
 #TABU SLOW
+df_consent_fast <- df_consent[!df_consent$is_fast,]
 for (i in 1:length(professions)) {
   choice = professions[i]
-  df_prof <- df_selected[df_selected$profession==choice,]
+  df_prof <- df_selected[df_consent_slow$profession==choice,]
   df_prof <- 
     dplyr::select(df_prof,
                   years_prog,
@@ -327,3 +329,9 @@ for (i in 1:length(professions)) {
 }
 
 "Slow clustering showed only one edge Age->YoE for Hobbyists"
+
+
+#Remove profession from blacklist
+#blacklist_all <- blacklist_all[!(blacklist_all$from %in% c("profession") ),]
+#blacklist_all <- blacklist_all[!(blacklist_all$to %in% c("profession") ),]
+
