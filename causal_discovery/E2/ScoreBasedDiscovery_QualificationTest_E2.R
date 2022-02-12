@@ -272,7 +272,14 @@ df_consent_fast <-
   );
 bn <- tabu(df_consent_fast,blacklist = blacklist_all)
 plot(bn,main="FAST Answers (Tabu algorithm)")
-"FAST answers graph is identical to no clustering by answer speed. "
+"FAST answers graph is identical to no clustering by answer speed.
+Other: yoe -> score, age -> yoe
+Undergrad: yoe -> score, age -> yoe, age->score, yoe->duration, duration->score
+Grad: yoe -> score, age -> yoe, age->score
+Hobbyist: yoe -> score, age -> yoe, age->score, yoe->duration, duration->score
+Programmer: yoe -> score, age -> yoe,
+Professional: yoe -> score, age -> yoe, age->score, duration->score
+"
 
 df_consent_slow <- df_consent[!df_consent$is_fast,]
 df_consent_slow <-
