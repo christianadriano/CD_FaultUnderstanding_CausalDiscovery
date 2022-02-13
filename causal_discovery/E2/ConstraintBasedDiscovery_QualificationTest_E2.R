@@ -78,9 +78,9 @@ library(bnlearn)
 library(dplyr)
 library(Rgraphviz)
 
+#Folder and Script to plot the graphs
 plots_folder <- "C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//causal_discovery//E2//plots//"
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//util//GenerateGraphPlot.R")
-
 
 #Load only Consent data. No data from tasks, only from demographics and qualification test
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_consent_create_indexes_E2.R")
@@ -113,33 +113,22 @@ blacklist_3 <- data.frame(from = c("test_score"),
 blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_3) 
 
 #------------------------------------------
+#PC.STABLE
 bn <- pc.stable(df_selected,blacklist = blacklist_all)
-bn_name="All professions E2 - pc_stable";
+bn_name="E2 All Test_Score (pc.stable)";
 save_bayesian_net_plot(bayesian_net=bn,
                        outcome_node=outcomeNode,
                        plot_title=bn_name,
                        file_name=bn_name,
                        folder=plots_folder)
-
-gR <- graphviz.plot(bn,render = FALSE,
-                    main="All professions E2 - pc.stable",
-                    shape=c("ellipse"));
-gR = layoutGraph(gR, attrs = list(graph = list(rankdir = "LR")))
-
-nodeRenderInfo(gR)$fill[c("test_score")]="lightgrey"
-
-graph.par(list(nodes=list(col="black", lty="solid", 
-                          lwd=1, fontsize=14),
-               graph=list(cex.main=0.8)
-               ))
-renderGraph(gR)
-
-
-bn <-iamb(df_selected,blacklist = blacklist_all)
-plot(bn,main="All Professions, iamb algorithm")
-
+#IAMB.FDR
 bn <-iamb.fdr(df_selected,blacklist = blacklist_all)
-plot(bn,main="All Professions, iamb.fdr algorithm")
+bn_name="E2 All Test_Score (iamb.fdr)";
+save_bayesian_net_plot(bayesian_net=bn,
+                       outcome_node=outcomeNode,
+                       plot_title=bn_name,
+                       file_name=bn_name,
+                       folder=plots_folder)
 
 "
 All three algorithms produced the same graph.
@@ -156,8 +145,8 @@ no edge between years_prog and test_duration
 df_selected <-
   dplyr::select(df_consent,
                 profession,
-                age,
-                years_prog,
+                partic_age,
+                progr_years,
                 test_duration,
                 test_score #outcome
   );
@@ -165,62 +154,42 @@ df_selected <-
 df_selected$profession <- as.factor(df_selected$profession)
 #BY PROFESSION
 
-#Remove profession from blacklist
-blacklist_all <- blacklist_all[!(blacklist_all$from %in% c("profession") ),]
-blacklist_all <- blacklist_all[!(blacklist_all$to %in% c("profession") ),]
-
-
 #Run structure discovery for each profession
 professions = c("Other", "Undergraduate_Student","Graduate_Student","Hobbyist",
                 "Programmer","Professional")
 
-#PC-STABLE
+#PC-STABLE and IAMB.FDR
 for (i in 1:length(professions)) {
   choice = professions[i]
   df_prof <- df_selected[df_selected$profession==choice,]
   df_prof <- 
     dplyr::select(df_prof,
-                  years_prog,
-                  age,
+                  partic_age,
+                  progr_years,
                   test_duration,
                   test_score
     );
+  #PC.STABLE
   bn <-pc.stable(df_prof,blacklist = blacklist_all)
-  plot(bn,main=choice)
-}
-
-#IAMB
-for (i in 1:length(professions)) {
-  choice = professions[i]
-  df_prof <- df_selected[df_selected$profession==choice,]
-  df_prof <- 
-    dplyr::select(df_prof,
-                  years_prog,
-                  age,
-                  test_duration,
-                  test_score
-    );
-  bn <-iamb(df_prof,blacklist = blacklist_all)
-  plot(bn,main=choice)
-}
-
-#IAMB.FDR
-for (i in 1:length(professions)) {
-  choice = professions[i]
-  df_prof <- df_selected[df_selected$profession==choice,]
-  df_prof <- 
-    dplyr::select(df_prof,
-                  years_prog,
-                  age,
-                  test_duration,
-                  test_score
-    );
+  bn_name=paste("E2",choice," Test_Score (pc.stable)");
+  save_bayesian_net_plot(bayesian_net=bn,
+                         outcome_node=outcomeNode,
+                         plot_title=bn_name,
+                         file_name=bn_name,
+                         folder=plots_folder)
+  #IAMB.FDR
   bn <-iamb.fdr(df_prof,blacklist = blacklist_all)
-  plot(bn,main=choice)
+  bn_name=paste("E2",choice," Test_Score (iam.fdr)");
+  save_bayesian_net_plot(bayesian_net=bn,
+                         outcome_node=outcomeNode,
+                         plot_title=bn_name,
+                         file_name=bn_name,
+                         folder=plots_folder)
 }
 
-"All three algorithms produced the same results with one exception.
-For Hobbyist, the IAM and IAM.FDR determined that Age->Duration
+
+"All two algorithms produced the same results with one exception.
+For Hobbyist, the IAMB.FDR determined that Age->Duration
 For all professions Age -> YoE
 Only for undergrads YoE -> Test_Duration
 All (except Programmer and Other) Test_Duration -> Adjusted_Score
