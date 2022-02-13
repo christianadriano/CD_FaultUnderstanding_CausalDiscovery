@@ -270,7 +270,7 @@ df_consent_fast <-
                 test_duration,
                 adjusted_score #outcome
   );
-bn <- tabu(df_consent_fast,blacklist = blacklist_all)
+bn <- h2pc(df_consent_fast,blacklist = blacklist_all)
 plot(bn,main="FAST Answers (Tabu algorithm)")
 "FAST answers graph is identical to no clustering by answer speed.
 Other: yoe -> score, age -> yoe
