@@ -76,12 +76,17 @@ Results from adjusted_score and qualification score are the same across professi
 
 library(bnlearn)
 library(dplyr)
+library(Rgraphviz)
+
+plots_folder <- "C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//causal_discovery//E2//plots//"
+source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//util//GenerateGraphPlot.R")
+
 
 #Load only Consent data. No data from tasks, only from demographics and qualification test
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_consent_create_indexes_E2.R")
 df_consent <- load_consent_create_indexes()
 df_consent <- rename(df_consent,progr_years=years_programming)
-df_consent <- rename(df_consent,adj_score=adjusted_score)
+df_consent <- rename(df_consent,test_score=adjusted_score)
 df_consent <- rename(df_consent,partic_age=age)
 
 df_selected <-
@@ -89,26 +94,46 @@ df_selected <-
                 progr_years,
                 partic_age,
                 test_duration,
-                adj_score #outcome
+                test_score #outcome variable
                 );
 
 node.names <- colnames(df_selected)
+outcomeNode <- "test_score"
 
-#years_prog is not parent of partic_age
-blacklist_1 <- data.frame(from = c("years_prog"), 
+#progr_years is not parent of partic_age
+blacklist_1 <- data.frame(from = c("progr_years"), 
                           to   = c("partic_age"))
-#test_duration is not parent of age, years_prog
+#test_duration is not parent of partic_age, progr_years
 blacklist_2 <- data.frame(from = c("test_duration"),
-                          to   = c("years_prog","age")) 
-#adj_score cannot be parent of anyone
-blacklist_3 <- data.frame(from = c("adj_score"),
-                          to   = node.names[-grep("adj_score", node.names)])
+                          to   = c("progr_years","partic_age")) 
+#test_score cannot be parent of anyone
+blacklist_3 <- data.frame(from = c("test_score"),
+                          to   = node.names[-grep("test_score", node.names)])
 
 blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_3) 
 
 #------------------------------------------
 bn <- pc.stable(df_selected,blacklist = blacklist_all)
-plot(bn,main="All Professions, pc.stable algorithm",radius=150)
+bn_name="All professions E2 - pc_stable";
+save_bayesian_net_plot(bayesian_net=bn,
+                       outcome_node=outcomeNode,
+                       plot_title=bn_name,
+                       file_name=bn_name,
+                       folder=plots_folder)
+
+gR <- graphviz.plot(bn,render = FALSE,
+                    main="All professions E2 - pc.stable",
+                    shape=c("ellipse"));
+gR = layoutGraph(gR, attrs = list(graph = list(rankdir = "LR")))
+
+nodeRenderInfo(gR)$fill[c("test_score")]="lightgrey"
+
+graph.par(list(nodes=list(col="black", lty="solid", 
+                          lwd=1, fontsize=14),
+               graph=list(cex.main=0.8)
+               ))
+renderGraph(gR)
+
 
 bn <-iamb(df_selected,blacklist = blacklist_all)
 plot(bn,main="All Professions, iamb algorithm")
@@ -118,7 +143,7 @@ plot(bn,main="All Professions, iamb.fdr algorithm")
 
 "
 All three algorithms produced the same graph.
-years_prog only connected to Adjusted_Score by an undirected edge
+years_prog only connected to test_score by an undirected edge
 age -> test_duration
 age -> years_prog
 test_duration -> years_prog
@@ -134,7 +159,7 @@ df_selected <-
                 age,
                 years_prog,
                 test_duration,
-                adjusted_score #outcome
+                test_score #outcome
   );
 
 df_selected$profession <- as.factor(df_selected$profession)
@@ -158,7 +183,7 @@ for (i in 1:length(professions)) {
                   years_prog,
                   age,
                   test_duration,
-                  adjusted_score
+                  test_score
     );
   bn <-pc.stable(df_prof,blacklist = blacklist_all)
   plot(bn,main=choice)
@@ -173,7 +198,7 @@ for (i in 1:length(professions)) {
                   years_prog,
                   age,
                   test_duration,
-                  adjusted_score
+                  test_score
     );
   bn <-iamb(df_prof,blacklist = blacklist_all)
   plot(bn,main=choice)
@@ -188,7 +213,7 @@ for (i in 1:length(professions)) {
                   years_prog,
                   age,
                   test_duration,
-                  adjusted_score
+                  test_score
     );
   bn <-iamb.fdr(df_prof,blacklist = blacklist_all)
   plot(bn,main=choice)
