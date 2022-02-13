@@ -80,33 +80,35 @@ library(dplyr)
 #Load only Consent data. No data from tasks, only from demographics and qualification test
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_consent_create_indexes_E2.R")
 df_consent <- load_consent_create_indexes()
+df_consent <- rename(df_consent,progr_years=years_programming)
+df_consent <- rename(df_consent,adj_score=adjusted_score)
+df_consent <- rename(df_consent,partic_age=age)
 
 df_selected <-
   dplyr::select(df_consent,
-                #profession, #not using because it is categorical and the current methods do not support it
-                years_prog,
-                age,
+                progr_years,
+                partic_age,
                 test_duration,
-                adjusted_score #outcome
+                adj_score #outcome
                 );
 
 node.names <- colnames(df_selected)
 
-#years_prog is not parent of age.
+#years_prog is not parent of partic_age
 blacklist_1 <- data.frame(from = c("years_prog"), 
-                          to   = c("age"))
-#test_duration is not parent of age, years_prog, profession
+                          to   = c("partic_age"))
+#test_duration is not parent of age, years_prog
 blacklist_2 <- data.frame(from = c("test_duration"),
-                          to   = c("years_prog","age")) #"profession",
-#adjusted_score cannot be parent of anyone
-blacklist_3 <- data.frame(from = c("adjusted_score"),
-                          to   = node.names[-grep("adjusted_score", node.names)])
+                          to   = c("years_prog","age")) 
+#adj_score cannot be parent of anyone
+blacklist_3 <- data.frame(from = c("adj_score"),
+                          to   = node.names[-grep("adj_score", node.names)])
 
 blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_3) 
 
 #------------------------------------------
 bn <- pc.stable(df_selected,blacklist = blacklist_all)
-plot(bn,main="All Professions, pc.stable algorithm")
+plot(bn,main="All Professions, pc.stable algorithm",radius=150)
 
 bn <-iamb(df_selected,blacklist = blacklist_all)
 plot(bn,main="All Professions, iamb algorithm")
@@ -205,12 +207,14 @@ Only for undergraduate, Age -> Adjusted_Score.
 #---------------------------------------------------------------------
 #Using now the qualification_score
 
+df_consent <- rename(df_consent,orig_score=qualification_score)
+
 df_selected <-
   dplyr::select(df_consent,
                 years_prog,
                 age,
                 test_duration,
-                qualification_score #outcome
+                orig_score #outcome
   );
 
 
@@ -219,12 +223,12 @@ node.names <- colnames(df_selected)
 #years_prog is not parent of age.
 blacklist_1 <- data.frame(from = c("years_prog"), 
                           to   = c("age"))
-#test_duration is not parent of age, years_prog, profession
+#test_duration is not parent of age, years_prog
 blacklist_2 <- data.frame(from = c("test_duration"),
-                          to   = c("years_prog","age")) #"profession",
-#qualification_score cannot be parent of anyone
-blacklist_3 <- data.frame(from = c("qualification_score"),
-                          to   = node.names[-grep("qualification_score", node.names)])
+                          to   = c("years_prog","age"))
+#orig_score cannot be parent of anyone
+blacklist_3 <- data.frame(from = c("orig_score"),
+                          to   = node.names[-grep("orig_score", node.names)])
 
 blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_3) 
 
@@ -254,7 +258,7 @@ df_selected <-
                 years_prog,
                 age,
                 test_duration,
-                qualification_score #outcome
+                orig_score #outcome
   );
 
 #PC-STABLE
@@ -266,7 +270,7 @@ for (i in 1:length(professions)) {
                   years_prog,
                   age,
                   test_duration,
-                  qualification_score
+                  orig_score
     );
   bn <-pc.stable(df_prof,blacklist = blacklist_all)
   plot(bn,main=choice)
@@ -285,9 +289,9 @@ for (i in 1:length(professions)) {
   df_prof <- 
     dplyr::select(df_prof,
                   years_prog,
-                  age,
+                  partic_age,
                   test_duration,
-                  qualification_score
+                  orig_score
     );
   bn <-iamb(df_prof,blacklist = blacklist_all)
   plot(bn,main=choice)
@@ -326,7 +330,6 @@ for (i in 1:length(professions)) {
 
 df_consent <- load_consent_create_indexes()
 
-df_consent <- rename(df_consent,speed=testDuration_fastMembership)
 df_consent <- rename(df_consent,years_prog=years_programming)
 
 #Evaluate how fast and slow can explain adjusted_score score
