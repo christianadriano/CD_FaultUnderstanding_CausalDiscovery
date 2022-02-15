@@ -131,16 +131,17 @@ save_bayesian_net_plot(bayesian_net=bn,
                        folder=plots_folder)
 
 "
-All three algorithms produced the same graph.
-years_prog only connected to test_score by an undirected edge
+All algorithms produced the same graph.
+prog_years nodes is only connected to test_score by an undirected edge
 age -> test_duration
-age -> years_prog
-test_duration -> years_prog
-no edge between years_prog and test_duration
+age -> prog_years
+test_duration -> prog_years
+no edge between prog_years and test_duration
 "
 
 #-----------------------------------------
 #-----------------------------------------
+#BY PROFESSION
 
 df_selected <-
   dplyr::select(df_consent,
@@ -148,11 +149,10 @@ df_selected <-
                 partic_age,
                 progr_years,
                 test_duration,
-                test_score #outcome
+                test_score #outcome adjusted score
   );
 
 df_selected$profession <- as.factor(df_selected$profession)
-#BY PROFESSION
 
 #Run structure discovery for each profession
 professions = c("Other", "Undergraduate_Student","Graduate_Student","Hobbyist",
@@ -179,7 +179,7 @@ for (i in 1:length(professions)) {
                          folder=plots_folder)
   #IAMB.FDR
   bn <-iamb.fdr(df_prof,blacklist = blacklist_all)
-  bn_name=paste("E2",choice," Test_Score (iam.fdr)");
+  bn_name=paste("E2",choice," Test_Score (iamb.fdr)");
   save_bayesian_net_plot(bayesian_net=bn,
                          outcome_node=outcomeNode,
                          plot_title=bn_name,
@@ -197,6 +197,7 @@ All (except Graduate_Student) YoE -> Adjusted_Score
 Only for undergraduate, Age -> Adjusted_Score. 
 "
 
+#---------------------------------------------------------------------
 #---------------------------------------------------------------------
 #---------------------------------------------------------------------
 #Using now the qualification_score
@@ -255,7 +256,7 @@ df_selected <-
                 orig_score #outcome
   );
 
-#PC-STABLE
+#PC-STABLE and IAMB.FDR
 for (i in 1:length(professions)) {
   choice = professions[i]
   df_prof <- df_selected[df_selected$profession==choice,]
@@ -266,8 +267,23 @@ for (i in 1:length(professions)) {
                   test_duration,
                   orig_score
     );
+
+  #PC.STABLE
   bn <-pc.stable(df_prof,blacklist = blacklist_all)
-  plot(bn,main=choice)
+  bn_name=paste("E2",choice," Original_Test_Score (pc.stable)");
+  save_bayesian_net_plot(bayesian_net=bn,
+                         outcome_node=outcomeNode,
+                         plot_title=bn_name,
+                         file_name=bn_name,
+                         folder=plots_folder)
+  #IAMB.FDR
+  bn <-iamb.fdr(df_prof,blacklist = blacklist_all)
+  bn_name=paste("E2",choice," Original_Test_Score (iamb.fdr)");
+  save_bayesian_net_plot(bayesian_net=bn,
+                         outcome_node=outcomeNode,
+                         plot_title=bn_name,
+                         file_name=bn_name,
+                         folder=plots_folder)
 }
 
 "Analysis of results of the PC algorithm
