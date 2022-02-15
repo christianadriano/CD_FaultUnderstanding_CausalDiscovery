@@ -15,14 +15,9 @@ by compounding errors. Therefore, algorithms try to minimize this risk
 in various ways. To test the sensitivity of our data to this risk
 we executed methods with increasingly power to mitigate false positives.
 
-\begin{list}
+\begin{itemized}
 \item PC (pc.stable), seminal constraint-based structure learning algorithm \cite{colombo2014order}
 #Colombo D, Maathuis MH (2014). Order-Independent Constraint-Based Causal Structure Learning. Journal of Machine Learning Research, 15:3921–3962.
-
-\item Incremental Association (iamb) is based on the Markov blanket detection algorithm \cite{tsamardinos2003algorithms} that executes a 
-two-phase selection, more specifically a forward selection followed by a iteration to remove false positives.
-
-Tsamardinos I, Aliferis CF, Statnikov A (2003). Algorithms for Large Scale Markov Blanket Discovery. Proceedings of the Sixteenth International Florida Artificial Intelligence Research Society Conference, 376–381.
 
 \item Incremental Association with FDR (iamb.fdr) is an improvement on the IAMB. It adjusts the tests 
 significance threshold with false discovery rate heuristics \cite{pena2008learning,gasse2014hybrid}
@@ -31,7 +26,7 @@ Pena JM (2008). Learning Gaussian Graphical Models of Gene Networks with False D
 
 Gasse M, Aussem A, Elghazel H (2014). A Hybrid Algorithm for Bayesian Network Structure Learning with Application to Multi-Label Learning. Expert Systems with Applications, 41(15):6755–6772.
 
-\end{list}
+\end{itemized}
 
 The library used was bnlearn \cite{scutari2010learning}
 https://www.bnlearn.com/documentation/man/structure.learning.html
@@ -57,19 +52,14 @@ However, we found surprising results:
 Ultimately, as expected, Age was detected as a causal effect of YoE. Although Age, as well as Gender and
 Country of origin are not features that we selected, the association between Age and YoE contributes to
 increase confidence on the trustworthiness of the self-reported demographics data.
-
-
+    
 For each of these findings, we investigate if they generalize across YoE strata and 
 compute the effect size of the causal associations that were not ruled out.
 
-#Categorical variables are not supported, so need to run the analysis by profession and speed_cluster
-
 #Discussion of results
-#compare graphs produced by each of the methods. Check how sensitive they are to false discovery rate.
-#compare how professions are distinct in terms of adjusted_score and qualification_score
-Results from adjusted_score and qualification score are the same across professions.
-
-#compare between speed_clusters
+- Professions present distinct graphs
+- Results from adjusted_score and qualification score are the same across professions.
+- Slow speed cluster graphs have no edges, Fast speed have the same edges as the non-clustered data
 
 " 
 
@@ -206,8 +196,8 @@ df_consent <- rename(df_consent,orig_score=qualification_score)
 
 df_selected <-
   dplyr::select(df_consent,
-                years_prog,
-                age,
+                partic_age,
+                progr_years,
                 test_duration,
                 orig_score #outcome
   );
@@ -215,12 +205,12 @@ df_selected <-
 
 node.names <- colnames(df_selected)
 
-#years_prog is not parent of age.
-blacklist_1 <- data.frame(from = c("years_prog"), 
-                          to   = c("age"))
-#test_duration is not parent of age, years_prog
+#progr_years is not parent of partic_age
+blacklist_1 <- data.frame(from = c("progr_years"), 
+                          to   = c("partic_age"))
+#test_duration is not parent of partic_age, progr_years
 blacklist_2 <- data.frame(from = c("test_duration"),
-                          to   = c("years_prog","age"))
+                          to   = c("progr_years","partic_age")) 
 #orig_score cannot be parent of anyone
 blacklist_3 <- data.frame(from = c("orig_score"),
                           to   = node.names[-grep("orig_score", node.names)])
@@ -234,24 +224,17 @@ blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_3)
 bn <- pc.stable(df_selected,blacklist = blacklist_all)
 plot(bn,main="All Professions, pc.stable algorithm")
 
-bn <-iamb(df_selected,blacklist = blacklist_all)
-plot(bn,main="All Professions, iamb algorithm")
-
 bn <-iamb.fdr(df_selected,blacklist = blacklist_all)
 plot(bn,main="All Professions, iamb.fdr algorithm")
 
 #-----------------------------------------
 #Remove Profession as Node
 
-#Remove profession from blacklist
-blacklist_all <- blacklist_all[!(blacklist_all$from %in% c("profession") ),]
-blacklist_all <- blacklist_all[!(blacklist_all$to %in% c("profession") ),]
-
 df_selected <-
   dplyr::select(df_consent,
                 profession,
-                years_prog,
-                age,
+                partic_age,
+                progr_years,
                 test_duration,
                 orig_score #outcome
   );
@@ -292,47 +275,6 @@ Only in undegrad that test duration is affected by years_prog
 Hence, qualification_Score and adjusted_score produced the same graphs with the PC algorithm
 "
 
-#IAMB
-for (i in 1:length(professions)) {
-  choice = professions[i]
-  df_prof <- df_selected[df_selected$profession==choice,]
-  df_prof <- 
-    dplyr::select(df_prof,
-                  years_prog,
-                  partic_age,
-                  test_duration,
-                  orig_score
-    );
-  bn <-iamb(df_prof,blacklist = blacklist_all)
-  plot(bn,main=choice)
-  #graphviz.plot(bn,main=choice,shape="ellipse",layout = "circo");
-}
-
-"Analysis of results of the Tabu algorithm
-Test duration has not effect on adjusted_score for other and Programmer
-Test duration has no parents for Graduate and Professional
-Only in Hobbyists that test duration is a mediator for effect on adjusted_score
-Test duration has years_prog as parent in Hobbyist, Undergrad, 
-Programmer, and Other.
-
-Hence, qualification_score and adjusted_score produced the same graph with the tabu algorithm
-"
-
-#IAMB-FDR
-for (i in 1:length(professions)) {
-  choice = professions[i]
-  df_prof <- df_selected[df_selected$profession==choice,]
-  df_prof <- 
-    dplyr::select(df_prof,
-                  years_prog,
-                  age,
-                  test_duration,
-                  qualification_score
-    );
-  bn <-iamb.fdr(df_prof,blacklist = blacklist_all)
-  plot(bn,main=choice)
-}
-
 #------------------------------------------------------
 #SPEED CLUSTERS
 #------------------------------------------------------
@@ -341,6 +283,8 @@ for (i in 1:length(professions)) {
 df_consent <- load_consent_create_indexes()
 
 df_consent <- rename(df_consent,years_prog=years_programming)
+df_consent <- rename(df_consent,test_score=adjusted_score)
+
 
 #Evaluate how fast and slow can explain adjusted_score score
 df_consent_fast <- df_consent[df_consent$is_fast,]
@@ -349,29 +293,25 @@ df_consent_slow <- df_consent[!df_consent$is_fast,]
 df_selected <-
   dplyr::select(df_consent_fast,
                 profession,
-                years_prog,
-                age,
+                partic_age,
+                progr_years,
                 test_duration,
-                adjusted_score #outcome
+                test_score #outcome
   );
 
 node.names <- colnames(df_selected)
 
-#years_prog is not parent of age.
-blacklist_1 <- data.frame(from = c("years_prog"), 
-                          to   = c("age"))
-#test_duration is not parent of age, years_prog, profession
+#progr_years is not parent of partic_age
+blacklist_1 <- data.frame(from = c("progr_years"), 
+                          to   = c("partic_age"))
+#test_duration is not parent of partic_age, progr_years
 blacklist_2 <- data.frame(from = c("test_duration"),
-                          to   = c("years_prog","age")) #"profession",
-#adjusted_score cannot be parent of anyone
-blacklist_3 <- data.frame(from = c("adjusted_score"),
-                          to   = node.names[-grep("adjusted_score", node.names)])
+                          to   = c("progr_years","partic_age")) 
+#test_score cannot be parent of anyone
+blacklist_3 <- data.frame(from = c("test_score"),
+                          to   = node.names[-grep("test_score", node.names)])
 
 blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_3) 
-
-#Remove profession from blacklist
-blacklist_all <- blacklist_all[!(blacklist_all$from %in% c("profession") ),]
-blacklist_all <- blacklist_all[!(blacklist_all$to %in% c("profession") ),]
 
 #IAMB-FDR FAST
 for (i in 1:length(professions)) {
@@ -379,13 +319,18 @@ for (i in 1:length(professions)) {
   df_prof <- df_selected[df_selected$profession==choice,]
   df_prof <- 
     dplyr::select(df_prof,
-                  years_prog,
-                  age,
+                  partic_age,
+                  progr_years,
                   test_duration,
-                  adjusted_score
+                  test_score
     );
   bn <-iamb.fdr(df_prof,blacklist = blacklist_all)
-  plot(bn,main=paste(choice,"(fast answers)"))
+  bn_name=paste("E2 Fast",choice," Test_Score (iamb.fdr)");
+  save_bayesian_net_plot(bayesian_net=bn,
+                         outcome_node=outcomeNode,
+                         plot_title=bn_name,
+                         file_name=bn_name,
+                         folder=plots_folder)
 }
 
 "Fast answer cluster has same results as no clustering"
@@ -393,10 +338,10 @@ for (i in 1:length(professions)) {
 df_selected <-
   dplyr::select(df_consent_slow,
                 profession,
-                years_prog,
-                age,
+                partic_age,
+                progr_years,
                 test_duration,
-                adjusted_score #outcome
+                test_score
   );
 
 #IAMB-FDR SLOW
@@ -411,7 +356,12 @@ for (i in 1:length(professions)) {
                   adjusted_score
     );
   bn <-iamb.fdr(df_prof,blacklist = blacklist_all)
-  plot(bn,main=paste(choice,"(slow answers)"))
+  bn_name=paste("E2 Slow",choice," Test_Score (iamb.fdr)");
+  save_bayesian_net_plot(bayesian_net=bn,
+                         outcome_node=outcomeNode,
+                         plot_title=bn_name,
+                         file_name=bn_name,
+                         folder=plots_folder)
 }
 
 "Slow clustering showed only one edge Age->YoE for Hobbyists"
