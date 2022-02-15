@@ -41,42 +41,59 @@ Learning Bayesian Networks with the bnlearn R - https://arxiv.org/pdf/0908.3817.
 
 library(bnlearn)
 library(dplyr)
+library(Rgraphviz)
+
+#Folder and Script to plot the graphs
+plots_folder <- "C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//causal_discovery//E2//plots//"
+source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//util//GenerateGraphPlot.R")
 
 #Load only Consent data. No data from tasks, only from demographics and qualification test
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_consent_create_indexes_E2.R")
 df_consent <- load_consent_create_indexes()
-df_consent <- rename(df_consent,years_prog=years_programming)
+df_consent <- rename(df_consent,progr_years=years_programming)
+df_consent <- rename(df_consent,test_score=adjusted_score)
+df_consent <- rename(df_consent,partic_age=age)
 
 df_selected <-
   dplyr::select(df_consent,
-                years_prog,
-                age,
+                progr_years,
+                partic_age,
                 test_duration,
-                adjusted_score #outcome
-                );
+                test_score #outcome variable
+  );
 
 node.names <- colnames(df_selected)
+outcomeNode <- "test_score"
 
-#years_prog is not parent of age.
-blacklist_1 <- data.frame(from = c("years_prog"), 
-                          to   = c("age"))
-
-#test_duration is not parent of age, years_prog
+#progr_years is not parent of partic_age
+blacklist_1 <- data.frame(from = c("progr_years"), 
+                          to   = c("partic_age"))
+#test_duration is not parent of partic_age, progr_years
 blacklist_2 <- data.frame(from = c("test_duration"),
-                          to   = c("years_prog","age"))
-#adjusted_score cannot be parent of anyone
-blacklist_3 <- data.frame(from = c("adjusted_score"),
-                          to   = node.names[-grep("adjusted_score", node.names)])
+                          to   = c("progr_years","partic_age")) 
+#test_score cannot be parent of anyone
+blacklist_3 <- data.frame(from = c("test_score"),
+                          to   = node.names[-grep("test_score", node.names)])
 
 blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_3) 
 
-#----------------------------------------------
-bn_hc <- hc(df_selected,blacklist = blacklist_all)
-plot(bn_hc,main="All Professions, hill climbing algorithm")
-
-bn_tabu <-tabu(df_selected,blacklist = blacklist_all)
-plot(bn_tabu,main="All Professions, tabu algorithm")
-
+#------------------------------------------
+#HC
+bn <- hc(df_selected,blacklist = blacklist_all)
+bn_name="E2 All Test_Score (hc)";
+save_bayesian_net_plot(bayesian_net=bn,
+                       outcome_node=outcomeNode,
+                       plot_title=bn_name,
+                       file_name=bn_name,
+                       folder=plots_folder)
+#TABU
+bn <-tabu(df_selected,blacklist = blacklist_all)
+bn_name="E2 All Test_Score (tabu)";
+save_bayesian_net_plot(bayesian_net=bn,
+                       outcome_node=outcomeNode,
+                       plot_title=bn_name,
+                       file_name=bn_name,
+                       folder=plots_folder)
 "
 Both algorithms produced the same graph. It has two additional 
 edges than the graph discovered by the CB algorithms. 
@@ -89,37 +106,47 @@ The two additional edges are years_prog->test_duration, age->adjusted_score
 
 df_selected <-
   dplyr::select(df_consent,
-                profession, #not using because it is categorical and the current methods do not support it
-                years_prog,
-                age,
+                profession,
+                partic_age,
+                progr_years,
                 test_duration,
-                adjusted_score #outcome
+                test_score #outcome adjusted score
   );
 
+df_selected$profession <- as.factor(df_selected$profession)
 
 #Run structure discovery for each profession
 professions = c("Other", "Undergraduate_Student","Graduate_Student","Hobbyist",
                 "Programmer","Professional")
 
-"Analysis of results of the PC algorithm
-test duration seem relevant only for professional, undergrad, grad, hobbyist
-only in undegrad that test duration is affected by years_prog"
-
-#Score-based algorithm - Hill Climbing
+#PC-STABLE and IAMB.FDR
 for (i in 1:length(professions)) {
   choice = professions[i]
   df_prof <- df_selected[df_selected$profession==choice,]
   df_prof <- 
     dplyr::select(df_prof,
-                  years_prog,
-                  age,
+                  partic_age,
+                  progr_years,
                   test_duration,
-                  adjusted_score
+                  test_score
     );
+  #HC
   bn <-hc(df_prof,blacklist = blacklist_all)
-  plot(bn,main=choice)
+  bn_name=paste("E2",choice," Test_Score (hc)");
+  save_bayesian_net_plot(bayesian_net=bn,
+                         outcome_node=outcomeNode,
+                         plot_title=bn_name,
+                         file_name=bn_name,
+                         folder=plots_folder)
+  #TABU
+  bn <-tabu(df_prof,blacklist = blacklist_all)
+  bn_name=paste("E2",choice," Test_Score (tabu)");
+  save_bayesian_net_plot(bayesian_net=bn,
+                         outcome_node=outcomeNode,
+                         plot_title=bn_name,
+                         file_name=bn_name,
+                         folder=plots_folder)
 }
-
 "Results of Hill Climbing
 years_prog -> test_duration, all except Grad_student and Professionals
 years_prog -> adjusted_score, all except Grad_student
@@ -127,35 +154,25 @@ test_duration -> adjusted_score, all except Other and Programmer
 age -> years_prog, all
 age -> duration, none
 age -> adjusted_score, all except Grad_student and Other
+
+Results of Tabu produced the exact same results as Hill Climbing
 "
-
-#Score-based algorithm - Tabu
-for (i in 1:length(professions)) {
-  choice = professions[i]
-  df_prof <- df_selected[df_selected$profession==choice,]
-  df_prof <- 
-    dplyr::select(df_prof,
-                  years_prog,
-                  age,
-                  test_duration,
-                  adjusted_score
-    );
-  bn <-tabu(df_prof,blacklist = blacklist_all)
-  plot(bn,main=choice)
-}
-
-"Results of Tabu produced the exact same results as Hill Climbing"
 
 #-------------------------------------------------------
 #-------------------------------------------------------
 #Using now the qualification_score
 
+#---------------------------------------------------------------------
+#Using now the qualification_score
+
+df_consent <- rename(df_consent,orig_score=qualification_score)
+
 df_selected <-
   dplyr::select(df_consent,
-                age,
                 years_prog,
+                age,
                 test_duration,
-                qualification_score #outcome
+                orig_score #outcome
   );
 
 
@@ -164,39 +181,40 @@ node.names <- colnames(df_selected)
 #years_prog is not parent of age.
 blacklist_1 <- data.frame(from = c("years_prog"), 
                           to   = c("age"))
-
 #test_duration is not parent of age, years_prog
 blacklist_2 <- data.frame(from = c("test_duration"),
                           to   = c("years_prog","age"))
-#qualification_score cannot be parent of anyone
-blacklist_3 <- data.frame(from = c("qualification_score"),
-                          to   = node.names[-grep("qualification_score", node.names)])
+#orig_score cannot be parent of anyone
+blacklist_3 <- data.frame(from = c("orig_score"),
+                          to   = node.names[-grep("orig_score", node.names)])
 
 blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_3) 
 
+
 #------------------------------------------
+#Including Profession as Node
 
-bn <- hc(df_selected,blacklist = blacklist_all)
-plot(bn,main="All Professions, Hill-Climbing")
+bn <- pc.stable(df_selected,blacklist = blacklist_all)
+plot(bn,main="All Professions, pc.stable algorithm")
 
-bn <-tabu(df_selected,blacklist = blacklist_all)
-plot(bn,main="All Professions, Tabu")
+bn <-iamb(df_selected,blacklist = blacklist_all)
+plot(bn,main="All Professions, iamb algorithm")
 
-"Identical results"
+bn <-iamb.fdr(df_selected,blacklist = blacklist_all)
+plot(bn,main="All Professions, iamb.fdr algorithm")
 
-#--------------------------
-#Including Profession
+#-----------------------------------------
+#Remove Profession as Node
 
 df_selected <-
   dplyr::select(df_consent,
-                profession, #included only for building models for each profession
-                age,
+                profession,
                 years_prog,
+                age,
                 test_duration,
-                qualification_score #outcome
+                orig_score #outcome
   );
 
-#Score-based algorithm - Hill Climbing
 for (i in 1:length(professions)) {
   choice = professions[i]
   df_prof <- df_selected[df_selected$profession==choice,]
@@ -205,27 +223,26 @@ for (i in 1:length(professions)) {
                   years_prog,
                   age,
                   test_duration,
-                  qualification_score
+                  orig_score
     );
-  bn <-hc(df_prof,blacklist = blacklist_all)
-  plot(bn,main=choice)
+  
+  #HC
+  bn <-pc.stable(df_prof,blacklist = blacklist_all)
+  bn_name=paste("E2",choice," Original_Test_Score (hc)");
+  save_bayesian_net_plot(bayesian_net=bn,
+                         outcome_node=outcomeNode,
+                         plot_title=bn_name,
+                         file_name=bn_name,
+                         folder=plots_folder)
+  #TABU
+  bn <-iamb.fdr(df_prof,blacklist = blacklist_all)
+  bn_name=paste("E2",choice," Original_Test_Score (tabu)");
+  save_bayesian_net_plot(bayesian_net=bn,
+                         outcome_node=outcomeNode,
+                         plot_title=bn_name,
+                         file_name=bn_name,
+                         folder=plots_folder)
 }
-
-#Score-based algorithm - Tabu algorithm
-for (i in 1:length(professions)) {
-  choice = professions[i]
-  df_prof <- df_selected[df_selected$profession==choice,]
-  df_prof <- 
-    dplyr::select(df_prof,
-                  years_prog,
-                  age,
-                  test_duration,
-                  qualification_score
-    );
-  bn <-tabu(df_prof,blacklist = blacklist_all)
-  plot(bn,main=choice)
-}
-
 "Qualification score results were identical to Adjusted score"
 
 #------------------------------------------------------
@@ -234,16 +251,16 @@ for (i in 1:length(professions)) {
 #Will only used TABU
 
 df_consent <- load_consent_create_indexes()
-df_consent <- rename(df_consent,years_prog=years_programming)
+df_consent <- rename(df_consent,progr_years=years_programming)
 
 df_selected <-
   dplyr::select(df_consent,
-                years_prog,
+                profession,
+                progr_years,
                 age,
                 test_duration,
-                adjusted_score #outcome
+                orig_score #outcome
   );
-
 
 node.names <- colnames(df_selected)
 
