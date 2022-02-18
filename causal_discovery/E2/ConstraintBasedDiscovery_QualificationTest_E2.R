@@ -72,6 +72,9 @@ library(Rgraphviz)
 plots_folder <- "C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//causal_discovery//E2//plots//"
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//util//GenerateGraphPlot.R")
 
+#Load script for generating blacklists of edges 
+source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//causal_discovery//GenerateBlacklists.R")
+
 #Load only Consent data. No data from tasks, only from demographics and qualification test
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_consent_create_indexes_E2.R")
 df_consent <- load_consent_create_indexes()
@@ -87,20 +90,8 @@ df_selected <-
                 test_score #outcome variable
                 );
 
-node.names <- colnames(df_selected)
-outcomeNode <- "test_score"
-
-#progr_years is not parent of partic_age
-blacklist_1 <- data.frame(from = c("progr_years"), 
-                          to   = c("partic_age"))
-#test_duration is not parent of partic_age, progr_years
-blacklist_2 <- data.frame(from = c("test_duration"),
-                          to   = c("progr_years","partic_age")) 
-#test_score cannot be parent of anyone
-blacklist_3 <- data.frame(from = c("test_score"),
-                          to   = node.names[-grep("test_score", node.names)])
-
-blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_3) 
+blacklist_all <- blacklist_E2_TestScore(node.names=colnames(df_selected), 
+                                                 outcome.node="test_score")
 
 #------------------------------------------
 #PC.STABLE
@@ -202,21 +193,8 @@ df_selected <-
                 orig_score #outcome
   );
 
-
-node.names <- colnames(df_selected)
-
-#progr_years is not parent of partic_age
-blacklist_1 <- data.frame(from = c("progr_years"), 
-                          to   = c("partic_age"))
-#test_duration is not parent of partic_age, progr_years
-blacklist_2 <- data.frame(from = c("test_duration"),
-                          to   = c("progr_years","partic_age")) 
-#orig_score cannot be parent of anyone
-blacklist_3 <- data.frame(from = c("orig_score"),
-                          to   = node.names[-grep("orig_score", node.names)])
-
-blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_3) 
-
+blacklist_all <- blacklist_E2_TestScore(node.names=colnames(df_selected), 
+                                        outcome.node="orig_score")
 
 #------------------------------------------
 #Including Profession as Node
