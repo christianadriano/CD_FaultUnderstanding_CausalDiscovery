@@ -47,6 +47,10 @@ library(Rgraphviz)
 plots_folder <- "C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//causal_discovery//E2//plots//"
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//util//GenerateGraphPlot.R")
 
+#Load script for generating blacklists of edges 
+source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//causal_discovery//GenerateBlacklists.R")
+
+
 #Load only Consent data. No data from tasks, only from demographics and qualification test
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_consent_create_indexes_E2.R")
 df_consent <- load_consent_create_indexes()
