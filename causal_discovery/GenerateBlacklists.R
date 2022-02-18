@@ -2,7 +2,7 @@
 Generate list of edges to be ignore (called blacklist)
 "
 
-generate_blacklist_E2_TestScore <- function(node.names, outcome.node){
+blacklist_E2_TestScore <- function(node.names, outcome.node){
   
   #progr_years is not parent of partic_age
   blacklist_1 <- data.frame(from = c("progr_years"), 
