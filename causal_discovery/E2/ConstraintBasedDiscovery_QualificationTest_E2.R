@@ -66,7 +66,6 @@ compute the effect size of the causal associations that were not ruled out.
 
 library(bnlearn)
 library(dplyr)
-library(Rgraphviz)
 
 #Folder and Script to plot the graphs
 plots_folder <- "C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//causal_discovery//E2//plots//"
