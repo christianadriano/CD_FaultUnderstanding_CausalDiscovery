@@ -2,7 +2,7 @@
 Generate a plot and save to file
 "
 
-
+library(Rgraphviz)
 
 save_bayesian_net_plot <- function(bayesian_net,outcome_node,plot_title, 
                                    file_name,folder){
