@@ -41,7 +41,6 @@ Learning Bayesian Networks with the bnlearn R - https://arxiv.org/pdf/0908.3817.
 
 library(bnlearn)
 library(dplyr)
-library(Rgraphviz)
 
 #Folder and Script to plot the graphs
 plots_folder <- "C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//causal_discovery//E2//plots//"
