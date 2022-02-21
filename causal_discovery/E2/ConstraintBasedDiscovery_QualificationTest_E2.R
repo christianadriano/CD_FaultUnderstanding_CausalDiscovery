@@ -278,18 +278,8 @@ df_selected <-
 
 node.names <- colnames(df_selected)
 
-#progr_years is not parent of partic_age
-blacklist_1 <- data.frame(from = c("progr_years"), 
-                          to   = c("partic_age"))
-#test_duration is not parent of partic_age, progr_years
-blacklist_2 <- data.frame(from = c("test_duration"),
-                          to   = c("progr_years","partic_age")) 
-#test_score cannot be parent of anyone
-blacklist_3 <- data.frame(from = c("test_score"),
-                          to   = node.names[-grep("test_score", node.names)])
-
-blacklist_all <- rbind(blacklist_1,blacklist_2,blacklist_3) 
-
+blacklist_all <- blacklist_E2_TestScore(node.names=colnames(df_selected), 
+                                        outcome.node="test_score")
 #IAMB-FDR FAST
 for (i in 1:length(professions)) {
   choice = professions[i]
