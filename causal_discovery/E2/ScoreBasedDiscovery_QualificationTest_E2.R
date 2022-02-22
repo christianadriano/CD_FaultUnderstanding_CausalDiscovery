@@ -169,9 +169,6 @@ blacklist_all <- blacklist_E2_TestScore(node.names=colnames(df_selected),
 bn <- pc.stable(df_selected,blacklist = blacklist_all)
 plot(bn,main="All Professions, pc.stable algorithm")
 
-bn <-iamb(df_selected,blacklist = blacklist_all)
-plot(bn,main="All Professions, iamb algorithm")
-
 bn <-iamb.fdr(df_selected,blacklist = blacklist_all)
 plot(bn,main="All Professions, iamb.fdr algorithm")
 
@@ -202,7 +199,7 @@ for (i in 1:length(professions)) {
   bn <-pc.stable(df_prof,blacklist = blacklist_all)
   bn_name=paste("E2",choice," Original_Test_Score (hc)");
   save_bayesian_net_plot(bayesian_net=bn,
-                         outcome_node=outcomeNode,
+                         outcome_node="orig_score",
                          plot_title=bn_name,
                          file_name=bn_name,
                          folder=plots_folder)
@@ -210,25 +207,66 @@ for (i in 1:length(professions)) {
   bn <-iamb.fdr(df_prof,blacklist = blacklist_all)
   bn_name=paste("E2",choice," Original_Test_Score (tabu)");
   save_bayesian_net_plot(bayesian_net=bn,
-                         outcome_node=outcomeNode,
+                         outcome_node="orig_score",
                          plot_title=bn_name,
                          file_name=bn_name,
                          folder=plots_folder)
 }
 "Qualification score results were identical to Adjusted score"
 
+#------------------------------------------------------------------------
 #------------------------------------------------------
 #SPEED CLUSTERS
 #Evaluate how fast and slow can explain test_score
 #------------------------------------------------------
+
+#FAST
+i=1
+for (i in 1:length(professions)) {
+  choice = professions[i]
+  df_prof <- df_consent[df_consent$profession=="Other",]
+  median_membership <- median(df_prof$testDuration_fastMembership);
+  df_prof <- df_prof[df_prof$testDuration_fastMembership>=median_membership,]
+  df_selected <- 
+    dplyr::select(df_prof,
+                  progr_years,
+                  partic_age,
+                  test_duration,
+                  test_score
+    );
+  
+  blacklist_all <- blacklist_E2_TestScore(node.names=colnames(df_selected), 
+                                          outcome.node="test_score")
+  bn <- pc.stable(df_selected,blacklist = blacklist_all)
+  plot(bn,main="Fast Profession")
+  bn_name=paste("E2 Fast (Median)",choice," Test_Score (tabu)");
+  save_bayesian_net_plot(bayesian_net=bn,
+                         outcome_node="test_score",
+                         plot_title=bn_name,
+                         file_name=bn_name,
+                         folder=plots_folder)
+  
+}
+plot(bn)
+
+"Graphs for FAST Mean and Median are identical to no clustering by answer speed.
+Other: yoe -> score, age -> yoe
+Undergrad: yoe -> score, age -> yoe, age->score, yoe->duration, duration->score
+Grad: yoe -> score, age -> yoe, age->score
+Hobbyist: yoe -> score, age -> yoe, age->score, yoe->duration, duration->score
+Programmer: yoe -> score, age -> yoe,
+Professional: yoe -> score, age -> yoe, age->score, duration->score
+"
+
+#SLOW
 i=1
 for (i in 1:length(professions)) {
   choice = professions[i]
   df_prof <- df_consent[df_consent$profession==choice,]
-  median_membership <- df_prof$testDuration_fastMembership;
-  df_prof_fast <- df_prof[df_prof$testDuration_fastMembership>=median_membership,]
+  median_membership <- median(df_prof$testDuration_fastMembership);
+  df_prof <- df_prof[df_prof$testDuration_fastMembership<median_membership,]
   df_selected <- 
-    dplyr::select(df_prof_fast,
+    dplyr::select(df_prof,
                   progr_years,
                   partic_age,
                   test_duration,
@@ -238,7 +276,7 @@ for (i in 1:length(professions)) {
   blacklist_all <- blacklist_E2_TestScore(node.names=colnames(df_selected), 
                                           outcome.node="test_score")
   bn <- tabu(df_selected,blacklist = blacklist_all)
-  bn_name=paste("E2 Fast Speed (>Median)",choice," Original_Test_Score (tabu)");
+  bn_name=paste("E2 Slow (Median)",choice," Test_Score (tabu)");
   save_bayesian_net_plot(bayesian_net=bn,
                          outcome_node="test_score",
                          plot_title=bn_name,
@@ -246,8 +284,9 @@ for (i in 1:length(professions)) {
                          folder=plots_folder)
   
 }
-  #plot(bn,main="FAST Answers (Tabu algorithm)")
-"FAST answers graph is identical to no clustering by answer speed.
+
+
+"Graphs for FAST Mean and Median are identical to no clustering by answer speed.
 Other: yoe -> score, age -> yoe
 Undergrad: yoe -> score, age -> yoe, age->score, yoe->duration, duration->score
 Grad: yoe -> score, age -> yoe, age->score
@@ -255,6 +294,7 @@ Hobbyist: yoe -> score, age -> yoe, age->score, yoe->duration, duration->score
 Programmer: yoe -> score, age -> yoe,
 Professional: yoe -> score, age -> yoe, age->score, duration->score
 "
+
 
 df_consent_slow <- df_consent[!df_consent$is_fast,]
 df_consent_slow <-
