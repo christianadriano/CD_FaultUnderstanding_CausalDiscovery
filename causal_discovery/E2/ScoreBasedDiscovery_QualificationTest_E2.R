@@ -221,10 +221,9 @@ for (i in 1:length(professions)) {
 #------------------------------------------------------
 
 #FAST
-i=1
 for (i in 1:length(professions)) {
   choice = professions[i]
-  df_prof <- df_consent[df_consent$profession=="Other",]
+  df_prof <- df_consent[df_consent$profession==choice,]
   median_membership <- median(df_prof$testDuration_fastMembership);
   df_prof <- df_prof[df_prof$testDuration_fastMembership>=median_membership,]
   df_selected <- 
@@ -237,25 +236,45 @@ for (i in 1:length(professions)) {
   
   blacklist_all <- blacklist_E2_TestScore(node.names=colnames(df_selected), 
                                           outcome.node="test_score")
-  bn <- pc.stable(df_selected,blacklist = blacklist_all)
-  plot(bn,main="Fast Profession")
+  bn <- tabu(df_selected,blacklist = blacklist_all)
   bn_name=paste("E2 Fast (Median)",choice," Test_Score (tabu)");
-  save_bayesian_net_plot(bayesian_net=bn,
-                         outcome_node="test_score",
-                         plot_title=bn_name,
-                         file_name=bn_name,
-                         folder=plots_folder)
+  plot(bn,main=bn_name)
+       
+  # save_bayesian_net_plot(bayesian_net=bn,
+  #                        outcome_node="test_score",
+  #                        plot_title=bn_name,
+  #                        file_name=bn_name,
+  #                        folder=plots_folder)
   
 }
 plot(bn)
 
-"Graphs for FAST Mean and Median are identical to no clustering by answer speed.
+"
+Results on FAST RESPONDERS
+
+Mean as threshold: Graphs are identical to no clustering by answer speed.
 Other: yoe -> score, age -> yoe
 Undergrad: yoe -> score, age -> yoe, age->score, yoe->duration, duration->score
 Grad: yoe -> score, age -> yoe, age->score
 Hobbyist: yoe -> score, age -> yoe, age->score, yoe->duration, duration->score
 Programmer: yoe -> score, age -> yoe,
 Professional: yoe -> score, age -> yoe, age->score, duration->score
+
+Median as threshold: 
+Other: age->yoe->score
+Undergrad: age->yoe->score; age->score
+Grad: no edges
+Hobbyist:age->yoe->score; age->score<-duration
+Programmer: age->yoe->score; score<-duration
+Professional: age->yoe->score; age->score
+So, only hobbyist and programmer have an edge from duration->score
+No profession has edges arriving at duration
+Hence, when conditioning on duration, we would to have only
+minor effect on hobbyist and programmer, but no effect on the other professions.
+This implies that fast responders would have similar results 
+as the aggregate data (not filter by speed). 
+
+Moreover,looking at the variance of the fast responder duration, we have
 "
 
 #SLOW
