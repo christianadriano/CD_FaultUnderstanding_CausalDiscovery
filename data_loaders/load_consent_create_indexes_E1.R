@@ -30,7 +30,7 @@ load_consent_create_indexes <- function(load_is_student=0){
   dim(df_consent) #3699 are not NA.
   
   #-----------------------
-  "IMPUTATION ERROR"
+  "INPUTATION ERROR"
   
   #Filter-out 3 rows that have demographics data but did not pass the test (qualification score<2)
   #This should not have happened in normal execution, because demographics were collected only 
@@ -188,6 +188,25 @@ The interquartile range is the difference between the 2nd and 3rd quartiles
                                    by=c("worker_id"="worker_id"),
                                    keep=FALSE,copy=FALSE)
   }
+  
+  "FAST TEST ANSWER MEMBERSHIP
+Merge the membership column that tells whether a worker is part of the fast or slow test takers.
+This column was produced by building a Gaussian Mixture model.
+"
+  df_fastMembership <- read.csv(paste0(path,"data//mixture_model//","E1_consent_with_testDuration_fastMembership.csv"))
+  df_fastMembership <- 
+    dplyr::select(df_fastMembership,
+                  worker_id,
+                  file_name,
+                  profession,
+                  testDuration_fastMembership,
+                  is_fast
+    );
+  df_consent <- left_join(df_consent,df_fastMembership,by=c("worker_id","file_name","profession"),
+                          copy= FALSE)
+  
+  
+  df_consent$is_fast <- df_consent$testDuration_fastMembership>=0.5
   
   #---------------------
   
