@@ -349,7 +349,7 @@ The interquartile range is the difference between the 2nd and 3rd quartiles
 Merge the membership column that tells whether a worker is part of the fast or slow test takers.
 This column was produced by building a Gaussian Mixture model.
 "
-  df_fastMembership <- read.csv(paste0(path,"data//mixture_model//","consent_with_testDuration_fastMembership.csv"))
+  df_fastMembership <- read.csv(paste0(path,"data//mixture_model//","E2_consent_with_testDuration_fastMembership.csv"))
   df_fastMembership <- 
     dplyr::select(df_fastMembership,
                   worker_id,
@@ -364,6 +364,7 @@ This column was produced by building a Gaussian Mixture model.
   
   df_consent$is_fast <- df_consent$testDuration_fastMembership>=0.5
   
+  #------------------------------------------------------------------
   
   print(paste0("Loaded ",dim(df_consent)[1], " rows."," Results are in df_consent"))
   
