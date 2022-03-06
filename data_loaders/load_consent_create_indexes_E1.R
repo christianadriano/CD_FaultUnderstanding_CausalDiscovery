@@ -1,5 +1,10 @@
 "
-Load data from E1 and create indexes for qualification_score, gender
+Load data from E1 and execute the following data wrangling procedures:
+- create indexes for various columns 
+- merge IRT data
+- deal with inputation error
+- missing data
+- label programmers as fast w.r.t. to their testDuration_Membership
 "
 
 library(farff)
