@@ -29,7 +29,8 @@ load_consent_create_indexes <- function(load_is_student=0){
   #------------------------
   "MISSING DATA"
   
-  #Filter-out rows without test data
+  #Filter-out rows without test data, because there is not information about these 
+  #as in the E1 the demographics are collected at the end of the task
   dim(df_consent[is.na(df_consent$test1),]) #1077 are NA
   df_consent <- df_consent[complete.cases(df_consent[,"qualification_score"]),]
   dim(df_consent) #3699 are not NA.
@@ -48,7 +49,7 @@ load_consent_create_indexes <- function(load_is_student=0){
   "I cannot transform qualification score as a factor anymore for two reasons:
     - it is reasonable to assume a continuous scale 
     - there will be more than the integer values, because some workers will have averaged values that result
-    from the fact that they took the more than one test.
+    from the fact that they took more than one type of test (there were four types)
   "
   
   # Averaging worker qualification scores
