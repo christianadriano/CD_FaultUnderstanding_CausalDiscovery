@@ -29,7 +29,7 @@ load_consent_create_indexes <- function(load_is_student=0){
   #------------------------
   "MISSING DATA"
   
-  #Filter-out rows without test data, because there is not information about these 
+  #Filter-out rows without test data, because there is no information about these 
   #as in the E1 the demographics are collected at the end of the task
   dim(df_consent[is.na(df_consent$test1),]) #1077 are NA
   df_consent <- df_consent[complete.cases(df_consent[,"qualification_score"]),]
@@ -48,17 +48,31 @@ load_consent_create_indexes <- function(load_is_student=0){
   
   "I cannot transform qualification score as a factor anymore for two reasons:
     - it is reasonable to assume a continuous scale 
-    - there will be more than the integer values, because some workers will have averaged values that result
-    from the fact that they took more than one type of test (there were four types)
+    - there will be more than the integer values, because some workers will
+    have averaged values that result from the fact that they took more 
+    than one type of test (there were four types)
   "
   
   # Averaging worker qualification scores
+  worker_repeated_tests <- 0
+  total_repeated_tests <- 0
   worker_id_list <- unique(df_consent$worker_id)
   for (id in worker_id_list) {
     qualification_score_list <- df_consent[df_consent$worker_id == id,"qualification_score"]
+    number_tests <- length(qualification_score_list)
+    if(number_tests>1){
+      print(number_tests)
+      worker_repeated_tests <- worker_repeated_tests+1
+      total_repeated_tests <- total_repeated_tests +number_tests
+    }
     average_score <- ave(qualification_score_list)
     df_consent[df_consent$worker_id==id,"qualification_score"] <- average_score
   }
+  
+  print(paste("worker_repeated_tests:",worker_repeated_tests))
+  print(paste("total_repeated_tests:",total_repeated_tests))
+  
+  #There were not repeated tests!
   
   #test PASSED
   for (id in worker_id_list) {
