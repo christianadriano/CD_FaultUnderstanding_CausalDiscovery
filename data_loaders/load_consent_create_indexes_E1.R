@@ -61,7 +61,7 @@ load_consent_create_indexes <- function(load_is_student=0){
     qualification_score_list <- df_consent[df_consent$worker_id == id,"qualification_score"]
     number_tests <- length(qualification_score_list)
     if(number_tests>1){
-      print(number_tests)
+     # print(number_tests)
       worker_repeated_tests <- worker_repeated_tests+1
       total_repeated_tests <- total_repeated_tests +number_tests
     }
@@ -69,10 +69,9 @@ load_consent_create_indexes <- function(load_is_student=0){
     df_consent[df_consent$worker_id==id,"qualification_score"] <- average_score
   }
   
-  print(paste("worker_repeated_tests:",worker_repeated_tests))
-  print(paste("total_repeated_tests:",total_repeated_tests))
-  
-  #There were not repeated tests!
+ # print(paste("worker_repeated_tests:",worker_repeated_tests))
+ # print(paste("total_repeated_tests:",total_repeated_tests))
+ # There were no repeated tests!
   
   #test PASSED
   for (id in worker_id_list) {
