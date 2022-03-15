@@ -217,11 +217,10 @@ This column was produced by building a Gaussian Mixture model.
     dplyr::select(df_fastMembership,
                   worker_id,
                   file_name,
-                  profession,
                   testDuration_fastMembership,
                   is_fast
     );
-  df_consent <- left_join(df_consent,df_fastMembership,by=c("worker_id","file_name","profession"),
+  df_consent <- left_join(df_consent,df_fastMembership,by=c("worker_id","file_name"),
                           copy= FALSE)
   
   
