@@ -231,7 +231,13 @@ This column was produced by building a Gaussian Mixture model.
                           copy= FALSE)
   
   #TODO change this to use the Median.
-  df_consent$is_fast <- df_consent$testDuration_fastMembership>=0.5
+  source("C://Users//Christian//Documents//GitHub//EM_GaussianMixtureModel_TaskDurations//3.speed_classification//Label_FastSlowMembership_Test.R")
+  df_test <- compute_median_label(df_consent)
+  table(dplyr::select(df_test,is_fast, profession))
+  #         profession
+  # is_fast non-student other student
+  # FALSE         203  1606      38
+  # TRUE          203  1607      39
   
   #---------------------
   
