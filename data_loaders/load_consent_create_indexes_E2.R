@@ -362,9 +362,30 @@ This column was produced by building a Gaussian Mixture model.
                           copy= FALSE)
   
   
-  df_consent$is_fast <- df_consent$testDuration_fastMembership>=0.5
+  source("C://Users//Christian//Documents//GitHub//EM_GaussianMixtureModel_TaskDurations//3.speed_classification//Label_FastSlowMembership_Test.R")
+  #df_test <- compute_50percent_label(df_consent)
+  #table(dplyr::select(df_test,is_fast, profession))
+  #         profession
+  # is_fast Graduate_Student Hobbyist Other Professional Programmer Undergraduate_Student
+  # FALSE               23       44    11            0         13                    59
+  # TRUE               260      440   101          417         36                   384
   
-  #------------------------------------------------------------------
+  #df_test <- compute_median_label(df_consent)
+  #table(dplyr::select(df_test,is_fast, profession))
+  # MEDIAN      profession
+  # is_fast Graduate_Student Hobbyist Other Professional Programmer Undergraduate_Student
+  # FALSE              141      242    56          208         24                   221
+  # TRUE               142      242    56          209         25                   222
+  
+  df_consent <- compute_mean_label(df_consent)
+  #table(dplyr::select(df_consent,is_fast, profession))
+  # MEAN          profession
+  # is_fast Graduate_Student Hobbyist Other Professional Programmer Undergraduate_Student
+  # FALSE              111      179    44          157         18                   168
+  # TRUE               172      305    68          260         31                   275 
+  
+  #MEAN as threshold seems more more balanced than the fixed 0.5 threshold
+  #------------------------------------------------------------------------
   
   print(paste0("Loaded ",dim(df_consent)[1], " rows."," Results are in df_consent"))
   
