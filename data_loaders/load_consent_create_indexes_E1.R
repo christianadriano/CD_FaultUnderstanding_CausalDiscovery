@@ -214,11 +214,6 @@ This column was produced by building a Gaussian Mixture model.
 "
   
   df_fastMembership <- read.csv(paste0(path,"mixture_model//","E1_consent_with_testDuration_fastMembership.csv"))
-  table(dplyr::select(df_fastMembership,is_fast, profession))
-  #         profession
-  # is_fast non-student other student
-  # FALSE         252  1860      66
-  # TRUE          154  1353      11
   
   df_fastMembership <- 
     dplyr::select(df_fastMembership,
@@ -230,16 +225,30 @@ This column was produced by building a Gaussian Mixture model.
   df_consent <- left_join(df_consent,df_fastMembership,by=c("worker_id","profession"),
                           copy= FALSE)
   
-  #TODO change this to use the Median.
   source("C://Users//Christian//Documents//GitHub//EM_GaussianMixtureModel_TaskDurations//3.speed_classification//Label_FastSlowMembership_Test.R")
-  df_test <- compute_median_label(df_consent)
-  table(dplyr::select(df_test,is_fast, profession))
+  #df_test <- compute_50percent_label(df_consent)
+  #table(dplyr::select(df_test,is_fast, profession))
   #         profession
+  # is_fast non-student other student
+  # FALSE         252  1860      66
+  # TRUE          154  1353      11
+  
+  #df_test <- compute_media_label(df_consent)
+  #table(dplyr::select(df_test,is_fast, profession))
+  #  MEDIAN       profession
   # is_fast non-student other student
   # FALSE         203  1606      38
   # TRUE          203  1607      39
+
+  df_consent <- compute_mean_label(df_consent)
+  #table(dplyr::select(df_consent,is_fast, profession))
+  # MEAN          profession
+  # is_fast non-student other student
+  # FALSE         244  1841      51
+  # TRUE          162  1372      26
   
-  #---------------------
+  #MEAN as threshold seems more more balanced than the fixed 0.5 threshold
+  #------------------------------------------------------------------------
   
   print(paste0("Loaded ",dim(df_consent)[1], " rows."," Results are in df_consent"))
   
