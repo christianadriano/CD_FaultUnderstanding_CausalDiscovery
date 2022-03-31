@@ -161,23 +161,17 @@ load_consent_create_indexes <- function(load_is_student=0){
                                  labels = c(1:3)
   )
   
-  #-----------------------
+  #------------------------------------------------------------
   #DURATION of TEST
   #Convert to minutes
   df_consent$test_duration <- df_consent$test_duration/(1000*60)
   
   
   "TEST DURATION OUTLIERS
-Replace outliers in test_duration for median values.
-
-A reasonable time for the qualification test in E1 is 20 min, which gives 5 min per question,
-which is the average time people took to answer the code inspection tasks. 
-Because the boxplot shows points that are above 20 min, which is more than 5 min per question
-
-We consider as outliers all data points that are above wiskers in the boxplots. 
-These datapoints have values > 3rd quartile + 1.5*interquartile range. 
-The interquartile range is the difference between the 2nd and 3rd quartiles
-"
+  We study the distribution of test duration by comparing their quartiles and the wiskers.
+  The latter have values > 3rd quartile + 1.5*interquartile range. 
+  The interquartile range is the difference between the 2nd and 3rd quartiles
+  "
   #Quantiles
   values <- quantile(df_consent$test_duration)
   q2 <- values[[2]]
@@ -187,10 +181,14 @@ The interquartile range is the difference between the 2nd and 3rd quartiles
   upper_wisker <- values[[4]] + 1.5 * inter_quartile
   lower_wisker <- values[[2]] -1.5 *inter_quartile #NOT USED
   
-  #Replace all values that are above 40 min to the median of each professional group
-  upperwisker <- as.numeric(upper_wisker)
-  median_value <- as.numeric(median)
-  df_consent[df_consent$test_duration>40,]$test_duration <- median_value
+ "A reasonable time for the qualification test in E1 is 20 min, which gives 5 min per question,
+  which is the average time people took to answer the code inspection tasks. We decided to 
+  use twice this average as a threshold, hence 40min
+
+  Instead of removing the datapoints we replaced the values that were above 40 min to 
+  the median of each professional group, so we mitigated the impact on the distribution of test duration.
+  "
+  df_consent[df_consent$test_duration>40,]$test_duration <- as.numeric(median)
   
   #---------------------
   #
@@ -208,10 +206,11 @@ The interquartile range is the difference between the 2nd and 3rd quartiles
                                    keep=FALSE,copy=FALSE)
   }
   
+  #---------------------------------------
   "FAST TEST ANSWER MEMBERSHIP
-Merge the membership column that tells whether a worker is part of the fast or slow test takers.
-This column was produced by building a Gaussian Mixture model.
-"
+  Merge the membership column that tells whether a worker is part of the fast or slow test takers.
+  This column was produced by building a Gaussian Mixture model.
+  "
   
   df_fastMembership <- read.csv(paste0(path,"mixture_model//","E1_consent_with_testDuration_fastMembership.csv"))
   
