@@ -345,6 +345,8 @@ The interquartile range is the difference between the 2nd and 3rd quartiles
     df_consent[(df_consent$profession==prof & 
                   df_consent$test_duration>upperwisker),]$test_duration <- median_value
   }
+  
+  #-----------------------------------------
   "FAST TEST ANSWER MEMBERSHIP
 Merge the membership column that tells whether a worker is part of the fast or slow test takers.
 This column was produced by building a Gaussian Mixture model.
