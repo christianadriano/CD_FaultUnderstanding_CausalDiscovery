@@ -14,9 +14,9 @@ library(dplyr)
 "--------------------------------------------------------------------
 About the load function
 is_student =1 adds a column with the classification of is_student_E1.csv
-default = 0
+default = 1
 "
-load_consent_create_indexes <- function(load_is_student=0){
+load_consent_create_indexes <- function(load_is_student=1){
   
   #--------------------------
   "LOAD FILES"
@@ -161,17 +161,64 @@ load_consent_create_indexes <- function(load_is_student=0){
                                  labels = c(1:3)
   )
   
+  #---------------------
+  # STUDENT, NON-STUDENT, OTHER labels
+  
+  if(load_is_student){
+    df_aux <- read.csv(paste0(path,"is_student_E1.csv"))
+    df_aux <- df_aux  %>% select("worker_id","is_student")
+    #Create labels as three types of professions (student, non-student, other)
+    df_aux[df_aux$is_student=="0" & !is.na(df_aux$is_student),"profession"] <- "non-student"
+    df_aux[df_aux$is_student=="1" & !is.na(df_aux$is_student),"profession"] <- "student"
+    df_aux[is.na(df_aux$is_student),]$profession <- "other"
+    df_aux$profession <- factor(df_aux$profession)
+    
+    df_consent <- dplyr::left_join(df_consent,df_aux,
+                                   by=c("worker_id"="worker_id"),
+                                   keep=FALSE,copy=FALSE)
+  }
+  
+  
   #------------------------------------------------------------
   #DURATION of TEST
   #Convert to minutes
   df_consent$test_duration <- df_consent$test_duration/(1000*60)
   
+  #TODO Compute outliers by profession, Chek load_consent E2.
   
   "TEST DURATION OUTLIERS
   We study the distribution of test duration by comparing their quartiles and the wiskers.
   The latter have values > 3rd quartile + 1.5*interquartile range. 
   The interquartile range is the difference between the 2nd and 3rd quartiles
   "
+  
+  profession_list <- as.character(unique(df_consent$profession))
+  
+  computeMedians <- function(prof){
+    median(df_consent[df_consent$profession==prof,]$test_duration)
+  }
+  medians_list <- lapply(profession_list, computeMedians)
+  
+  df_quantiles <- data.frame(matrix(data=c(profession_list,rep(0,24)),ncol=5,nrow = 6, byrow = FALSE),
+                             stringsAsFactors=FALSE) #initialize with all zeros
+  colnames(df_quantiles) <- c("profession","median","q2","q3","upper_wisker")
+  
+  #Quantiles
+  computeQuantiles <- function(prof){
+    quantile(df_consent[df_consent$profession==prof,]$test_duration)
+  }
+  quantile_list <- lapply(profession_list,computeQuantiles)
+  
+  for(i in c(1:length(profession_list))){
+    values <- unlist(quantile_list[i])
+    prof <- profession_list[i]
+    df_quantiles[df_quantiles$profession==prof,]$q2 <- as.numeric(values[[2]])
+    df_quantiles[df_quantiles$profession==prof,]$median <- as.numeric(values[[3]])
+    df_quantiles[df_quantiles$profession==prof,]$q3 <- as.numeric(values[[4]])
+    inter_quartile <- as.numeric(values[[4]] - values[[2]])
+    df_quantiles[df_quantiles$profession==prof,]$upper_wisker <- as.numeric(values[[4]] + 1.5 * inter_quartile)
+  } 
+  
   #Quantiles
   values <- quantile(df_consent$test_duration)
   q2 <- values[[2]]
@@ -190,22 +237,7 @@ load_consent_create_indexes <- function(load_is_student=0){
   "
   df_consent[df_consent$test_duration>40,]$test_duration <- as.numeric(median)
   
-  #---------------------
-  #
-  if(load_is_student){
-    df_aux <- read.csv(paste0(path,"is_student_E1.csv"))
-    df_aux <- df_aux  %>% select("worker_id","is_student")
-    #Create labels as three types of professions (student, non-student, other)
-    df_aux[df_aux$is_student=="0" & !is.na(df_aux$is_student),"profession"] <- "non-student"
-    df_aux[df_aux$is_student=="1" & !is.na(df_aux$is_student),"profession"] <- "student"
-    df_aux[is.na(df_aux$is_student),]$profession <- "other"
-    df_aux$profession <- factor(df_aux$profession)
-    
-    df_consent <- dplyr::left_join(df_consent,df_aux,
-                                   by=c("worker_id"="worker_id"),
-                                   keep=FALSE,copy=FALSE)
-  }
-  
+ 
   #---------------------------------------
   "FAST TEST ANSWER MEMBERSHIP
   Merge the membership column that tells whether a worker is part of the fast or slow test takers.
