@@ -184,8 +184,6 @@ load_consent_create_indexes <- function(load_is_student=1){
   #Convert to minutes
   df_consent$test_duration <- df_consent$test_duration/(1000*60)
   
-  #TODO Compute outliers by profession, Chek load_consent E2.
-  
   "TEST DURATION OUTLIERS
   We study the distribution of test duration by comparing their quartiles and the wiskers.
   The latter have values > 3rd quartile + 1.5*interquartile range. 
@@ -199,7 +197,8 @@ load_consent_create_indexes <- function(load_is_student=1){
   }
   medians_list <- lapply(profession_list, computeMedians)
   
-  df_quantiles <- data.frame(matrix(data=c(profession_list,rep(0,24)),ncol=5,nrow = 6, byrow = FALSE),
+  #Initializes a dataframe with profession names in first column and zeros for the remaining columns
+  df_quantiles <- data.frame(matrix(data=c(profession_list,rep(0,12)),ncol=5,nrow = 3, byrow = FALSE),
                              stringsAsFactors=FALSE) #initialize with all zeros
   colnames(df_quantiles) <- c("profession","median","q2","q3","upper_wisker")
   
@@ -218,6 +217,14 @@ load_consent_create_indexes <- function(load_is_student=1){
     inter_quartile <- as.numeric(values[[4]] - values[[2]])
     df_quantiles[df_quantiles$profession==prof,]$upper_wisker <- as.numeric(values[[4]] + 1.5 * inter_quartile)
   } 
+  
+  #Generate BOXPLOTS
+  #Do Statistical tests to check if distributions are statistically distinct (before and after outlier processing)
+  #Statistical tests: null-hypothesis tests of equal means and also Kolmogorov-Smirnov test.
+  #    profession  median                q2               q3     upper_wisker
+  # 1       other 1.66485 0.800966666666667 3.04553333333333 6.41238333333333
+  # 2 non-student 2.11485             0.764 3.95444166666667 8.74010416666667
+  # 3     student  1.9874           0.66665 3.56496666666667 7.91244166666667
   
   #Quantiles
   values <- quantile(df_consent$test_duration)
