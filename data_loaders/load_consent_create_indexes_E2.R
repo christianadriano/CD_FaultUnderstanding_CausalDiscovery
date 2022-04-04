@@ -316,6 +316,7 @@ The interquartile range is the difference between the 2nd and 3rd quartiles
   }
   medians_list <- lapply(profession_list, computeMedians)
   
+  #Initializes a dataframe with profession names in first column and zeros for the remaining columns
   df_quantiles <- data.frame(matrix(data=c(profession_list,rep(0,24)),ncol=5,nrow = 6, byrow = FALSE),
                              stringsAsFactors=FALSE) #initialize with all zeros
   colnames(df_quantiles) <- c("profession","median","q2","q3","upper_wisker")
@@ -335,6 +336,14 @@ The interquartile range is the difference between the 2nd and 3rd quartiles
     inter_quartile <- as.numeric(values[[4]] - values[[2]])
     df_quantiles[df_quantiles$profession==prof,]$upper_wisker <- as.numeric(values[[4]] + 1.5 * inter_quartile)
   } 
+  
+  #              profession           median               q2               q3     upper_wisker
+  # 1              Hobbyist         4.811475 3.00068333333333 7.96979166666667 15.4234541666667
+  # 2 Undergraduate_Student 4.45258333333333         2.510575 7.44260833333333 14.8406583333333
+  # 3          Professional 5.08443333333333 2.69791666666667            8.472        17.133125
+  # 4      Graduate_Student 4.31256666666667 2.24764166666667         7.327275        14.946725
+  # 5                 Other         5.757875         3.139375 9.26158333333333 18.4448958333333
+  # 6            Programmer 6.60786666666667          4.00565 12.8254833333333 26.0552333333333
   
   #Replace all values that are above 30 min to the median of each professional group
   df_consent$profession <- as.factor(df_consent$profession)
