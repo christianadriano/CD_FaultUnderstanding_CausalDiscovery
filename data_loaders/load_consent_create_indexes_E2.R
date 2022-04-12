@@ -43,16 +43,6 @@ load_consent_create_indexes <- function(){
   pattern <- "it|developer|programmer|computer|tech|technician|software|computer|qa|dba|data|physicist|systems|analyst|engineer"
   df_consent[(grep(pattern,tolower(df_consent$profession))),"profession"] <- "Programmer"
   df_consent[(grep("other",tolower(df_consent$profession))),"profession"] <- "Other"
-  
-  #-----------
-  #DO NOT NEED THIS ANYMORE
-  #Convert profession from factor to character 
-  #(Don't need to do this anymore, because it was solved 
-  #when extracted the Programmer profile from the Other category
-  #df_consent$profession <- as.character(df_consent$experience)
-  #Replaces 'Other...something' for only 'Other'
-  #df_consent[grep("Other",df_consent$profession),"profession"] <- "Other"
-  #---------
  
   #Transform profession as factor
   df_consent$profession <- factor(df_consent$profession, 
