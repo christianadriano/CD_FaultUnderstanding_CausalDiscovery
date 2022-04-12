@@ -12,6 +12,7 @@ library(tidyverse)
 
 #Load only Consent data. No data from tasks, only from demographics and qualification test
 source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_consent_create_indexes_E2.R")
+df_consent <- load_consent_create_indexes();
 
 df_consent <-
   dplyr::select(df_consent,
