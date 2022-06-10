@@ -91,7 +91,7 @@ load_consent_create_indexes <- function(){
   #only joins with people who qualified (qualification_score>=3), because only these are present in the task execution logs
   df_consent <- left_join(x=df_consent,y=df_irt,keep=FALSE, by=c("worker_id"="worker_id","file_name"="file_name"))#,"file_name"="file_name"))
   dim(df_consent) 
-  df_consent <- rename(df_consent,adjusted_score=irt_qualification_score)
+  df_consent <- dplyr::rename(df_consent,adjusted_score=irt_qualification_score)
   
   #Averaging the worker adjusted and qualification score (to keep consistency)
   worker_id_list <- unique(df_consent$worker_id)
@@ -242,7 +242,7 @@ load_consent_create_indexes <- function(){
   df_tb <-  data.frame(table(df_consent$country))
   colnames(df_tb) <- c("country","participants")
   tribble_cnty <- df_tb %>% group_by(participants)
-  tribble_cnty <- tribble_cnty %>% summarise(countries_by_participants = n())
+  tribble_cnty <- tribble_cnty %>% dplyr::summarise(countries_by_participants = dplyr::n())
   tribble_cnty$participants_labels <- as.factor(tribble_cnty$participants)
   
   # barplot(tribble_cnty$countries_by_participants,
