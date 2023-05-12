@@ -16,7 +16,7 @@ About the load function
 is_student =1 adds a column with the classification of is_student_E1.csv
 default = 1
 "
-load_consent_create_indexes <- function(load_is_student=1){
+load_consent_create_indexes_E1 <- function(load_is_student=1){
   
   #--------------------------
   "LOAD FILES"

@@ -13,7 +13,7 @@ library(ggplot2)
 library(dplyr)
 library(tidyr)
 
-load_consent_create_indexes <- function(){
+load_consent_create_indexes_E2 <- function(){
   
   #--------------------------
   "LOAD FILES"
