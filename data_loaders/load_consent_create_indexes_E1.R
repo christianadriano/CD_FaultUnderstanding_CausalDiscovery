@@ -41,7 +41,7 @@ load_consent_create_indexes_E1 <- function(load_is_student=1){
   #Filter-out 3 rows that have demographics data but did not pass the test (qualification score<2)
   #This should not have happened in normal execution, because demographics were collected only 
   #at the end of the experiment. 
-  df_consent <- df_consent[!(df_consent$qualification_score<2 & !is.na(df_consent$years_programming)),]
+  df_consent <- df_consent[!(df_consent$qualification_score<2 & !is.na(df_consent$years_prog)),]
   
   #-----------------------
   "QUALIFICATION_SCORE"
@@ -52,6 +52,9 @@ load_consent_create_indexes_E1 <- function(load_is_student=1){
     have averaged values that result from the fact that they took more 
     than one type of test (there were four types)
   "
+  
+  #Rename variables (to be consistent with the identification and transportation adjustment formulas)
+  df_consent <- df_consent %>% rename("years_prog"="years_programming")
   
   # Averaging worker qualification scores
   worker_repeated_tests <- 0
