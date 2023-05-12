@@ -15,7 +15,9 @@ library(bnlearn)
 library(dplyr)
 
 #Load only Consent data. No data from tasks, only from demographics and qualification test
-source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_consent_create_indexes_E2.R")
+source("C://Users//Christian//Documents//GitHub//CausalModel_FaultUnderstanding//data_loaders//load_consent_create_indexes_E1.R")
+
+df_consent <- load_consent_create_indexes_E1()
 
 #Evaluate how fast and slow can explain adjusted_score score
 df_consent_fast <- df_consent[df_consent$is_fast,]
