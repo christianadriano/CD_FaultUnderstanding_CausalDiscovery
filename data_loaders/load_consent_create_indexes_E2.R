@@ -27,7 +27,7 @@ load_consent_create_indexes_E2 <- function(){
   #------------------------
   #Rename variables (to be consistent with the identification and transportation adjustment formulas)
   df_consent <- df_consent %>% rename("years_prog"="years_programming")
-  
+  df_consent$is_student <- df_consent$profession=="Undergraduate_Student" | df_consent$profession=="Graduate_Student" 
   
   #------------------------
   "MISSING DATA"
