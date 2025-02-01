@@ -42,10 +42,10 @@ load_consent_create_indexes_E2 <- function(){
   
   #------------------------
   "PROFESSION"
-  #re-lable professional_developer as professional
+  #re-label professional_developer as professional
   df_consent[df_consent$profession=="Professional_Developer",]$profession <- "Professional"
   
-  #re-lable Others who are programmers
+  #re-label Others who are programmers
   pattern <- "it|developer|programmer|computer|tech|technician|software|computer|qa|dba|data|physicist|systems|analyst|engineer"
   df_consent[(grep(pattern,tolower(df_consent$profession))),"profession"] <- "Programmer"
   df_consent[(grep("other",tolower(df_consent$profession))),"profession"] <- "Other"
